@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stefanie Schumacher — Design Directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;1,400&family=Archivo+Black&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,400&family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============ RESET / BASE ============ */
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+a{color:inherit;text-decoration:none}
+ul{list-style:none}
+img{max-width:100%;display:block}
+
+:root{
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+
+/* ============ SWITCHER ============ */
+.switcher{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:1000;display:flex;gap:4px;background:rgba(20,20,20,.92);backdrop-filter:blur(10px);border-radius:100px;padding:5px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.switcher button{border:0;background:transparent;color:#bbb;font:500 12px/1 'Archivo',sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:9px 16px;border-radius:100px;cursor:pointer;transition:all .25s var(--ease);white-space:nowrap}
+.switcher button:hover{color:#fff}
+.switcher button.active{background:#fff;color:#111}
+
+/* ============ SHARED STRUCTURE ============ */
+.dir{display:none}
+body[data-dir="a"] .dir-a{display:block}
+body[data-dir="b"] .dir-b{display:block}
+body[data-dir="c"] .dir-c{display:block}
+
+.tag{display:inline-block;font-size:11px;letter-spacing:.18em;text-transform:uppercase}
+
+/* ################################################################
+   DIRECTION A — "THE GALLERY"
+   Mendes Wood / Petzel bones + color-field vibrancy
+   ################################################################ */
+.dir-a{font-family:'Archivo',sans-serif;background:#FFFFFF;color:#111}
+.dir-a .topbar{display:flex;justify-content:space-between;align-items:baseline;padding:26px 4vw;border-bottom:1px solid #111;position:sticky;top:0;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);z-index:50}
+.dir-a .wordmark{font-size:clamp(17px,1.6vw,22px);font-weight:600;letter-spacing:-.01em}
+.dir-a .wordmark span{font-weight:400;color:#666;margin-left:10px;font-size:.8em}
+.dir-a nav{display:flex;gap:28px;font-size:13px;letter-spacing:.04em}
+.dir-a nav a{position:relative;padding-bottom:2px}
+.dir-a nav a:hover{color:#0032FF}
+.dir-a .hero{padding:11vh 4vw 9vh;display:grid;grid-template-columns:1.4fr 1fr;gap:6vw;align-items:end}
+.dir-a h1{font-size:clamp(42px,6.2vw,96px);line-height:.98;letter-spacing:-.035em;font-weight:500}
+.dir-a h1 em{font-style:normal;color:#0032FF}
+.dir-a .hero-side{padding-bottom:12px}
+.dir-a .hero-side p{font-size:clamp(15px,1.25vw,18px);line-height:1.55;color:#333;margin-bottom:26px}
+.dir-a .btn{display:inline-block;border:1.5px solid #111;padding:14px 28px;font-size:13px;letter-spacing:.1em;text-transform:uppercase;transition:all .25s var(--ease)}
+.dir-a .btn:hover{background:#0032FF;border-color:#0032FF;color:#fff}
+.dir-a .credline{padding:0 4vw 40px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#888}
+.dir-a .works{border-top:1px solid #111}
+.dir-a .works-head{padding:20px 4vw;display:flex;justify-content:space-between;font-size:12px;letter-spacing:.16em;text-transform:uppercase;border-bottom:1px solid #e5e5e5}
+.dir-a .work-grid{display:grid;grid-template-columns:repeat(3,1fr)}
+.dir-a .work{border-right:1px solid #e5e5e5;padding:0 0 34px;cursor:pointer}
+.dir-a .work:last-child{border-right:0}
+.dir-a .swatch{height:340px;margin:0 0 22px;position:relative;overflow:hidden}
+.dir-a .swatch::after{content:"";position:absolute;inset:0;background:rgba(255,255,255,0);transition:background .3s}
+.dir-a .work:hover .swatch::after{background:rgba(255,255,255,.12)}
+.dir-a .sw1{background:linear-gradient(160deg,#FF4B1F 0%,#FF7A00 55%,#FFB300 100%)}
+.dir-a .sw2{background:linear-gradient(200deg,#0032FF 0%,#4B6BFF 60%,#9FB4FF 100%)}
+.dir-a .sw3{background:linear-gradient(140deg,#0B7A3E 0%,#2FBF71 60%,#B6F09C 100%)}
+.dir-a .work h3{font-size:clamp(18px,1.6vw,23px);font-weight:600;letter-spacing:-.01em;padding:0 22px;margin-bottom:8px}
+.dir-a .work p{padding:0 22px;font-size:14.5px;line-height:1.55;color:#555}
+.dir-a .work .num{display:block;padding:16px 22px 10px;font-size:11px;letter-spacing:.2em;color:#999}
+.dir-a .method{display:grid;grid-template-columns:1fr 1.3fr;gap:6vw;padding:10vh 4vw;border-top:1px solid #111}
+.dir-a .method h2{font-size:clamp(30px,3.4vw,52px);letter-spacing:-.03em;font-weight:500;line-height:1.05}
+.dir-a .method-list li{display:flex;align-items:baseline;gap:18px;padding:16px 0;border-bottom:1px solid #e5e5e5;font-size:clamp(17px,1.5vw,21px)}
+.dir-a .method-list li:first-child{border-top:1px solid #e5e5e5}
+.dir-a .method-list .n{font-size:11px;color:#0032FF;letter-spacing:.1em;min-width:26px}
+.dir-a .events{border-top:1px solid #111;padding-bottom:8vh}
+.dir-a .events-head{padding:20px 4vw;display:flex;justify-content:space-between;font-size:12px;letter-spacing:.16em;text-transform:uppercase;border-bottom:1px solid #e5e5e5}
+.dir-a .ev{display:grid;grid-template-columns:110px 1fr 130px;gap:3vw;align-items:baseline;padding:20px 4vw;border-bottom:1px solid #eee;transition:background .2s}
+.dir-a .ev:hover{background:#F5F7FF}
+.dir-a .ev .date{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#888}
+.dir-a .ev .t{font-size:clamp(16px,1.5vw,20px);font-weight:500;letter-spacing:-.01em}
+.dir-a .ev .go{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#0032FF;text-align:right}
+.dir-a .fees{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #111}
+.dir-a .fee{padding:8vh 4vw;border-right:1px solid #e5e5e5}
+.dir-a .fee:last-child{border-right:0}
+.dir-a .fee .amt{font-size:clamp(40px,4.6vw,68px);font-weight:500;letter-spacing:-.03em;margin:14px 0 6px}
+.dir-a .fee .amt sup{font-size:.4em;vertical-align:super}
+.dir-a .fee p{color:#555;font-size:14.5px}
+.dir-a footer{border-top:1px solid #111;padding:40px 4vw;display:flex;justify-content:space-between;font-size:12.5px;color:#666}
+
+/* ################################################################
+   DIRECTION B — "THE SIGNAL"
+   Martine Syms energy: saturated field, editorial, personality
+   ################################################################ */
+.dir-b{font-family:'Space Grotesk',sans-serif;background:#3D00B7;color:#F4EFE6}
+.dir-b ::selection{background:#E8FF4A;color:#3D00B7}
+.dir-b .marquee{overflow:hidden;border-bottom:1px solid rgba(244,239,230,.35);padding:11px 0;background:#E8FF4A;color:#3D00B7}
+.dir-b .marquee-inner{display:flex;gap:48px;white-space:nowrap;animation:slide 26s linear infinite;font:500 13px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;text-transform:uppercase}
+@keyframes slide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.dir-b .topbar{display:flex;justify-content:space-between;align-items:center;padding:24px 4vw}
+.dir-b .wordmark{font:700 17px 'Space Grotesk',sans-serif;letter-spacing:.02em}
+.dir-b nav{display:flex;gap:26px;font:400 13px 'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.06em}
+.dir-b nav a:hover{color:#E8FF4A}
+.dir-b .hero{padding:9vh 4vw 10vh}
+.dir-b h1{font-family:'Fraunces',serif;font-weight:300;font-size:clamp(46px,7.4vw,118px);line-height:1.0;letter-spacing:-.02em}
+.dir-b h1 em{font-style:italic;color:#E8FF4A}
+.dir-b .hero p{max-width:560px;margin:34px 0 30px;font-size:clamp(15px,1.3vw,18px);line-height:1.6;color:rgba(244,239,230,.85)}
+.dir-b .btn{display:inline-block;background:#E8FF4A;color:#3D00B7;padding:16px 30px;border-radius:100px;font:500 13px 'IBM Plex Mono',monospace;letter-spacing:.08em;text-transform:uppercase;transition:transform .25s var(--ease),box-shadow .25s}
+.dir-b .btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.dir-b .strip{border-top:1px solid rgba(244,239,230,.35);border-bottom:1px solid rgba(244,239,230,.35);display:grid;grid-template-columns:repeat(3,1fr)}
+.dir-b .strip .cell{padding:34px 30px;border-right:1px solid rgba(244,239,230,.35)}
+.dir-b .strip .cell:last-child{border-right:0}
+.dir-b .strip .k{font:400 11px 'IBM Plex Mono',monospace;letter-spacing:.18em;text-transform:uppercase;color:#E8FF4A;display:block;margin-bottom:10px}
+.dir-b .strip .cell p{font-size:15px;line-height:1.5}
+.dir-b .services{padding:10vh 4vw}
+.dir-b .sec-label{font:400 12px 'IBM Plex Mono',monospace;letter-spacing:.2em;text-transform:uppercase;color:#E8FF4A;margin-bottom:34px;display:block}
+.dir-b .svc{border-top:1px solid rgba(244,239,230,.35);padding:34px 0;display:grid;grid-template-columns:70px 1fr 1.1fr;gap:4vw;align-items:start;transition:padding-left .3s var(--ease)}
+.dir-b .svc:hover{padding-left:14px}
+.dir-b .svc:last-child{border-bottom:1px solid rgba(244,239,230,.35)}
+.dir-b .svc .num{font:400 13px 'IBM Plex Mono',monospace;color:rgba(244,239,230,.6)}
+.dir-b .svc h3{font-family:'Fraunces',serif;font-weight:400;font-size:clamp(24px,2.6vw,38px);letter-spacing:-.01em;line-height:1.1}
+.dir-b .svc p{font-size:15px;line-height:1.6;color:rgba(244,239,230,.82)}
+.dir-b .now{padding:0 4vw 10vh}
+.dir-b .now-list li{display:flex;justify-content:space-between;align-items:baseline;gap:20px;padding:15px 0;border-bottom:1px dashed rgba(244,239,230,.35);font-size:clamp(15px,1.4vw,19px)}
+.dir-b .now-list .d{font:400 12px 'IBM Plex Mono',monospace;color:#E8FF4A;min-width:70px}
+.dir-b .now-list .join{font:400 11px 'IBM Plex Mono',monospace;letter-spacing:.1em;text-transform:uppercase;opacity:.7}
+.dir-b .now-list li:hover .join{color:#E8FF4A;opacity:1}
+.dir-b .wise{background:#E8FF4A;color:#3D00B7;padding:11vh 4vw;text-align:center}
+.dir-b .wise h2{font-family:'Fraunces',serif;font-style:italic;font-weight:300;font-size:clamp(34px,4.6vw,72px);letter-spacing:-.02em;max-width:900px;margin:0 auto}
+.dir-b .wise .tag{margin-bottom:22px;font-family:'IBM Plex Mono',monospace}
+.dir-b footer{padding:42px 4vw;display:flex;justify-content:space-between;font:400 12px 'IBM Plex Mono',monospace;letter-spacing:.06em;color:rgba(244,239,230,.7)}
+
+/* ################################################################
+   DIRECTION C — "THE WISE ADULT"
+   Warm bone ground, monumental type, one electric accent
+   ################################################################ */
+.dir-c{font-family:'Archivo',sans-serif;background:#F3EFE7;color:#1A1815}
+.dir-c ::selection{background:#FF4D00;color:#fff}
+.dir-c .topbar{display:flex;justify-content:space-between;align-items:center;padding:24px 4vw;border-bottom:1.5px solid #1A1815}
+.dir-c .wordmark{font-family:'Archivo Black',sans-serif;font-size:15px;letter-spacing:.02em;text-transform:uppercase}
+.dir-c nav{display:flex;gap:26px;font-size:13px;font-weight:500;letter-spacing:.05em;text-transform:uppercase}
+.dir-c nav a:hover{color:#FF4D00}
+.dir-c .hero{padding:10vh 4vw 8vh}
+.dir-c .hero .kicker{font-size:12px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#FF4D00;display:block;margin-bottom:26px}
+.dir-c h1{font-family:'Archivo Black',sans-serif;font-size:clamp(44px,8.2vw,128px);line-height:.92;letter-spacing:-.02em;text-transform:uppercase}
+.dir-c h1 .o{-webkit-text-stroke:2px #1A1815;color:transparent}
+.dir-c .hero-row{display:flex;justify-content:space-between;align-items:flex-end;gap:6vw;margin-top:44px;flex-wrap:wrap}
+.dir-c .hero-row p{max-width:520px;font-size:clamp(15px,1.3vw,18px);line-height:1.6;color:#44403A}
+.dir-c .btn{display:inline-block;background:#1A1815;color:#F3EFE7;padding:18px 34px;font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;transition:background .2s}
+.dir-c .btn:hover{background:#FF4D00}
+.dir-c .bigband{background:#FF4D00;color:#F3EFE7;overflow:hidden;padding:13px 0;border-top:1.5px solid #1A1815;border-bottom:1.5px solid #1A1815}
+.dir-c .bigband .marquee-inner{display:flex;gap:56px;white-space:nowrap;animation:slide 30s linear infinite;font-family:'Archivo Black',sans-serif;font-size:14px;letter-spacing:.12em;text-transform:uppercase}
+.dir-c .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-bottom:1.5px solid #1A1815}
+.dir-c .card{border-right:1.5px solid #1A1815;padding:44px 30px 50px;position:relative;transition:background .25s}
+.dir-c .card:last-child{border-right:0}
+.dir-c .card:hover{background:#fff}
+.dir-c .card .num{font-family:'Archivo Black',sans-serif;font-size:44px;color:transparent;-webkit-text-stroke:1.5px #1A1815;display:block;margin-bottom:22px}
+.dir-c .card:hover .num{color:#FF4D00;-webkit-text-stroke:1.5px #FF4D00}
+.dir-c .card h3{font-family:'Archivo Black',sans-serif;font-size:clamp(17px,1.7vw,22px);text-transform:uppercase;letter-spacing:.01em;line-height:1.15;margin-bottom:14px}
+.dir-c .card p{font-size:14.5px;line-height:1.6;color:#44403A}
+.dir-c .how{display:grid;grid-template-columns:1fr 1.2fr;gap:6vw;padding:10vh 4vw;border-bottom:1.5px solid #1A1815}
+.dir-c .how h2{font-family:'Archivo Black',sans-serif;font-size:clamp(30px,4vw,58px);text-transform:uppercase;line-height:.95;letter-spacing:-.01em}
+.dir-c .how h2 span{color:#FF4D00}
+.dir-c .how-list li{padding:15px 0;border-bottom:1.5px solid #1A1815;font-size:clamp(17px,1.6vw,23px);font-weight:500;display:flex;gap:20px;align-items:baseline}
+.dir-c .how-list li:first-child{border-top:1.5px solid #1A1815}
+.dir-c .how-list .n{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#FF4D00}
+.dir-c .sched{padding:9vh 4vw 10vh}
+.dir-c .sched h2{font-family:'Archivo Black',sans-serif;font-size:clamp(26px,3.2vw,46px);text-transform:uppercase;margin-bottom:8px}
+.dir-c .sched .sub{color:#6B6459;font-size:14px;margin-bottom:40px}
+.dir-c .sched-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0 5vw}
+.dir-c .sev{display:grid;grid-template-columns:84px 1fr;gap:22px;align-items:baseline;padding:16px 0;border-bottom:1.5px solid #1A1815}
+.dir-c .sev .d{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#FF4D00;font-weight:500}
+.dir-c .sev .t{font-size:clamp(15px,1.35vw,18px);font-weight:500}
+.dir-c .fees{display:grid;grid-template-columns:1fr 1fr;border-top:1.5px solid #1A1815;border-bottom:1.5px solid #1A1815}
+.dir-c .fee{padding:8vh 4vw;border-right:1.5px solid #1A1815}
+.dir-c .fee:last-child{border-right:0}
+.dir-c .fee .k{font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#6B6459}
+.dir-c .fee .amt{font-family:'Archivo Black',sans-serif;font-size:clamp(44px,5.4vw,80px);margin:12px 0 6px}
+.dir-c .fee .amt span{font-size:.32em;font-family:'Archivo',sans-serif;font-weight:500;color:#6B6459}
+.dir-c .fee p{color:#44403A;font-size:14.5px}
+.dir-c footer{padding:42px 4vw;display:flex;justify-content:space-between;font-size:12.5px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;color:#6B6459}
+
+/* ============ RESPONSIVE ============ */
+@media(max-width:860px){
+  .dir-a .hero,.dir-a .method,.dir-a .fees{grid-template-columns:1fr}
+  .dir-a .work-grid{grid-template-columns:1fr}
+  .dir-a .work{border-right:0;border-bottom:1px solid #e5e5e5}
+  .dir-a .ev{grid-template-columns:80px 1fr}
+  .dir-a .ev .go{display:none}
+  .dir-b .strip{grid-template-columns:1fr}
+  .dir-b .strip .cell{border-right:0;border-bottom:1px solid rgba(244,239,230,.35)}
+  .dir-b .svc{grid-template-columns:40px 1fr}
+  .dir-b .svc p{grid-column:2}
+  .dir-c .cards{grid-template-columns:1fr}
+  .dir-c .card{border-right:0;border-bottom:1.5px solid #1A1815}
+  .dir-c .how,.dir-c .fees,.dir-c .sched-grid{grid-template-columns:1fr}
+  .dir-a nav,.dir-b nav,.dir-c nav{display:none}
+}
+</style>
+</head>
+<body data-dir="a">
+
+<!-- ================= DIRECTION A : THE GALLERY ================= -->
+<div class="dir dir-a">
+  <div class="topbar">
+    <div class="wordmark">Stefanie Schumacher <span>MS, LPC, EMDR</span></div>
+    <nav><a href="#">Practice</a><a href="#">Approach</a><a href="#">Workshops</a><a href="#">Fees</a><a href="#">Consultation</a></nav>
+  </div>
+
+  <section class="hero">
+    <h1>Relational work, practiced with <em>precision</em>.</h1>
+    <div class="hero-side">
+      <p>Structured, direct relationship work for high-responsibility professionals and leaders. A deliberately small caseload. Private-pay, online, and discreet — all adults welcome.</p>
+      <a class="btn" href="#">Request a Confidential Consultation</a>
+    </div>
+  </section>
+  <div class="credline">Licensed psychotherapist · In practice since 2015 · EMDR certified · Zen practice since 1997</div>
+
+  <section class="works">
+    <div class="works-head"><span>The Work</span><span>Three Practices</span></div>
+    <div class="work-grid">
+      <div class="work">
+        <span class="num">01</span>
+        <div class="swatch sw1"></div>
+        <h3>Couples Stuck in the Same Fight</h3>
+        <p>The argument that repeats itself isn't about the dishes. Untangling the protective patterns underneath the cycle.</p>
+      </div>
+      <div class="work">
+        <span class="num">02</span>
+        <div class="swatch sw2"></div>
+        <h3>Couples at a Crossroads</h3>
+        <p>Recommit or separate — with clarity and integrity either way. A structured process for the hardest decision.</p>
+      </div>
+      <div class="work">
+        <span class="num">03</span>
+        <div class="swatch sw3"></div>
+        <h3>Individual Relational Work</h3>
+        <p>From shame and defensiveness toward accountability — and a steadier way of being in every relationship you hold.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="method">
+    <h2>How change happens</h2>
+    <ul class="method-list">
+      <li><span class="n">I</span>Accountability</li>
+      <li><span class="n">II</span>Honesty</li>
+      <li><span class="n">III</span>Repair</li>
+      <li><span class="n">IV</span>Boundaries</li>
+      <li><span class="n">V</span>Family-of-origin pattern recognition</li>
+      <li><span class="n">VI</span>From reactivity to the Wise Adult</li>
+    </ul>
+  </section>
+
+  <section class="events">
+    <div class="events-head"><span>Workshop Series — Relational Diplomacy</span><span>Live · Wednesdays · Zoom</span></div>
+    <a class="ev" href="#"><span class="date">Sep 09</span><span class="t">“I'm right, you're wrong” — The Fight That Never Ends</span><span class="go">Register</span></a>
+    <a class="ev" href="#"><span class="date">Sep 16</span><span class="t">If We Can't Control Our Partner, Why Do We Keep Trying?</span><span class="go">Register</span></a>
+    <a class="ev" href="#"><span class="date">Sep 23</span><span class="t">Why Unleashing on Your Partner Never Gets You Heard</span><span class="go">Register</span></a>
+    <a class="ev" href="#"><span class="date">Sep 30</span><span class="t">The Destructive Force of Retaliation</span><span class="go">Register</span></a>
+    <a class="ev" href="#"><span class="date">Oct 07</span><span class="t">The Withdrawal Trap</span><span class="go">Register</span></a>
+    <a class="ev" href="#"><span class="date">Oct 14</span><span class="t">The Art &amp; Skill of Acceptance</span><span class="go">Register</span></a>
+    <a class="ev" href="#"><span class="date">Oct 21</span><span class="t">The Art &amp; Skill of Listening to Understand</span><span class="go">Register</span></a>
+    <a class="ev" href="#"><span class="date">Oct 28</span><span class="t">Responsible Distance-Taking &amp; Responsible Feedback</span><span class="go">Register</span></a>
+    <a class="ev" href="#"><span class="date">Nov 04</span><span class="t">The Art of Generosity &amp; Empowering Your Partner</span><span class="go">Register</span></a>
+    <a class="ev" href="#"><span class="date">Nov 11</span><span class="t">The Art of the Apology</span><span class="go">Register</span></a>
+  </section>
+
+  <section class="fees">
+    <div class="fee">
+      <span class="tag">Couples</span>
+      <div class="amt"><sup>$</sup>300</div>
+      <p>75-minute session · private pay · online</p>
+    </div>
+    <div class="fee">
+      <span class="tag">Individuals</span>
+      <div class="amt"><sup>$</sup>150</div>
+      <p>50-minute session · private pay · online</p>
+    </div>
+  </section>
+
+  <footer>
+    <span>© Stefanie Schumacher, MS, LPC</span>
+    <span>Relational Diplomacy for Individuals &amp; Couples</span>
+  </footer>
+</div>
+
+<!-- ================= DIRECTION B : THE SIGNAL ================= -->
+<div class="dir dir-b">
+  <div class="marquee"><div class="marquee-inner">
+    <span>Relational Diplomacy Workshop Series — Live on Zoom — Begins Sep 09</span><span>·</span>
+    <span>Structured. Direct. Discreet.</span><span>·</span>
+    <span>Relational Diplomacy Workshop Series — Live on Zoom — Begins Sep 09</span><span>·</span>
+    <span>Structured. Direct. Discreet.</span><span>·</span>
+  </div></div>
+
+  <div class="topbar">
+    <div class="wordmark">STEFANIE SCHUMACHER</div>
+    <nav><a href="#">Practice</a><a href="#">Approach</a><a href="#">Workshops</a><a href="#">Fees</a><a href="#">Contact</a></nav>
+  </div>
+
+  <section class="hero">
+    <h1>The fight is never<br>about the <em>dishes</em>.</h1>
+    <p>Structured, direct relationship work for high-responsibility professionals and leaders. Small caseload, private-pay, online, discreet. All adults welcome, regardless of age or orientation.</p>
+    <a class="btn" href="#">Request a confidential consultation</a>
+  </section>
+
+  <div class="strip">
+    <div class="cell"><span class="k">The Practitioner</span><p>Licensed psychotherapist since 2015. EMDR-certified, trauma-trained. Clients from Google, Meta, Apple, Tesla &amp; SpaceX. Zen practice since 1997.</p></div>
+    <div class="cell"><span class="k">The Method</span><p>Accountability · Honesty · Repair · Boundaries · Family-of-origin pattern recognition. From reactivity to the Wise Adult.</p></div>
+    <div class="cell"><span class="k">The Process</span><p>Clarify the problem → understand its origins with compassion → build new skills. Noticeable change in how you relate, every day.</p></div>
+  </div>
+
+  <section class="services">
+    <span class="sec-label">The Work</span>
+    <div class="svc">
+      <span class="num">001</span>
+      <h3>Couples stuck in the same fight</h3>
+      <p>The same argument on a loop isn't a communication problem — it's a pair of protective patterns colliding. We name them, then interrupt them.</p>
+    </div>
+    <div class="svc">
+      <span class="num">002</span>
+      <h3>Couples at a crossroads</h3>
+      <p>Stay or go — decided deliberately, not by exhaustion. A structured process for recommitting, or separating with integrity.</p>
+    </div>
+    <div class="svc">
+      <span class="num">003</span>
+      <h3>Individual relational work</h3>
+      <p>Out of shame and defensiveness, into accountability. Work that changes how you show up in every relationship you hold.</p>
+    </div>
+  </section>
+
+  <section class="now">
+    <span class="sec-label">Now Running — Workshop Series · Wednesdays · Zoom · 90 min</span>
+    <ul class="now-list">
+      <li><span class="d">SEP 09</span><span>“I'm right, you're wrong” — The Fight That Never Ends</span><span class="join">Join →</span></li>
+      <li><span class="d">SEP 16</span><span>If We Can't Control Our Partner, Why Do We Keep Trying?</span><span class="join">Join →</span></li>
+      <li><span class="d">SEP 23</span><span>Why Unleashing on Your Partner Never Gets You Heard</span><span class="join">Join →</span></li>
+      <li><span class="d">SEP 30</span><span>The Destructive Force of Retaliation</span><span class="join">Join →</span></li>
+      <li><span class="d">OCT 07</span><span>The Withdrawal Trap</span><span class="join">Join →</span></li>
+      <li><span class="d">OCT 14</span><span>The Art &amp; Skill of Acceptance</span><span class="join">Join →</span></li>
+      <li><span class="d">OCT 21</span><span>The Art &amp; Skill of Listening to Understand</span><span class="join">Join →</span></li>
+      <li><span class="d">OCT 28</span><span>Responsible Distance-Taking &amp; Responsible Feedback</span><span class="join">Join →</span></li>
+      <li><span class="d">NOV 04</span><span>The Art of Generosity &amp; Empowering Your Partner</span><span class="join">Join →</span></li>
+      <li><span class="d">NOV 11</span><span>The Art of the Apology</span><span class="join">Join →</span></li>
+    </ul>
+  </section>
+
+  <section class="wise">
+    <span class="tag">The destination</span>
+    <h2>From reactivity<br>to the Wise Adult.</h2>
+  </section>
+
+  <footer>
+    <span>© Stefanie Schumacher · MS, LPC, EMDR</span>
+    <span>Couples $300/75min · Individuals $150/50min · Private pay · Online</span>
+  </footer>
+</div>
+
+<!-- ================= DIRECTION C : THE WISE ADULT ================= -->
+<div class="dir dir-c">
+  <div class="topbar">
+    <div class="wordmark">Stefanie Schumacher</div>
+    <nav><a href="#">Practice</a><a href="#">Approach</a><a href="#">Workshops</a><a href="#">Fees</a><a href="#">Contact</a></nav>
+  </div>
+
+  <section class="hero">
+    <span class="kicker">Relational Diplomacy · For Individuals &amp; Couples</span>
+    <h1>Say the<br>hard thing<br><span class="o">skillfully.</span></h1>
+    <div class="hero-row">
+      <p>Structured, direct relationship work for high-responsibility professionals and leaders. Deliberately small caseload. Private-pay, online, and discreet — all adults welcome.</p>
+      <a class="btn" href="#">Request a Consultation</a>
+    </div>
+  </section>
+
+  <div class="bigband"><div class="marquee-inner">
+    <span>Accountability</span><span>Honesty</span><span>Repair</span><span>Boundaries</span><span>Pattern Recognition</span><span>The Wise Adult</span>
+    <span>Accountability</span><span>Honesty</span><span>Repair</span><span>Boundaries</span><span>Pattern Recognition</span><span>The Wise Adult</span>
+  </div></div>
+
+  <section class="cards">
+    <div class="card">
+      <span class="num">01</span>
+      <h3>Couples Stuck in the Same Fight</h3>
+      <p>The repeating argument isn't about the surface topic. It's two protective patterns colliding on schedule. We interrupt the cycle at its source.</p>
+    </div>
+    <div class="card">
+      <span class="num">02</span>
+      <h3>Couples at a Crossroads</h3>
+      <p>Recommit, or separate with integrity. Either way — a decision made deliberately, with structure, not by exhaustion or default.</p>
+    </div>
+    <div class="card">
+      <span class="num">03</span>
+      <h3>Individual Relational Work</h3>
+      <p>From shame and defensiveness toward accountability. Change how you show up in every relationship that matters to you.</p>
+    </div>
+  </section>
+
+  <section class="how">
+    <h2>How change <span>actually</span> happens</h2>
+    <ul class="how-list">
+      <li><span class="n">01</span>Clarify the problem, precisely</li>
+      <li><span class="n">02</span>Understand its origins, with compassion</li>
+      <li><span class="n">03</span>Build new skills, deliberately</li>
+      <li><span class="n">04</span>Practice until it shows up in daily life</li>
+    </ul>
+  </section>
+
+  <section class="sched">
+    <h2>Workshop Series</h2>
+    <p class="sub">Relational Diplomacy · Live · Wednesdays 7:00–8:30 PM ET · Zoom · Join any session, in any order · 18+</p>
+    <div class="sched-grid">
+      <div class="sev"><span class="d">SEP 09</span><span class="t">“I'm right, you're wrong” — The Fight That Never Ends</span></div>
+      <div class="sev"><span class="d">SEP 16</span><span class="t">If We Can't Control Our Partner, Why Do We Keep Trying?</span></div>
+      <div class="sev"><span class="d">SEP 23</span><span class="t">Why Unleashing on Your Partner Never Gets You Heard</span></div>
+      <div class="sev"><span class="d">SEP 30</span><span class="t">The Destructive Force of Retaliation</span></div>
+      <div class="sev"><span class="d">OCT 07</span><span class="t">The Withdrawal Trap</span></div>
+      <div class="sev"><span class="d">OCT 14</span><span class="t">The Art &amp; Skill of Acceptance</span></div>
+      <div class="sev"><span class="d">OCT 21</span><span class="t">The Art &amp; Skill of Listening to Understand</span></div>
+      <div class="sev"><span class="d">OCT 28</span><span class="t">Responsible Distance-Taking &amp; Feedback Skills</span></div>
+      <div class="sev"><span class="d">NOV 04</span><span class="t">The Art of Generosity &amp; Empowering Your Partner</span></div>
+      <div class="sev"><span class="d">NOV 11</span><span class="t">The Art of the Apology</span></div>
+    </div>
+  </section>
+
+  <section class="fees">
+    <div class="fee">
+      <span class="k">Couples</span>
+      <div class="amt">$300 <span>/ 75 min</span></div>
+      <p>Private pay · online · discreet</p>
+    </div>
+    <div class="fee">
+      <span class="k">Individuals</span>
+      <div class="amt">$150 <span>/ 50 min</span></div>
+      <p>Private pay · online · discreet</p>
+    </div>
+  </section>
+
+  <footer>
+    <span>© Stefanie Schumacher · MS, LPC, EMDR</span>
+    <span>Relational Diplomacy</span>
+  </footer>
+</div>
+
+<!-- ================= SWITCHER ================= -->
+<div class="switcher">
+  <button data-d="a" class="active">A · Gallery</button>
+  <button data-d="b">B · Signal</button>
+  <button data-d="c">C · Wise Adult</button>
+</div>
+
+<script>
+document.querySelectorAll('.switcher button').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.body.dataset.dir=b.dataset.d;
+    document.querySelectorAll('.switcher button').forEach(x=>x.classList.toggle('active',x===b));
+    window.scrollTo({top:0});
+  });
+});
+</script>
+</body>
+</html>

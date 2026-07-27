@@ -1,0 +1,54 @@
+# AGENTS.md — Stefanie Schumacher site rebuild
+
+Read this file and everything in `/docs` before writing any code.
+
+## Stack pins (looked up on npm 2026-07-27 — do not "correct" toward training data)
+
+| Package | Version | Notes |
+|---|---|---|
+| `next` | `16.2.12` | App Router only. No Pages Router. No `pages/api`. |
+| `react` / `react-dom` | `19.2.8` | |
+| `typescript` | `7.0.2` | Next 16 needs `experimental.useTypeScriptCli: true` in `next.config.ts` until it supports the TS 7 compiler API. |
+| `sanity` | `6.6.0` | Studio + schema. Not 3.x / 4.x. |
+| `next-sanity` | `13.2.2` | Not v5 patterns. |
+| `@sanity/client` | `7.25.0` | **Peer of next-sanity — install explicitly.** |
+| `styled-components` | `6.4.4` | **Peer for Sanity Studio — install explicitly.** App UI still uses CSS tokens, not styled-components. |
+| `@sanity/vision` | `6.6.0` | Match `sanity` major/minor. |
+
+Do not invent older Sanity v2 `sanityClient` configs, `lib/sanity.js` patterns, or Pages Router API routes.
+
+## Architecture rules
+
+1. **Schemas before pages.** Content lives in Sanity. Do not hardcode copy into JSX.
+2. **Embedded Studio** at `/studio` (`app/studio/[[...tool]]/page.tsx` + root `sanity.config.ts`).
+3. **Design tokens** (later task) live in one CSS custom-properties file. No one-off hex in components.
+4. **Workshop datetimes** are stored as ISO **UTC** strings from `docs/workshop-schedule.md` verbatim. Never recompute or convert when seeding. Render with `America/New_York` and an explicit EDT/EST label.
+5. **Contact form** (later): Resend only — no DB persistence. Honeypot + rate limit. PHI disclaimer. `replyTo` = submitter. From-address on verified subdomain `send.stefanie-schumacher.com`.
+6. **Metadata** comes from `siteSettings` seeded from `docs/metadata-truth.md`. Nothing from the "wrong" table may appear anywhere.
+7. **Fees** seeded from homepage canonical values must be marked `// CONFIRM WITH STEF` in seed source comments.
+
+## Site map (later pages — do not build in schemas-only task)
+
+`/`, `/about`, `/approach`, `/workshops`, `/workshops/[slug]`, `/fees`, `/contact`
+
+## Feeds (later)
+
+`/api/events.json`, `/events.ics`, per-event JSON-LD. Timezone assertion in `docs/workshop-schedule.md` must pass before feed code.
+
+## Env keys (`.env.example`)
+
+```
+NEXT_PUBLIC_SANITY_PROJECT_ID=
+NEXT_PUBLIC_SANITY_DATASET=
+NEXT_PUBLIC_SANITY_API_VERSION=2026-07-27
+SANITY_API_READ_TOKEN=
+SANITY_API_WRITE_TOKEN=
+NEXT_PUBLIC_SITE_URL=
+RESEND_API_KEY=
+CONTACT_TO_EMAIL=
+CONTACT_FROM_EMAIL=
+```
+
+## Current task scope gate
+
+If the user asks for schemas + seed only: **do not** create marketing pages, layouts, components, or styling beyond what Studio requires.
