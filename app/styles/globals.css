@@ -329,6 +329,7 @@ textarea {
   -webkit-text-fill-color: var(--color-bone);
   -webkit-text-stroke: 3.5px var(--color-ink);
   paint-order: stroke fill;
+  letter-spacing: 0.04em;
 }
 
 .hero-row {
