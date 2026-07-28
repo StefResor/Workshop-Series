@@ -580,10 +580,20 @@ textarea {
   padding: 6vh var(--page-pad-x) 12vh;
 }
 
-.about-portrait {
-  border: var(--rule);
+/*
+  Sticky on the grid item. align-self: start is required — without it,
+  grid stretch makes the aside as tall as the bio and sticky has nowhere to move.
+*/
+.about-grid > .about-sticky {
   position: sticky;
   top: 90px;
+  align-self: start;
+  z-index: 1;
+  background: var(--color-bone);
+}
+
+.about-portrait {
+  border: var(--rule);
 }
 
 .about-portrait img {
@@ -800,8 +810,11 @@ textarea {
     grid-template-columns: 1fr;
   }
 
-  .about-portrait {
+  .about-grid > .about-sticky {
     position: static;
+  }
+
+  .about-portrait {
     max-width: 420px;
   }
 

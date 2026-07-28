@@ -46,25 +46,24 @@ export default async function AboutPage() {
 
   return (
     <div className="about-grid">
-      <aside>
-        <figure>
-          <div className="about-portrait">
-            <Image
-              src="/stefanie-schumacher.jpg"
-              alt="Portrait of Stefanie Schumacher, MS, LPC, EMDR"
-              width={676}
-              height={926}
-              sizes="(max-width: 860px) 100vw, 380px"
-              priority
-              style={{ width: '100%', height: 'auto' }}
-            />
-          </div>
-          <figcaption className="about-caption">
-            Stefanie Schumacher — MS, LPC, EMDR.
-            <br />
-            Private practice since 2015.
-          </figcaption>
-        </figure>
+      {/* Sticky on the grid item itself (align-self: start). Caption stays inside. */}
+      <aside className="about-sticky">
+        <div className="about-portrait">
+          <Image
+            src="/stefanie-schumacher.jpg"
+            alt="Portrait of Stefanie Schumacher, MS, LPC, EMDR"
+            width={676}
+            height={926}
+            sizes="(max-width: 860px) 100vw, 380px"
+            priority
+            style={{ width: '100%', height: 'auto' }}
+          />
+        </div>
+        <p className="about-caption">
+          Stefanie Schumacher — MS, LPC, EMDR.
+          <br />
+          Private practice since 2015.
+        </p>
       </aside>
       <div className="about-bio">
         <span className="kicker">{page?.eyebrow || 'About Stefanie'}</span>
