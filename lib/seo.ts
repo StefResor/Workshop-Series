@@ -44,9 +44,9 @@ export function buildPageMetadata({
       description,
       images: [absoluteUrl('/stefanie-schumacher.jpg')],
     },
-    robots: noIndex
-      ? { index: false, follow: false }
-      : { index: true, follow: true },
+    // Only force noindex here. Otherwise omit robots so the root layout's
+    // host-based allowSearchIndexing decision applies (blocks *.vercel.app).
+    ...(noIndex ? { robots: { index: false, follow: false } } : {}),
     other: {
       'geo.region': 'US-OH',
     },

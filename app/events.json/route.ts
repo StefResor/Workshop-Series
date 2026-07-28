@@ -33,9 +33,11 @@ export async function GET() {
       _stef: {
         sessionNumber: w.sessionNumber,
         endsAt: w.endsAt,
-        priceUSD: w.priceUSD,
+        price: w.price ?? null,
         locationLabel: w.locationLabel || 'Zoom',
-        registrationUrl: w.registrationUrl || null,
+        stripePaymentLink: w.stripePaymentLink || null,
+        zoomRegistrationUrl: w.zoomRegistrationUrl || null,
+        registrationStatus: w.registrationStatus || null,
       },
     }
   })

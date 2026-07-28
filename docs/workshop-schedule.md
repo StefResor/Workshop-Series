@@ -52,14 +52,18 @@ Document type: `workshop`
 | Field | Type | Notes |
 |---|---|---|
 | `title` | string | required |
-| `slug` | slug | from title |
+| `slug` | slug | from title (no `workshop-N-` prefix) |
 | `sessionNumber` | number | 1–10 |
 | `startsAt` | datetime | UTC ISO from table |
 | `endsAt` | datetime | UTC ISO from table |
 | `timeZone` | string | always `America/New_York` |
-| `priceUSD` | number | |
+| `price` | number | per-participant USD |
+| `hook` | string | max ~90 chars; cards / social |
+| `stripePaymentLink` | url | Stripe Payment Link |
+| `capacity` | number | optional; empty = unlimited |
+| `registrationStatus` | string | `draft` \| `open` \| `sold-out` \| `past` |
 | `shortDescription` | text | feed / cards |
 | `body` | text | full event page (plain text paragraphs for now) |
 | `status` | string | `published` \| `draft` |
-| `registrationUrl` | url | optional until ticketing settled |
+| `zoomRegistrationUrl` | url | Zoom registration page — never store join links |
 | `locationLabel` | string | default `Zoom` |

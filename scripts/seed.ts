@@ -38,7 +38,7 @@ function slugify(input: string) {
 
 // ---------------------------------------------------------------------------
 // Workshops — startsAt/endsAt copied verbatim from docs/workshop-schedule.md
-// priceUSD $35 // CONFIRM WITH STEF
+// price $35 // CONFIRM WITH STEF
 // ---------------------------------------------------------------------------
 
 type WorkshopSeed = {
@@ -356,12 +356,13 @@ async function main() {
       _id: w._id,
       _type: 'workshop',
       title: w.title,
-      slug: { _type: 'slug', current: slugify(`workshop-${w.sessionNumber}-${w.title}`) },
+      slug: { _type: 'slug', current: slugify(w.title) },
       sessionNumber: w.sessionNumber,
       startsAt: w.startsAt,
       endsAt: w.endsAt,
       timeZone: 'America/New_York',
-      priceUSD: 35, // CONFIRM WITH STEF
+      price: 35, // CONFIRM WITH STEF
+      registrationStatus: 'draft',
       shortDescription: w.shortDescription,
       body: w.body,
       status: 'published',

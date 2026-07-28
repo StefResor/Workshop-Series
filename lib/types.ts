@@ -6,11 +6,15 @@ export type Workshop = {
   startsAt: string
   endsAt: string
   timeZone: string
-  priceUSD: number
+  price?: number
+  hook?: string
+  stripePaymentLink?: string
+  zoomRegistrationUrl?: string
+  capacity?: number
+  registrationStatus?: 'draft' | 'open' | 'sold-out' | 'past'
   shortDescription?: string
   body?: string
   status: 'published' | 'draft'
-  registrationUrl?: string
   locationLabel?: string
 }
 
@@ -26,6 +30,9 @@ export type SiteSettings = {
   defaultDescription: string
   twitterTitle: string
   ogTitle: string
+  mailingAddress?: string
+  notificationsEnabled?: boolean
+  workshopDisclaimer?: string
 }
 
 export type Service = {

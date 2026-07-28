@@ -45,13 +45,6 @@ export const workshop = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
-      name: 'priceUSD',
-      title: 'Price (USD) — legacy display',
-      type: 'number',
-      description: 'Existing seeded display price. Prefer `price` for Stripe checkout going forward.',
-      validation: (rule) => rule.required().min(0),
-    }),
-    defineField({
       name: 'hook',
       title: 'Hook',
       type: 'string',
@@ -63,7 +56,7 @@ export const workshop = defineType({
       title: 'Price',
       type: 'number',
       description: 'Per-participant price in USD (Stripe checkout).',
-      validation: (rule) => rule.min(0),
+      validation: (rule) => rule.required().min(0),
     }),
     defineField({
       name: 'stripePaymentLink',
@@ -119,11 +112,6 @@ export const workshop = defineType({
       },
       initialValue: 'draft',
       validation: (rule) => rule.required(),
-    }),
-    defineField({
-      name: 'registrationUrl',
-      title: 'Registration URL (legacy)',
-      type: 'url',
     }),
     defineField({
       name: 'zoomRegistrationUrl',

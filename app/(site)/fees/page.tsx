@@ -42,16 +42,32 @@ export default async function FeesPage() {
         <div className="fee">
           <span className="k">Couples</span>
           <div className="amt">
-            ${couples?.priceUSD ?? 300}{' '}
-            <span>/ {couples?.durationMinutes ?? 75} min</span>
+            {couples?.priceUSD != null ? (
+              <>
+                ${couples.priceUSD}{' '}
+                {couples.durationMinutes != null ? (
+                  <span>/ {couples.durationMinutes} min</span>
+                ) : null}
+              </>
+            ) : (
+              <span>Contact for current fees</span>
+            )}
           </div>
           <p>Private pay · online · discreet</p>
         </div>
         <div className="fee">
           <span className="k">Individuals</span>
           <div className="amt">
-            ${individuals?.priceUSD ?? 150}{' '}
-            <span>/ {individuals?.durationMinutes ?? 50} min</span>
+            {individuals?.priceUSD != null ? (
+              <>
+                ${individuals.priceUSD}{' '}
+                {individuals.durationMinutes != null ? (
+                  <span>/ {individuals.durationMinutes} min</span>
+                ) : null}
+              </>
+            ) : (
+              <span>Contact for current fees</span>
+            )}
           </div>
           <p>Private pay · online · discreet</p>
         </div>

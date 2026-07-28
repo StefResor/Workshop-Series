@@ -1,0 +1,3 @@
+{"sessionId":"37fee7","runId":"indexing-check","hypothesisId":"A","location":"lib/indexing.ts:allowSearchIndexing","message":"indexing decision","data":{"host":"localhost","allow":false},"timestamp":1785241800215}
+{"sessionId":"37fee7","runId":"indexing-check","hypothesisId":"A","location":"lib/indexing.ts:allowSearchIndexing","message":"indexing decision","data":{"host":"stefanie-schumacher-com.vercel.app","allow":false},"timestamp":1785241800234}
+{"sessionId":"37fee7","runId":"indexing-check","hypothesisId":"A","location":"lib/indexing.ts:allowSearchIndexing","message":"indexing decision","data":{"host":"stefanie-schumacher.com","allow":true},"timestamp":1785241800252}

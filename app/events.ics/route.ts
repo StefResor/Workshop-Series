@@ -3,15 +3,10 @@ import { workshopsQuery } from '@/sanity/queries'
 import { formatWorkshopIcsUtc } from '@/lib/datetime'
 import { buildIcsCalendar } from '@/lib/ics'
 import type { Workshop } from '@/lib/types'
+import { siteOrigin } from '@/lib/site-url'
 
 // Cached route — Sanity CDN on miss; /api/revalidate busts on publish.
 export const revalidate = 60
-
-function siteOrigin(): string {
-  const raw = process.env.NEXT_PUBLIC_SITE_URL || 'https://stefanie-schumacher.com'
-  const trimmed = raw.replace(/\/$/, '')
-  return trimmed.startsWith('http') ? trimmed : `https://${trimmed}`
-}
 
 export async function GET() {
   const client = getReadClient()

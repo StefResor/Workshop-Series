@@ -39,7 +39,11 @@ export default async function WorkshopsPage() {
               key={w._id}
               href={`/workshops/${w.slug}`}
               className="workshop-row"
-              aria-label={`${w.title}, ${w.priceUSD} dollars`}
+              aria-label={
+                w.price != null
+                  ? `${w.title}, ${w.price} dollars`
+                  : `${w.title}, contact for current fees`
+              }
             >
               <WorkshopDateLabel startsAt={w.startsAt} timeZone={w.timeZone} />
               <span>
@@ -49,7 +53,9 @@ export default async function WorkshopsPage() {
                   <WorkshopWhen startsAt={w.startsAt} timeZone={w.timeZone} />
                 </span>
               </span>
-              <span className="meta">${w.priceUSD}</span>
+              <span className="meta">
+                {w.price != null ? `$${w.price}` : 'Contact for fees'}
+              </span>
             </Link>
           ))}
         </div>

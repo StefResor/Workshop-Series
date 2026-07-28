@@ -8,11 +8,15 @@ export const workshopsQuery = `*[_type == "workshop" && status == "published"] |
   startsAt,
   endsAt,
   timeZone,
-  priceUSD,
+  price,
+  hook,
+  stripePaymentLink,
+  zoomRegistrationUrl,
+  capacity,
+  registrationStatus,
   shortDescription,
   body,
   status,
-  registrationUrl,
   locationLabel
 }`
 
@@ -24,11 +28,15 @@ export const workshopBySlugQuery = `*[_type == "workshop" && slug.current == $sl
   startsAt,
   endsAt,
   timeZone,
-  priceUSD,
+  price,
+  hook,
+  stripePaymentLink,
+  zoomRegistrationUrl,
+  capacity,
+  registrationStatus,
   shortDescription,
   body,
   status,
-  registrationUrl,
   locationLabel
 }`
 
@@ -43,7 +51,10 @@ export const siteSettingsQuery = `*[_type == "siteSettings"][0] {
   defaultTitle,
   defaultDescription,
   twitterTitle,
-  ogTitle
+  ogTitle,
+  mailingAddress,
+  notificationsEnabled,
+  workshopDisclaimer
 }`
 
 export const servicesQuery = `*[_type == "service"] | order(order asc) {

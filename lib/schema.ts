@@ -20,9 +20,9 @@ type EventInput = Pick<
   | 'endsAt'
   | 'shortDescription'
   | 'body'
-  | 'registrationUrl'
+  | 'stripePaymentLink'
   | 'locationLabel'
-  | 'priceUSD'
+  | 'price'
 >
 
 /**
@@ -73,6 +73,7 @@ export function workshopEventJsonLd(
 ) {
   const origin = siteOrigin()
   const url = absoluteUrl(`/workshops/${workshop.slug}`)
+  const offerUrl = workshop.stripePaymentLink || url
 
   return {
     '@context': 'https://schema.org',
@@ -88,7 +89,7 @@ export function workshopEventJsonLd(
     isAccessibleForFree: false,
     location: {
       '@type': 'VirtualLocation',
-      url: workshop.registrationUrl || url,
+      url: offerUrl,
       name: workshop.locationLabel || 'Zoom',
     },
     organizer: {
@@ -103,14 +104,17 @@ export function workshopEventJsonLd(
     },
     url,
     image: absoluteUrl('/stefanie-schumacher.jpg'),
-    offers: {
-      '@type': 'Offer',
-      price: workshop.priceUSD,
-      priceCurrency: 'USD',
-      url: workshop.registrationUrl || url,
-      availability: 'https://schema.org/InStock',
-      validFrom: new Date().toISOString(),
-    },
+    offers:
+      workshop.price != null
+        ? {
+            '@type': 'Offer',
+            price: workshop.price,
+            priceCurrency: 'USD',
+            url: offerUrl,
+            availability: 'https://schema.org/InStock',
+            validFrom: new Date().toISOString(),
+          }
+        : undefined,
   }
 }
 

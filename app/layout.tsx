@@ -1,9 +1,11 @@
 import { Archivo, Archivo_Black, IBM_Plex_Mono } from 'next/font/google'
 import type { Metadata, Viewport } from 'next'
+import { headers } from 'next/headers'
 import './styles/globals.css'
 import { sanityFetch } from '@/sanity/lib/fetch'
 import { siteSettingsQuery } from '@/sanity/queries'
 import type { SiteSettings } from '@/lib/types'
+import { allowSearchIndexing } from '@/lib/indexing'
 import { absoluteUrl, defaultOgImages, siteOrigin } from '@/lib/seo'
 
 const archivo = Archivo({
@@ -40,6 +42,8 @@ export async function generateMetadata(): Promise<Metadata> {
     settings?.defaultDescription ||
     'Structured, direct relationship work for high-responsibility professionals and leaders. Private-pay, online, and discreet.'
   const canonical = siteOrigin()
+  const host = (await headers()).get('host')
+  const indexable = allowSearchIndexing(host)
 
   return {
     title: {
@@ -82,17 +86,19 @@ export async function generateMetadata(): Promise<Metadata> {
       description,
       images: [absoluteUrl('/stefanie-schumacher.jpg')],
     },
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: {
-        index: true,
-        follow: true,
-        'max-image-preview': 'large',
-        'max-snippet': -1,
-        'max-video-preview': -1,
-      },
-    },
+    robots: indexable
+      ? {
+          index: true,
+          follow: true,
+          googleBot: {
+            index: true,
+            follow: true,
+            'max-image-preview': 'large',
+            'max-snippet': -1,
+            'max-video-preview': -1,
+          },
+        }
+      : { index: false, follow: false },
     formatDetection: {
       telephone: false,
       email: false,

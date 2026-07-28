@@ -21,13 +21,13 @@ Do not invent older Sanity v2 `sanityClient` configs, `lib/sanity.js` patterns, 
 
 1. **Schemas before pages.** Content lives in Sanity. Do not hardcode copy into JSX.
 2. **Embedded Studio** at `/studio` (`app/studio/[[...tool]]/page.tsx` + root `sanity.config.ts`).
-3. **Design tokens** (later task) live in one CSS custom-properties file. No one-off hex in components.
+3. **Design tokens** live in `app/styles/tokens.css`. No one-off hex in components.
 4. **Workshop datetimes** are stored as ISO **UTC** strings from `docs/workshop-schedule.md` verbatim. Never recompute or convert when seeding. Render with `America/New_York` and an explicit EDT/EST label.
-5. **Contact form** (later): Resend only — no DB persistence. Honeypot + rate limit. PHI disclaimer. `replyTo` = submitter. From-address on verified subdomain `send.stefanie-schumacher.com`.
-6. **Metadata** comes from `siteSettings` seeded from `docs/metadata-truth.md`. Nothing from the "wrong" table may appear anywhere.
-7. **Fees** seeded from homepage canonical values must be marked `// CONFIRM WITH STEF` in seed source comments.
+5. **Contact form**: Resend only — no DB persistence. Honeypot + rate limit. PHI disclaimer. `replyTo` = submitter. From-address on verified subdomain `send.stefanie-schumacher.com`.
+6. **Metadata** comes from `siteSettings` seeded from `docs/metadata-truth.md`. Nothing from the "wrong" table may appear anywhere. `*.vercel.app` hosts must be `noindex`.
+7. **Fees** from Sanity only — never invent JSX price fallbacks. Mark seed values `// CONFIRM WITH STEF`.
 
-## Site map (later pages — do not build in schemas-only task)
+## Site map
 
 `/`, `/about`, `/approach`, `/workshops`, `/workshops/[slug]`, `/fees`, `/contact`
 

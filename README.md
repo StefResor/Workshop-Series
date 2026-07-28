@@ -13,7 +13,9 @@ Next.js App Router + Sanity CMS rebuild of stefanie-schumacher.com.
 
 ## Current milestone
 
-**Schemas + seed only.** Marketing pages, tokens, Resend form, and feeds are next — after `docs/design-decision.md` revisions are filled in.
+Marketing site is live on Vercel preview. Outstanding: Sanity revalidate webhook, Resend domain, Stef confirmations (fees, photo, address, Squarespace), custom domain cutover.
+
+Do **not** hardcode session fees as JSX fallbacks — missing Sanity values must fail visible (`Contact for current fees`). Workshop legal disclaimer may keep a hardcoded fail-safe.
 
 ## Docs that matter most
 

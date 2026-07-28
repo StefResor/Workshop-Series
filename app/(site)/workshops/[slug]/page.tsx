@@ -5,6 +5,7 @@ import { WorkshopWhen } from '@/components/WorkshopWhen'
 import { breadcrumbJsonLd, workshopEventJsonLd } from '@/lib/schema'
 import { buildPageMetadata } from '@/lib/seo'
 import type { SiteSettings, Workshop } from '@/lib/types'
+import { DEFAULT_WORKSHOP_DISCLAIMER } from '@/lib/workshop-disclaimer'
 import { sanityFetch } from '@/sanity/lib/fetch'
 import {
   siteSettingsQuery,
@@ -50,13 +51,17 @@ export default async function WorkshopDetailPage({ params }: Props) {
   if (!workshop) notFound()
 
   const policyNote =
-    'Relational Diplomacy Workshops are educational in nature and are not psychotherapy, mental health treatment, or crisis services. Participation does not establish a therapist–client relationship. Registration is per participant; workshop registrations are non-refundable.'
+    settings?.workshopDisclaimer?.trim() || DEFAULT_WORKSHOP_DISCLAIMER
 
   const breadcrumbs = breadcrumbJsonLd([
     { name: 'Home', path: '/' },
     { name: 'Workshops', path: '/workshops' },
     { name: workshop.title, path: `/workshops/${workshop.slug}` },
   ])
+
+  const priceLabel =
+    workshop.price != null ? `$${workshop.price}` : 'Contact for current fees'
+  const registerHref = workshop.stripePaymentLink
 
   return (
     <>
@@ -94,7 +99,10 @@ export default async function WorkshopDetailPage({ params }: Props) {
             Live on Zoom · 90 min
           </div>
           <div>
-            <span className="k">Price</span>${workshop.priceUSD} per participant
+            <span className="k">Price</span>
+            {workshop.price != null
+              ? `$${workshop.price} per participant`
+              : 'Contact for current fees'}
           </div>
         </div>
         <div className="ev-body">
@@ -103,13 +111,13 @@ export default async function WorkshopDetailPage({ params }: Props) {
           ))}
         </div>
         <div style={{ marginTop: 38 }}>
-          {workshop.registrationUrl ? (
-            <a className="btn" href={workshop.registrationUrl}>
-              Register — ${workshop.priceUSD}
+          {registerHref ? (
+            <a className="btn" href={registerHref}>
+              Register — {priceLabel}
             </a>
           ) : (
             <Link className="btn" href="/contact">
-              Inquire to register — ${workshop.priceUSD}
+              Inquire to register — {priceLabel}
             </Link>
           )}
         </div>
