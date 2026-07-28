@@ -322,29 +322,14 @@ textarea {
   text-transform: uppercase;
 }
 
-/* Inner outline: ink glyph + slightly smaller bone fill on top.
-   -webkit-text-stroke is always centered (can't do true inner); this keeps
-   the rim inside the letter so neighbors don't collide. */
+/* Transparent fill + stroke alone is uneven on Archivo Black (S/K double-line).
+   Fill with page bone on top of stroke so every letter shares one outer rim. */
 .home-hero h1 .outline {
-  position: relative;
-  display: inline-block;
-  letter-spacing: 0.04em;
-}
-
-.home-hero h1 .outline-ink {
-  color: var(--color-ink);
-  -webkit-text-fill-color: var(--color-ink);
-}
-
-.home-hero h1 .outline-fill {
-  position: absolute;
-  left: 0;
-  top: 0;
   color: var(--color-bone);
   -webkit-text-fill-color: var(--color-bone);
-  transform: scale(0.93);
-  transform-origin: center;
-  pointer-events: none;
+  -webkit-text-stroke: 3.5px var(--color-ink);
+  paint-order: stroke fill;
+  letter-spacing: 0.04em;
 }
 
 .hero-row {
