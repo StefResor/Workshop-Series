@@ -18,3 +18,8 @@ next-env.d.ts
 *.tsbuildinfo
 tsconfig.tsbuildinfo
 .cursor/
+
+# Private agency notes (see endesign-stef-notes repo)
+correspondence/
+meetings/
+ideas/

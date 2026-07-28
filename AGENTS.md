@@ -24,12 +24,15 @@ Do not invent older Sanity v2 `sanityClient` configs, `lib/sanity.js` patterns, 
 3. **Design tokens** live in `app/styles/tokens.css`. No one-off hex in components.
 4. **Workshop datetimes** are stored as ISO **UTC** strings from `docs/workshop-schedule.md` verbatim. Never recompute or convert when seeding. Render with `America/New_York` and an explicit EDT/EST label.
 5. **Contact form**: Resend only — no DB persistence. Honeypot + rate limit. PHI disclaimer. `replyTo` = submitter. From-address on verified subdomain `send.stefanie-schumacher.com`.
-6. **Metadata** comes from `siteSettings` seeded from `docs/metadata-truth.md`. Nothing from the "wrong" table may appear anywhere. `*.vercel.app` hosts must be `noindex`.
+6. **Metadata** comes from `siteSettings` seeded from `docs/metadata-truth.md`. Nothing from the "wrong" table may appear anywhere. `*.vercel.app` (and localhost) must be `noindex` via request-host checks in root metadata **and** `robots.ts`.
 7. **Fees** from Sanity only — never invent JSX price fallbacks. Mark seed values `// CONFIRM WITH STEF`.
+8. **`NEXT_PUBLIC_SITE_URL`**: pre-cutover = Vercel alias so feeds/OG/sitemap absolute URLs hit a live Next host. Apex domain only after DNS points here. Host-based noindex covers the alias either way.
 
 ## Site map
 
 `/`, `/about`, `/approach`, `/workshops`, `/workshops/[slug]`, `/fees`, `/contact`
+
+Private agency notes (`correspondence/`, `meetings/`, `ideas/`) live in **endesignllc/endesign-stef-notes**, not this client-facing repo.
 
 ## Feeds + revalidation
 
@@ -51,6 +54,8 @@ RESEND_API_KEY=
 CONTACT_TO_EMAIL=
 CONTACT_FROM_EMAIL=
 ```
+
+Pre-cutover `NEXT_PUBLIC_SITE_URL` should be `https://stefanie-schumacher-com.vercel.app` so `/events.ics` and OG URLs resolve to Next, not Wix. Switch to `https://stefanie-schumacher.com` at DNS cutover.
 
 ## Images
 
