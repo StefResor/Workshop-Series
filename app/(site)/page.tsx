@@ -89,7 +89,17 @@ export default async function HomePage() {
               <br />
             </span>
           ))}
-          {outline ? <span className="outline">{outline}.</span> : null}
+          {outline ? (
+            <span className="outline">
+              <span className="outline-ink" aria-hidden="true">
+                {outline}.
+              </span>
+              <span className="outline-fill" aria-hidden="true">
+                {outline}.
+              </span>
+              <span className="visually-hidden">{outline}.</span>
+            </span>
+          ) : null}
         </h1>
         <div className="hero-row">
           <p>
