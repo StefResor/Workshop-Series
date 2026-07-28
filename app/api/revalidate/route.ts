@@ -10,49 +10,67 @@ type WebhookBody = {
   operation?: string
 }
 
+type RevalidateTarget =
+  | { kind: 'path'; path: string }
+  | { kind: 'layout'; path: string }
+
 function slugValue(slug: WebhookBody['slug']): string | undefined {
   if (!slug) return undefined
+  // Accept native Sanity slug objects and a flattened string projection.
   if (typeof slug === 'string') return slug
   return slug.current
 }
 
-function pathsForDoc(body: WebhookBody): string[] {
+/**
+ * Map a Sanity webhook document to cache invalidation targets.
+ * Public JSON feed lives at /events.json (alongside /events.ics), not /api/.
+ */
+export function targetsForDoc(body: WebhookBody): RevalidateTarget[] {
   const type = body._type
   const slug = slugValue(body.slug)
-  const paths = new Set<string>(['/'])
 
   switch (type) {
-    case 'workshop':
-      paths.add('/workshops')
-      paths.add('/events.json')
-      paths.add('/events.ics')
-      if (slug) paths.add(`/workshops/${slug}`)
-      break
-    case 'page':
-      if (slug === 'home' || !slug) paths.add('/')
-      else paths.add(`/${slug}`)
-      break
-    case 'service':
-      paths.add('/')
-      paths.add('/approach')
-      paths.add('/fees')
-      break
+    case 'registration':
+    case 'seasonPass':
+      // Transactional records — not published marketing content.
+      return []
+
     case 'siteSettings':
     case 'policy':
-      paths.add('/')
-      paths.add('/about')
-      paths.add('/approach')
-      paths.add('/workshops')
-      paths.add('/fees')
-      paths.add('/contact')
-      break
-    default:
-      paths.add('/workshops')
-      paths.add('/events.json')
-      paths.add('/events.ics')
-  }
+      // Header/footer/metadata flow through the root layout into every page,
+      // including /workshops/[slug].
+      return [{ kind: 'layout', path: '/' }]
 
-  return [...paths]
+    case 'workshop': {
+      const paths = new Set<string>([
+        '/',
+        '/workshops',
+        '/events.json',
+        '/events.ics',
+        '/sitemap.xml',
+      ])
+      if (slug) paths.add(`/workshops/${slug}`)
+      return [...paths].map((path) => ({ kind: 'path' as const, path }))
+    }
+
+    case 'page': {
+      if (slug === 'home' || !slug) return [{ kind: 'path', path: '/' }]
+      return [
+        { kind: 'path', path: '/' },
+        { kind: 'path', path: `/${slug}` },
+      ]
+    }
+
+    case 'service':
+      return ['/', '/approach', '/fees'].map((path) => ({
+        kind: 'path' as const,
+        path,
+      }))
+
+    default:
+      // Unknown types (and future ones) — do not cascade into workshops/feeds.
+      return [{ kind: 'path', path: '/' }]
+  }
 }
 
 export async function POST(req: Request) {
@@ -90,20 +108,28 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
   }
 
-  const paths = pathsForDoc(body)
-  for (const path of paths) {
-    revalidatePath(path)
+  const targets = targetsForDoc(body)
+  for (const target of targets) {
+    if (target.kind === 'layout') {
+      revalidatePath(target.path, 'layout')
+    } else {
+      revalidatePath(target.path)
+    }
   }
+
+  const summary = targets.map((t) =>
+    t.kind === 'layout' ? `${t.path} (layout)` : t.path,
+  )
 
   console.info(
     JSON.stringify({
       event: 'revalidate_ok',
       ok: true,
       at: new Date().toISOString(),
-      paths,
+      paths: summary,
       type: body._type ?? null,
     }),
   )
 
-  return NextResponse.json({ revalidated: true, paths })
+  return NextResponse.json({ revalidated: true, paths: summary })
 }

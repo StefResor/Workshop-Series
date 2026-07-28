@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "seed": "tsx scripts/seed.ts",
     "fix-typos": "tsx scripts/fix-typos.ts",
+    "backfill:workshop-fields": "tsx scripts/backfill-workshop-fields.ts",
     "test:timezone": "tsx scripts/timezone-assertion.ts"
   },
   "dependencies": {

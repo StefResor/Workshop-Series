@@ -4,7 +4,8 @@ import { formatWorkshopIcsUtc } from '@/lib/datetime'
 import { buildIcsCalendar } from '@/lib/ics'
 import type { Workshop } from '@/lib/types'
 
-export const dynamic = 'force-dynamic'
+// Cached route — Sanity CDN on miss; /api/revalidate busts on publish.
+export const revalidate = 60
 
 function siteOrigin(): string {
   const raw = process.env.NEXT_PUBLIC_SITE_URL || 'https://stefanie-schumacher.com'

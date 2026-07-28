@@ -46,9 +46,53 @@ export const workshop = defineType({
     }),
     defineField({
       name: 'priceUSD',
-      title: 'Price (USD)',
+      title: 'Price (USD) — legacy display',
       type: 'number',
+      description: 'Existing seeded display price. Prefer `price` for Stripe checkout going forward.',
       validation: (rule) => rule.required().min(0),
+    }),
+    defineField({
+      name: 'hook',
+      title: 'Hook',
+      type: 'string',
+      description: 'One-line summary for cards and social captions.',
+      validation: (rule) => rule.max(90),
+    }),
+    defineField({
+      name: 'price',
+      title: 'Price',
+      type: 'number',
+      description: 'Per-participant price in USD (Stripe checkout).',
+      validation: (rule) => rule.min(0),
+    }),
+    defineField({
+      name: 'stripePaymentLink',
+      title: 'Stripe Payment Link',
+      type: 'url',
+      description: 'External Stripe Payment Link for this session.',
+    }),
+    defineField({
+      name: 'capacity',
+      title: 'Capacity',
+      type: 'number',
+      description: 'Leave empty for unlimited.',
+      validation: (rule) => rule.min(1).integer(),
+    }),
+    defineField({
+      name: 'registrationStatus',
+      title: 'Registration status',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Draft', value: 'draft' },
+          { title: 'Open', value: 'open' },
+          { title: 'Sold out', value: 'sold-out' },
+          { title: 'Past', value: 'past' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'draft',
+      validation: (rule) => rule.required(),
     }),
     defineField({
       name: 'shortDescription',
@@ -64,7 +108,7 @@ export const workshop = defineType({
     }),
     defineField({
       name: 'status',
-      title: 'Status',
+      title: 'Publish status',
       type: 'string',
       options: {
         list: [
@@ -78,8 +122,15 @@ export const workshop = defineType({
     }),
     defineField({
       name: 'registrationUrl',
-      title: 'Registration URL',
+      title: 'Registration URL (legacy)',
       type: 'url',
+    }),
+    defineField({
+      name: 'zoomRegistrationUrl',
+      title: 'Zoom registration URL',
+      type: 'url',
+      description:
+        "Zoom's public registration page for this session. Do not store join links — those are per-registrant secrets issued by Zoom.",
     }),
     defineField({
       name: 'locationLabel',
@@ -99,12 +150,13 @@ export const workshop = defineType({
     select: {
       title: 'title',
       sessionNumber: 'sessionNumber',
+      registrationStatus: 'registrationStatus',
       status: 'status',
     },
-    prepare({ title, sessionNumber, status }) {
+    prepare({ title, sessionNumber, registrationStatus, status }) {
       return {
         title: title || 'Untitled workshop',
-        subtitle: `#${sessionNumber ?? '?'} · ${status ?? 'draft'}`,
+        subtitle: `#${sessionNumber ?? '?'} · ${registrationStatus ?? 'draft'} · ${status ?? 'draft'}`,
       }
     },
   },

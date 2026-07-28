@@ -60,7 +60,9 @@ export default async function AboutPage() {
             />
           </div>
           <figcaption className="about-caption">
-            Stefanie Schumacher — MS, LPC, EMDR. Private practice since 2015.
+            Stefanie Schumacher — MS, LPC, EMDR.
+            <br />
+            Private practice since 2015.
           </figcaption>
         </figure>
       </aside>

@@ -23,6 +23,8 @@ export function getReadClient() {
     dataset,
     apiVersion,
     token: process.env.SANITY_API_READ_TOKEN,
-    useCdn: false,
+    // Published content via API CDN — feeds are polled by calendar clients;
+    // pair with /api/revalidate so publishes still show up promptly.
+    useCdn: true,
   })
 }

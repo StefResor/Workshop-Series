@@ -31,9 +31,11 @@ Do not invent older Sanity v2 `sanityClient` configs, `lib/sanity.js` patterns, 
 
 `/`, `/about`, `/approach`, `/workshops`, `/workshops/[slug]`, `/fees`, `/contact`
 
-## Feeds (later)
+## Feeds + revalidation
 
 `/events.json`, `/events.ics`, per-event JSON-LD. Timezone assertion in `docs/workshop-schedule.md` must pass before feed code. Studio is noindex'd in metadata — do not Disallow `/studio` in robots.txt (blocked URLs never see noindex).
+
+Sanity publish webhook: see `docs/revalidate-webhook.md`. **Filter must exclude drafts** (`!(_id in path("drafts.**"))`) or Studio autosave will hammer `/api/revalidate`.
 
 ## Env keys (`.env.example`)
 

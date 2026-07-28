@@ -65,6 +65,28 @@ export const siteSettings = defineType({
       type: 'string',
       validation: (rule) => rule.required(),
     }),
+    defineField({
+      name: 'mailingAddress',
+      title: 'Mailing address',
+      type: 'text',
+      rows: 3,
+      description:
+        'Physical mailing address for CAN-SPAM compliance on commercial email. Optional until a final address is decided — leave empty rather than inventing one.',
+    }),
+    defineField({
+      name: 'notificationsEnabled',
+      title: 'Notifications enabled',
+      type: 'boolean',
+      initialValue: false,
+    }),
+    defineField({
+      name: 'workshopDisclaimer',
+      title: 'Workshop disclaimer',
+      type: 'text',
+      rows: 5,
+      description:
+        'Educational, not psychotherapy; no therapist-client relationship. Shown on workshop pages and at checkout.',
+    }),
   ],
   preview: {
     prepare() {

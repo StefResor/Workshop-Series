@@ -4,7 +4,8 @@ import { siteSettingsQuery, workshopsQuery } from '@/sanity/queries'
 import type { SiteSettings, Workshop } from '@/lib/types'
 import { siteOrigin } from '@/lib/site-url'
 
-export const dynamic = 'force-dynamic'
+// Cached route — Sanity CDN on miss; /api/revalidate busts on publish.
+export const revalidate = 60
 
 export async function GET() {
   const client = getReadClient()
