@@ -38,7 +38,7 @@ export const siteSettings = defineType({
       name: 'locationLabel',
       title: 'Location label',
       type: 'string',
-      description: 'Online · Ohio — never Austin / Gender Psychotherapy Institute.',
+      description: 'Online · Ohio — never invent a city or use transferred-account leftovers.',
     }),
     defineField({
       name: 'defaultTitle',

@@ -6,7 +6,7 @@ Workshops are already structured content (title, date, hook copy, price, Zoom li
 
 On a rebuild, events live as structured data with **public feed endpoints** — write once in the CMS, consume anywhere, no per-destination work:
 
-- /api/events.json — canonical JSON feed (also JSON Feed 1.1 spec for feed readers)
+- /events.json — canonical JSON feed (also JSON Feed 1.1 spec for feed readers)
 - /events.ics — iCal feed → subscribable in Google/Apple Calendar (nice client touch)
 - RSS — legacy but Zapier/Make/Buffer all eat it natively, which makes Tier-2 automation trivial: "new item in feed → queue social post"
 - JSON-LD Event schema embedded per event page → Google event rich results

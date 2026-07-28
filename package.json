@@ -8,17 +8,22 @@
     "start": "next start",
     "lint": "eslint .",
     "seed": "tsx scripts/seed.ts",
+    "fix-typos": "tsx scripts/fix-typos.ts",
     "test:timezone": "tsx scripts/timezone-assertion.ts"
   },
   "dependencies": {
     "@sanity/client": "7.25.0",
+    "@sanity/image-url": "^2.1.1",
     "@sanity/vision": "6.6.0",
+    "@sanity/webhook": "^4.0.4",
     "next": "16.2.12",
     "next-sanity": "13.2.2",
     "react": "19.2.8",
     "react-dom": "19.2.8",
+    "resend": "^6.18.0",
     "sanity": "6.6.0",
-    "styled-components": "6.4.4"
+    "styled-components": "6.4.4",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/node": "^22.15.0",

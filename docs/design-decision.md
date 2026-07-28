@@ -1,23 +1,37 @@
-# Design decision — Direction C (gap)
+# Design decision — Direction C · The Wise Adult
 
-**Status:** Direction **C · The Wise Adult** is the working baseline. Formal revision notes from Stef/Mike are still needed before visual implementation.
+**Status:** Locked for implementation (2026-07-27). Source of truth: `prototype/stef-cms-demo.html` Direction C.
 
-Until `docs/design-decision.md` is completed with explicit revisions, **do not** build marketing pages or token files beyond what schemas/seed require.
+## Visual system
 
-## Locked from Direction C (prototype)
+| Token | Value |
+|---|---|
+| Ground | `#F3EFE7` (bone) |
+| Ink | `#1A1815` |
+| Accent | `#FF4D00` (electric orange) |
+| Muted text | `#44403A` / `#6B6459` |
+| Display | Archivo Black |
+| Body | Archivo |
+| Mono / labels | IBM Plex Mono |
+| Rules | `1.5px solid` ink |
+| Wordmark | Typographic, uppercase — no logo |
 
-- Warm bone ground `#F3EFE7`
-- Ink `#1A1815`
-- Single electric orange accent `#FF4D00`
-- Archivo + Archivo Black
-- Typographic wordmark (no logo)
-- Workshops as exhibitions-style index
-- Hero: “Say the hard thing skillfully.”
+## Composition (homepage)
 
-## Still needed from stakeholders
+1. Topbar wordmark + nav  
+2. Hero: kicker (practice line) → monumental headline → summary + CTA  
+3. Orange method marquee  
+4. Three service panels (ruled grid)  
+5. How change happens  
+6. Workshop index  
+7. Fees strip  
+8. Footer  
 
-- Exact “revise C a bit” notes (spacing, type scale, accent usage, hybrid elements from A/B if any)
-- Confirmation of hero copy voice
-- Portrait asset (original, not screenshot)
+## Inner pages
 
-See also: `design/design-rationale.md`, `design/2026-07-21-three-directions-notes.md`.
+Same tokens/chrome. About uses B/W portrait + orange band (prototype C treatment). Workshop detail uses C event theme.
+
+## Explicitly deferred
+
+- Stakeholder “revise C a bit” micro-adjustments (iterate via tokens.css)  
+- Higher-res portrait swap when available (`public/stefanie-schumacher.jpg` from prototype for now)

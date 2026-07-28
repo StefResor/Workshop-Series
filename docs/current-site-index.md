@@ -52,7 +52,7 @@ Event page sample (Workshop #1): full description present, but **"Tickets are no
 
 1. **Pricing inconsistency:** homepage says Individuals $150/50-min; Bookings says $165/45-min (weekly) and $225/45-min (biweekly — costs MORE than weekly, likely a setup error or unclear per-period pricing). Couples $300/75 appears on homepage but has no booking service.
 2. **Placeholder template copy live in production:** individual-weekly service page still shows Wix default "Describe your service here…" text.
-3. **Stale/wrong contact metadata:** service page lists email genderpsychotherapyinstitute@gmail.com and location "Austin, Texas" — neither matches Stef's practice (she's Ohio-based; personal email stef8.schumacher@gmail.com). Likely leftover from a reused/transferred Wix account. Also: workshop times listed in EDT.
+3. **Stale/wrong contact metadata:** service page lists a transferred-account Gmail and an incorrect TX city — neither matches Stef's practice (she's Ohio-based; personal email stef8.schumacher@gmail.com). Likely leftover from a reused/transferred Wix account. Also: workshop times listed in EDT.
 4. **Ticketing gap:** 10 events published but tickets "not on sale"; a parallel $35 pricing plan exists — two overlapping Wix commerce systems for the same thing.
 5. **SEO/render fragility:** key pages (/fees-insurance, /event-list) render only via JS — thin/empty server HTML.
 6. **No consultation form found in static crawl** (homepage CTA references one — likely JS-rendered; confirm from Mike's page pastes).

@@ -1,32 +1,43 @@
 # Content corrections
 
-Apply every mapping below when seeding. Source of typos: live Wix crawl + workshop page paste review. Prototype copy already fixed some of these — seed the **corrected** forms.
+Source of typos: live Wix crawl + workshop page paste review.
 
-## Spelling / grammar (wrong → right)
+Fee values are **out of scope** for the one-off patch — they stay flagged pending client confirmation.
 
-| Wrong (live / drafts) | Right |
+---
+
+## 1. Homepage spelling patches
+
+Apply as **exact string replacements** on the `page` document with `slug.current == "home"` (fields: `body`, `summary`, `headline`). Do not rewrite fields wholesale.
+
+| Find (exact) | Replace |
 |---|---|
-| curiosty | curiosity |
-| noticable | noticeable |
-| loose sight | lose sight |
-| thay | they |
-| Reccomend | Recommend |
-| seperate | separate |
-| occured | occurred |
+| `curiosty` | `curiosity` |
+| `noticable` | `noticeable` |
 
-## Workshop #3 body — missing words
+Also ensure process promise uses **noticeable** (capitalized as the sentence requires): “Noticeable change in how you relate every day.”
 
-Live Wix copy for workshop #3 dropped words mid-sentence. Seed with complete sentences:
+---
 
-> Full volume gets full defenses. Getting heard takes something quieter — tone, timing, and the willingness to stay in the conversation without flooding it.
+## 2. Workshop #1 body patches
 
-Short description (seed):
+Apply as **exact string replacements** on the `workshop` document with `sessionNumber == 1` (fields: `body`, `shortDescription`). Patch published `_id` **and** `drafts.<id>` when a draft exists.
 
-> Full volume gets full defenses. Getting heard takes something quieter.
+| # | Find (exact) | Replace |
+|---|---|---|
+| 1 | `loose sight` | `lose sight` |
+| 2 | `thay` | `they` |
+| 3 | `curiosty` | `curiosity` |
+| 4 | `noticable` | `noticeable` |
+| 5 | `largely / irrelevant` | `largely irrelevant` |
 
-## Workshop #1 body — already corrected form (use this)
+Also fold a stray mid-sentence line break when present as a literal newline between the words:
 
-Use the prototype’s corrected body (includes “lose sight”, not “loose sight”):
+| Find (exact) | Replace |
+|---|---|
+| `largely\nirrelevant` | `largely irrelevant` |
+
+Canonical corrected workshop #1 body (reference only — do **not** wholesale-replace the field with this block; use the string table above):
 
 > Why trying to be “right” never gets you the understanding and connection you want.
 >
@@ -36,34 +47,37 @@ Use the prototype’s corrected body (includes “lose sight”, not “loose si
 >
 > Substantial time is dedicated to Q&A, so we can explore as a group how this losing strategy shows up in our lives, and how to shift it.
 
-## Homepage / process copy
+---
 
-- Use **noticeable** (not “noticable”) in process promise: “Noticeable change in how you relate every day.”
-- Brand line: **Relational Diplomacy for Individuals and Couples** (not “For Couples” only).
-- Wordmark: **Stefanie Schumacher** with credentials **MS, LPC, EMDR**.
+## 3. Workshop #3 body — missing words (seed / separate pass)
 
-## Fees (seed + mark CONFIRM WITH STEF)
+Live Wix copy for workshop #3 dropped words mid-sentence. Seed / future edit with complete sentences:
 
-Canonical homepage values used for seed (Bookings conflicts ignored until Stef confirms):
+> Full volume gets full defenses. Getting heard takes something quieter — tone, timing, and the willingness to stay in the conversation without flooding it.
+
+Short description:
+
+> Full volume gets full defenses. Getting heard takes something quieter.
+
+---
+
+## Other spelling (catalog — apply if found in any page/workshop body)
+
+| Wrong | Right |
+|---|---|
+| Reccomend | Recommend |
+| seperate | separate |
+| occured | occurred |
+
+---
+
+## Brand / process (seed guidance)
+
+- Brand line: **Relational Diplomacy for Individuals and Couples**
+- Wordmark: **Stefanie Schumacher** with credentials **MS, LPC, EMDR**
+
+## Fees (CONFIRM WITH STEF — do not patch)
 
 - Couples: **$300 / 75 min**
 - Individuals: **$150 / 50 min**
 - Workshops: **$35 / participant**
-
-Do **not** seed Wix Bookings figures ($165/45 weekly, $225/45 biweekly, $245 parent consult) as canonical site fees without confirmation.
-
-## Pages to seed
-
-| `slug` | Purpose |
-|---|---|
-| `home` | Hero, services teaser, method teaser, CTA |
-| `about` | Bio + facts (from prototype About) |
-| `approach` | How change happens + process |
-| `fees` | Fee table + private-pay note |
-
-## Policy to seed
-
-| `slug` | Purpose |
-|---|---|
-| `workshop-disclaimer` | Educational / not psychotherapy disclaimer |
-| `consult-form-notice` | Ask submitters not to include health details |

@@ -33,7 +33,7 @@ Do not invent older Sanity v2 `sanityClient` configs, `lib/sanity.js` patterns, 
 
 ## Feeds (later)
 
-`/api/events.json`, `/events.ics`, per-event JSON-LD. Timezone assertion in `docs/workshop-schedule.md` must pass before feed code.
+`/events.json`, `/events.ics`, per-event JSON-LD. Timezone assertion in `docs/workshop-schedule.md` must pass before feed code. Studio is noindex'd in metadata — do not Disallow `/studio` in robots.txt (blocked URLs never see noindex).
 
 ## Env keys (`.env.example`)
 
@@ -43,12 +43,30 @@ NEXT_PUBLIC_SANITY_DATASET=
 NEXT_PUBLIC_SANITY_API_VERSION=2026-07-27
 SANITY_API_READ_TOKEN=
 SANITY_API_WRITE_TOKEN=
+SANITY_REVALIDATE_SECRET=
 NEXT_PUBLIC_SITE_URL=
 RESEND_API_KEY=
 CONTACT_TO_EMAIL=
 CONTACT_FROM_EMAIL=
 ```
 
+## Images
+
+Content images are served through the Sanity image CDN via `@sanity/image-url` with `auto('format')` and explicit width/quality. Do not convert or re-encode at upload — originals are preserved and format is negotiated per request.
+
+Provide `urlForImage()` in `lib/image.ts`. All image URLs go through it; no hand-built Sanity CDN URLs in components.
+
+Always set explicit width and height to prevent layout shift. Responsive `srcset` via the helper (`imageSrcSet`).
+
+Exceptions — must **NOT** be WebP:
+
+- `og:image` and `twitter:image` must be PNG or JPEG (social platforms have unreliable WebP support), minimum 1200×630. Use `urlForImage(src, { width: 1200, height: 630, format: 'jpg' })` (or `png`).
+- Favicon is SVG with PNG fallback.
+
+Static images committed to `/public` should be WebP, except the OG and favicon assets above.
+
 ## Current task scope gate
 
 If the user asks for schemas + seed only: **do not** create marketing pages, layouts, components, or styling beyond what Studio requires.
+
+If the user asks for data/routes only: **do not** create marketing pages, components, layouts, design tokens, or styling.

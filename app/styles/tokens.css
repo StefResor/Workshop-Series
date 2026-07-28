@@ -1,0 +1,44 @@
+:root {
+  /* Direction C — The Wise Adult */
+  --color-bone: #f3efe7;
+  --color-ink: #1a1815;
+  --color-accent: #ff4d00;
+  --color-muted: #44403a;
+  --color-muted-2: #6b6459;
+  --color-white: #ffffff;
+
+  --font-sans: var(--font-archivo), 'Archivo', sans-serif;
+  --font-display: var(--font-archivo-black), 'Archivo Black', sans-serif;
+  --font-mono: var(--font-ibm-plex-mono), 'IBM Plex Mono', monospace;
+
+  --rule: 1.5px solid var(--color-ink);
+  --page-pad-x: 4vw;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --text-kicker: 12px;
+  --text-nav: 13px;
+  --text-body: clamp(15px, 1.3vw, 18px);
+  --text-body-sm: 14.5px;
+  --text-display: clamp(44px, 8.2vw, 128px);
+  --text-h2: clamp(30px, 4vw, 58px);
+}
+
+@keyframes marquee-slide {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

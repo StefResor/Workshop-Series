@@ -19,7 +19,7 @@ Next.js App Router + Sanity CMS rebuild of stefanie-schumacher.com.
 
 - `docs/workshop-schedule.md` — UTC table + DST trap for sessions 9–10
 - `docs/content-corrections.md` — typo / copy fixes applied in seed
-- `docs/metadata-truth.md` — ban list for Austin / Gender Psychotherapy / Trans-Anon leftovers
+- `docs/metadata-truth.md` — ban list for Wix transferred-account metadata leftovers
 - `docs/design-decision.md` — Direction C baseline; revisions still needed
 
 Legacy research/prototype files remain under `design/`, `prototype/`, `site-audit/`, etc.
