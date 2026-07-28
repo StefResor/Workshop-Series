@@ -52,10 +52,11 @@ export default async function AboutPage() {
             <Image
               src="/stefanie-schumacher.jpg"
               alt="Portrait of Stefanie Schumacher, MS, LPC, EMDR"
-              width={760}
-              height={1140}
+              width={676}
+              height={926}
               sizes="(max-width: 860px) 100vw, 380px"
               priority
+              style={{ width: '100%', height: 'auto' }}
             />
           </div>
           <figcaption className="about-caption">
