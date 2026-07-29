@@ -2,9 +2,10 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { WorkshopDateLabel, WorkshopWhen } from '@/components/WorkshopWhen'
 import { buildPageMetadata } from '@/lib/seo'
-import type { Workshop } from '@/lib/types'
+import type { SiteSettings, Workshop } from '@/lib/types'
+import { resolveWorkshopPrice } from '@/lib/workshop-price'
 import { sanityFetch } from '@/sanity/lib/fetch'
-import { workshopsQuery } from '@/sanity/queries'
+import { siteSettingsQuery, workshopsQuery } from '@/sanity/queries'
 
 export function generateMetadata(): Metadata {
   return buildPageMetadata({
@@ -16,7 +17,10 @@ export function generateMetadata(): Metadata {
 }
 
 export default async function WorkshopsPage() {
-  const workshops = await sanityFetch<Workshop[]>(workshopsQuery)
+  const [workshops, settings] = await Promise.all([
+    sanityFetch<Workshop[]>(workshopsQuery),
+    sanityFetch<SiteSettings | null>(siteSettingsQuery),
+  ])
 
   return (
     <>
@@ -34,30 +38,33 @@ export default async function WorkshopsPage() {
           Upcoming workshops
         </h2>
         <div className="workshop-list">
-          {(workshops || []).map((w) => (
-            <Link
-              key={w._id}
-              href={`/workshops/${w.slug}`}
-              className="workshop-row"
-              aria-label={
-                w.price != null
-                  ? `${w.title}, ${w.price} dollars`
-                  : `${w.title}, contact for current fees`
-              }
-            >
-              <WorkshopDateLabel startsAt={w.startsAt} timeZone={w.timeZone} />
-              <span>
-                <span style={{ fontWeight: 600 }}>{w.title}</span>
-                <br />
-                <span className="meta">
-                  <WorkshopWhen startsAt={w.startsAt} timeZone={w.timeZone} />
+          {(workshops || []).map((w) => {
+            const price = resolveWorkshopPrice(w, settings)
+            return (
+              <Link
+                key={w._id}
+                href={`/workshops/${w.slug}`}
+                className="workshop-row"
+                aria-label={
+                  price != null
+                    ? `${w.title}, ${price} dollars`
+                    : `${w.title}, contact for current fees`
+                }
+              >
+                <WorkshopDateLabel startsAt={w.startsAt} timeZone={w.timeZone} />
+                <span>
+                  <span style={{ fontWeight: 600 }}>{w.title}</span>
+                  <br />
+                  <span className="meta">
+                    <WorkshopWhen startsAt={w.startsAt} timeZone={w.timeZone} />
+                  </span>
                 </span>
-              </span>
-              <span className="meta">
-                {w.price != null ? `$${w.price}` : 'Contact for fees'}
-              </span>
-            </Link>
-          ))}
+                <span className="meta">
+                  {price != null ? `$${price}` : 'Contact for fees'}
+                </span>
+              </Link>
+            )
+          })}
         </div>
         <p style={{ marginTop: 36 }}>
           <a className="btn" href="/events.ics">

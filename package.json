@@ -11,6 +11,7 @@
     "fix-typos": "tsx scripts/fix-typos.ts",
     "backfill:workshop-fields": "tsx scripts/backfill-workshop-fields.ts",
     "migrate:workshop-fields": "tsx scripts/migrate-workshop-fields.ts",
+    "migrate:default-workshop-price": "tsx scripts/migrate-default-workshop-price.ts",
     "audit:schema": "tsx scripts/audit-schema-drift.ts",
     "test:revalidate": "tsx scripts/verify-revalidate.ts",
     "test:timezone": "tsx scripts/timezone-assertion.ts"

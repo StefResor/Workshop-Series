@@ -1,9 +1,13 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { buildPageMetadata } from '@/lib/seo'
-import type { PageDoc, Service } from '@/lib/types'
+import type { PageDoc, Service, SiteSettings } from '@/lib/types'
 import { sanityFetch } from '@/sanity/lib/fetch'
-import { pageBySlugQuery, servicesQuery } from '@/sanity/queries'
+import {
+  pageBySlugQuery,
+  servicesQuery,
+  siteSettingsQuery,
+} from '@/sanity/queries'
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await sanityFetch<PageDoc | null>(pageBySlugQuery, {
@@ -19,13 +23,15 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function FeesPage() {
-  const [page, services] = await Promise.all([
+  const [page, services, settings] = await Promise.all([
     sanityFetch<PageDoc | null>(pageBySlugQuery, { slug: 'fees' }),
     sanityFetch<Service[]>(servicesQuery),
+    sanityFetch<SiteSettings | null>(siteSettingsQuery),
   ])
 
   const couples = services?.find((s) => s.order === 1)
   const individuals = services?.find((s) => s.slug.includes('individual'))
+  const workshopDefault = settings?.defaultWorkshopPrice ?? null
 
   return (
     <>
@@ -38,22 +44,19 @@ export default async function FeesPage() {
         </p>
       </header>
 
-      <section className="fees-strip" aria-label="Session fees">
+      <section className="fees-strip fees-strip--3" aria-label="Session fees">
         <div className="fee">
-          <span className="k">Couples</span>
+          <span className="k">Workshops</span>
           <div className="amt">
-            {couples?.priceUSD != null ? (
+            {workshopDefault != null ? (
               <>
-                ${couples.priceUSD}{' '}
-                {couples.durationMinutes != null ? (
-                  <span>/ {couples.durationMinutes} min</span>
-                ) : null}
+                ${workshopDefault} <span>/ session</span>
               </>
             ) : (
               <span>Contact for current fees</span>
             )}
           </div>
-          <p>Private pay · online · discreet</p>
+          <p>Per participant · live on Zoom · 90 min</p>
         </div>
         <div className="fee">
           <span className="k">Individuals</span>
@@ -71,6 +74,22 @@ export default async function FeesPage() {
           </div>
           <p>Private pay · online · discreet</p>
         </div>
+        <div className="fee">
+          <span className="k">Couples</span>
+          <div className="amt">
+            {couples?.priceUSD != null ? (
+              <>
+                ${couples.priceUSD}{' '}
+                {couples.durationMinutes != null ? (
+                  <span>/ {couples.durationMinutes} min</span>
+                ) : null}
+              </>
+            ) : (
+              <span>Contact for current fees</span>
+            )}
+          </div>
+          <p>Private pay · online · discreet</p>
+        </div>
       </section>
 
       <section className="section" aria-labelledby="workshop-fees-heading">
@@ -78,11 +97,15 @@ export default async function FeesPage() {
           Workshops
         </h2>
         <p className="section-sub">
-          Relational Diplomacy Workshop Series — $35 per participant · live on Zoom ·
-          90 minutes. Non-refundable. Educational — not psychotherapy.
+          Relational Diplomacy Workshop Series
+          {workshopDefault != null
+            ? ` — $${workshopDefault} per participant`
+            : ''}{' '}
+          · live on Zoom · 90 minutes. Non-refundable. Educational — not
+          psychotherapy.
         </p>
-        <Link className="btn" href="/contact">
-          Request a Consultation
+        <Link className="btn" href="/workshops">
+          View workshops
         </Link>
       </section>
     </>

@@ -80,6 +80,14 @@ export const siteSettings = defineType({
       initialValue: false,
     }),
     defineField({
+      name: 'defaultWorkshopPrice',
+      title: 'Default workshop price',
+      type: 'number',
+      description:
+        'Default per-participant USD for workshops when a session has no override.',
+      validation: (rule) => rule.required().min(0),
+    }),
+    defineField({
       name: 'workshopDisclaimer',
       title: 'Workshop disclaimer',
       type: 'text',

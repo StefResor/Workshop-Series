@@ -6,6 +6,7 @@ import { breadcrumbJsonLd, workshopEventJsonLd } from '@/lib/schema'
 import { buildPageMetadata } from '@/lib/seo'
 import type { SiteSettings, Workshop } from '@/lib/types'
 import { DEFAULT_WORKSHOP_DISCLAIMER } from '@/lib/workshop-disclaimer'
+import { resolveWorkshopPrice } from '@/lib/workshop-price'
 import { sanityFetch } from '@/sanity/lib/fetch'
 import {
   siteSettingsQuery,
@@ -59,8 +60,9 @@ export default async function WorkshopDetailPage({ params }: Props) {
     { name: workshop.title, path: `/workshops/${workshop.slug}` },
   ])
 
+  const price = resolveWorkshopPrice(workshop, settings)
   const priceLabel =
-    workshop.price != null ? `$${workshop.price}` : 'Contact for current fees'
+    price != null ? `$${price}` : 'Contact for current fees'
   const registerHref = workshop.stripePaymentLink
 
   return (
@@ -72,6 +74,7 @@ export default async function WorkshopDetailPage({ params }: Props) {
             workshopEventJsonLd(
               workshop,
               settings?.siteName || 'Stefanie Schumacher',
+              price,
             ),
           ),
         }}
@@ -81,48 +84,53 @@ export default async function WorkshopDetailPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
       />
       <div className="ev-band" aria-hidden="true" />
-      <article className="ev-wrap">
+      <div className="ev-shell">
         <nav aria-label="Breadcrumb" className="ev-back-nav">
           <Link href="/workshops" className="ev-back">
             ← All workshops
           </Link>
         </nav>
-        <span className="kicker">Relational Diplomacy Workshop</span>
-        <h1>{workshop.title}</h1>
-        <div className="ev-meta">
-          <div>
-            <span className="k">When</span>
-            <WorkshopWhen startsAt={workshop.startsAt} timeZone={workshop.timeZone} />
+        <article className="ev-wrap">
+          <span className="kicker">Relational Diplomacy Workshop</span>
+          <h1>{workshop.title}</h1>
+          <div className="ev-meta">
+            <div>
+              <span className="k">When</span>
+              <WorkshopWhen
+                startsAt={workshop.startsAt}
+                timeZone={workshop.timeZone}
+              />
+            </div>
+            <div>
+              <span className="k">Format</span>
+              Live on Zoom · 90 min
+            </div>
+            <div>
+              <span className="k">Price</span>
+              {price != null
+                ? `$${price} per participant`
+                : 'Contact for current fees'}
+            </div>
           </div>
-          <div>
-            <span className="k">Format</span>
-            Live on Zoom · 90 min
+          <div className="ev-body">
+            {paragraphs(workshop.body || workshop.shortDescription).map((p) => (
+              <p key={p.slice(0, 40)}>{p}</p>
+            ))}
           </div>
-          <div>
-            <span className="k">Price</span>
-            {workshop.price != null
-              ? `$${workshop.price} per participant`
-              : 'Contact for current fees'}
+          <div style={{ marginTop: 38 }}>
+            {registerHref ? (
+              <a className="btn" href={registerHref}>
+                Register — {priceLabel}
+              </a>
+            ) : (
+              <Link className="btn" href="/contact">
+                Inquire to register — {priceLabel}
+              </Link>
+            )}
           </div>
-        </div>
-        <div className="ev-body">
-          {paragraphs(workshop.body || workshop.shortDescription).map((p) => (
-            <p key={p.slice(0, 40)}>{p}</p>
-          ))}
-        </div>
-        <div style={{ marginTop: 38 }}>
-          {registerHref ? (
-            <a className="btn" href={registerHref}>
-              Register — {priceLabel}
-            </a>
-          ) : (
-            <Link className="btn" href="/contact">
-              Inquire to register — {priceLabel}
-            </Link>
-          )}
-        </div>
-        <p className="ev-note">{policyNote}</p>
-      </article>
+          <p className="ev-note">{policyNote}</p>
+        </article>
+      </div>
     </>
   )
 }

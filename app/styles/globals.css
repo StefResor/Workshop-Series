@@ -528,12 +528,199 @@ textarea {
   color: var(--color-muted-2);
 }
 
+/* ——— Workshop LED (homepage) ——— */
+.workshops-led-section {
+  padding-bottom: 4vh;
+}
+
+.workshop-led-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  border-top: var(--rule);
+  border-bottom: var(--rule);
+}
+
+.workshop-led {
+  display: flex;
+  flex-direction: column;
+  border-right: var(--rule);
+  border-bottom: var(--rule);
+  padding: 36px 28px 28px;
+  position: relative;
+  transition: background 0.25s var(--ease);
+}
+
+.workshop-led:nth-child(2n) {
+  border-right: 0;
+}
+
+.workshop-led:hover,
+.workshop-led:has(.cta:focus-visible) {
+  background: var(--color-white);
+}
+
+.workshop-led:has(.cta:focus-visible) {
+  outline: 3px solid var(--color-accent);
+  outline-offset: -3px;
+}
+
+.workshop-led .num {
+  font-family: var(--font-display);
+  font-size: 40px;
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--color-ink);
+  display: block;
+  margin-bottom: 18px;
+  transition:
+    color 0.25s var(--ease),
+    -webkit-text-stroke 0.25s var(--ease);
+  position: relative;
+  z-index: 2;
+}
+
+.workshop-led:hover .num,
+.workshop-led:has(.cta:focus-visible) .num {
+  color: var(--color-accent);
+  -webkit-text-stroke: 1.5px var(--color-accent);
+}
+
+.workshop-led h2 {
+  font-family: var(--font-display);
+  font-size: clamp(16px, 1.5vw, 20px);
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 1.15;
+  margin-bottom: 12px;
+  font-weight: 400;
+  position: relative;
+  z-index: 2;
+}
+
+.workshop-led .hook {
+  font-size: var(--text-body-sm);
+  line-height: 1.55;
+  color: var(--color-muted);
+  margin-bottom: 0;
+  max-width: 36em;
+  position: relative;
+  z-index: 2;
+}
+
+.workshop-led-foot {
+  margin-top: auto;
+  padding-top: 18px;
+  display: flex;
+  flex-direction: column;
+}
+
+.workshop-led .accent-bar {
+  height: 1px;
+  background: color-mix(in srgb, var(--color-accent) 40%, var(--color-bone));
+  margin: 0 -28px 18px;
+  flex-shrink: 0;
+}
+
+.workshop-led .meta {
+  margin-bottom: 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-muted-2);
+  position: relative;
+  z-index: 2;
+}
+
+.workshop-led .cta {
+  align-self: flex-start;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  transition: opacity 0.2s var(--ease);
+}
+
+.workshop-led .cta:hover {
+  opacity: 0.72;
+}
+
+.workshop-led .cta:focus {
+  outline: none;
+}
+
+.workshop-led .cta:focus-visible {
+  outline: none;
+}
+
+.workshop-led .cta::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+/* ——— Areas of Expertise ——— */
+.expertise-band {
+  background: var(--color-ink);
+  color: var(--color-bone);
+  border-bottom: var(--rule);
+}
+
+.expertise-band-inner {
+  padding: 10vh var(--page-pad-x) 11vh;
+}
+
+.expertise-band-title {
+  font-family: var(--font-display);
+  font-size: clamp(26px, 3.2vw, 46px);
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  margin-bottom: 48px;
+}
+
+.expertise-band-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4vw;
+}
+
+.expertise-band-item .num {
+  font-family: var(--font-display);
+  font-size: 40px;
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--color-accent);
+  display: block;
+  margin-bottom: 18px;
+}
+
+.expertise-band-item h3 {
+  font-family: var(--font-display);
+  font-size: clamp(16px, 1.5vw, 20px);
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 1.15;
+  margin-bottom: 14px;
+  font-weight: 400;
+}
+
+.expertise-band-item p {
+  font-size: var(--text-body-sm);
+  line-height: 1.65;
+  color: color-mix(in srgb, var(--color-bone) 78%, transparent);
+  max-width: 36em;
+}
+
 /* ——— Fees ——— */
 .fees-strip {
   display: grid;
   grid-template-columns: 1fr 1fr;
   border-top: var(--rule);
   border-bottom: var(--rule);
+}
+
+.fees-strip--3 {
+  grid-template-columns: 1fr 1fr 1fr;
 }
 
 .fee {
@@ -661,10 +848,16 @@ textarea {
   border-bottom: var(--rule);
 }
 
-.ev-wrap {
-  max-width: 860px;
-  margin: 0 auto;
+.ev-shell {
+  position: relative;
   padding: 4vh var(--page-pad-x) 12vh;
+}
+
+.ev-back-nav {
+  position: absolute;
+  top: 4vh;
+  left: var(--page-pad-x);
+  z-index: 1;
 }
 
 .ev-back {
@@ -674,7 +867,11 @@ textarea {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   display: inline-block;
-  margin-bottom: 28px;
+}
+
+.ev-wrap {
+  max-width: 860px;
+  margin: 0 auto;
 }
 
 .ev-wrap h1 {
@@ -804,10 +1001,17 @@ textarea {
 
   .how,
   .fees-strip,
+  .fees-strip--3,
   .sched-grid,
+  .workshop-led-grid,
+  .expertise-band-list,
   .about-grid,
   .field-row {
     grid-template-columns: 1fr;
+  }
+
+  .workshop-led {
+    border-right: 0;
   }
 
   .about-grid > .about-sticky {
@@ -824,5 +1028,10 @@ textarea {
 
   .workshop-row .meta {
     grid-column: 2;
+  }
+
+  .ev-back-nav {
+    position: static;
+    margin-bottom: 28px;
   }
 }

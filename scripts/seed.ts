@@ -38,7 +38,7 @@ function slugify(input: string) {
 
 // ---------------------------------------------------------------------------
 // Workshops — startsAt/endsAt copied verbatim from docs/workshop-schedule.md
-// price $35 // CONFIRM WITH STEF
+// Per-session price comes from siteSettings.defaultWorkshopPrice unless overridden.
 // ---------------------------------------------------------------------------
 
 type WorkshopSeed = {
@@ -344,6 +344,7 @@ const siteSettingsDoc = {
     'Structured, direct relationship work for high-responsibility professionals and leaders. Private-pay, online, and discreet.',
   twitterTitle: 'Stefanie Schumacher — Relational Diplomacy',
   ogTitle: 'Stefanie Schumacher — Relational Diplomacy',
+  defaultWorkshopPrice: 45, // CONFIRM WITH STEF
 }
 
 async function main() {
@@ -361,7 +362,6 @@ async function main() {
       startsAt: w.startsAt,
       endsAt: w.endsAt,
       timeZone: 'America/New_York',
-      price: 35, // CONFIRM WITH STEF
       registrationStatus: 'draft',
       shortDescription: w.shortDescription,
       body: w.body,

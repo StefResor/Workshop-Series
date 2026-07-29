@@ -54,6 +54,7 @@ export const siteSettingsQuery = `*[_type == "siteSettings"][0] {
   ogTitle,
   mailingAddress,
   notificationsEnabled,
+  defaultWorkshopPrice,
   workshopDisclaimer
 }`
 

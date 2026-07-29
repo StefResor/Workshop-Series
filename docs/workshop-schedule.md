@@ -35,7 +35,7 @@ For sessions 9 and 10, 7:00 PM Eastern is **exactly midnight UTC**, so the **UTC
 9. The Art of Generosity & Empowering Your Partner  
 10. The Art of the Apology  
 
-Price: **$35** per participant (mark `// CONFIRM WITH STEF` in seed). Location: Zoom. Status: published.
+Price: default **$45** per participant on `siteSettings.defaultWorkshopPrice` (mark `// CONFIRM WITH STEF` in seed). Per-workshop `price` is an optional override. Location: Zoom. Status: published.
 
 ## Timezone assertion (write this test before any feed code)
 
@@ -57,7 +57,7 @@ Document type: `workshop`
 | `startsAt` | datetime | UTC ISO from table |
 | `endsAt` | datetime | UTC ISO from table |
 | `timeZone` | string | always `America/New_York` |
-| `price` | number | per-participant USD |
+| `price` | number | optional override; else `siteSettings.defaultWorkshopPrice` ($45 seeded) |
 | `hook` | string | max ~90 chars; cards / social |
 | `stripePaymentLink` | url | Stripe Payment Link |
 | `capacity` | number | optional; empty = unlimited |

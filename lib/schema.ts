@@ -70,10 +70,13 @@ export function websiteJsonLd(settings: PersonInput) {
 export function workshopEventJsonLd(
   workshop: EventInput,
   organizerName = 'Stefanie Schumacher',
+  /** Resolved price (override ?? site default). Prefer this over workshop.price. */
+  resolvedPrice?: number | null,
 ) {
   const origin = siteOrigin()
   const url = absoluteUrl(`/workshops/${workshop.slug}`)
   const offerUrl = workshop.stripePaymentLink || url
+  const price = resolvedPrice ?? workshop.price ?? null
 
   return {
     '@context': 'https://schema.org',
@@ -105,10 +108,10 @@ export function workshopEventJsonLd(
     url,
     image: absoluteUrl('/stefanie-schumacher.jpg'),
     offers:
-      workshop.price != null
+      price != null
         ? {
             '@type': 'Offer',
-            price: workshop.price,
+            price,
             priceCurrency: 'USD',
             url: offerUrl,
             availability: 'https://schema.org/InStock',

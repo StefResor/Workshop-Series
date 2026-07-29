@@ -3,6 +3,7 @@ import { getReadClient } from '@/sanity/lib/client'
 import { siteSettingsQuery, workshopsQuery } from '@/sanity/queries'
 import type { SiteSettings, Workshop } from '@/lib/types'
 import { siteOrigin } from '@/lib/site-url'
+import { resolveWorkshopPrice } from '@/lib/workshop-price'
 
 // Cached route — Sanity CDN on miss; /api/revalidate busts on publish.
 export const revalidate = 60
@@ -33,7 +34,7 @@ export async function GET() {
       _stef: {
         sessionNumber: w.sessionNumber,
         endsAt: w.endsAt,
-        price: w.price ?? null,
+        price: resolveWorkshopPrice(w, settings),
         locationLabel: w.locationLabel || 'Zoom',
         stripePaymentLink: w.stripePaymentLink || null,
         zoomRegistrationUrl: w.zoomRegistrationUrl || null,

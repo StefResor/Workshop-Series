@@ -53,10 +53,11 @@ export const workshop = defineType({
     }),
     defineField({
       name: 'price',
-      title: 'Price',
+      title: 'Price override',
       type: 'number',
-      description: 'Per-participant price in USD (Stripe checkout).',
-      validation: (rule) => rule.required().min(0),
+      description:
+        'Optional per-participant USD override. Leave empty to use Site settings → Default workshop price.',
+      validation: (rule) => rule.min(0),
     }),
     defineField({
       name: 'stripePaymentLink',

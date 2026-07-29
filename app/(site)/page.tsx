@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { WorkshopDateLabel } from '@/components/WorkshopWhen'
+import { formatWorkshopDisplay } from '@/lib/datetime'
 import { buildPageMetadata } from '@/lib/seo'
 import type { PageDoc, Service, SiteSettings, Workshop } from '@/lib/types'
+import { resolveWorkshopPrice } from '@/lib/workshop-price'
 import { sanityFetch } from '@/sanity/lib/fetch'
 import {
   pageBySlugQuery,
@@ -66,15 +67,17 @@ function splitHeadline(headline?: string) {
 }
 
 export default async function HomePage() {
-  const [home, services, workshops] = await Promise.all([
+  const [home, services, workshops, settings] = await Promise.all([
     sanityFetch<PageDoc | null>(pageBySlugQuery, { slug: 'home' }),
     sanityFetch<Service[]>(servicesQuery),
     sanityFetch<Workshop[]>(workshopsQuery),
+    sanityFetch<SiteSettings | null>(siteSettingsQuery),
   ])
 
   const { lines, outline } = splitHeadline(home?.headline)
   const couples = services?.find((s) => s.slug.includes('couples') && s.order === 1)
   const individuals = services?.find((s) => s.slug.includes('individual'))
+  const workshopDefault = settings?.defaultWorkshopPrice ?? null
 
   return (
     <>
@@ -110,16 +113,70 @@ export default async function HomePage() {
         </div>
       </div>
 
-      <section className="service-grid" aria-label="The work">
-        {(services || []).map((service, i) => (
-          <article key={service._id} className="service-panel">
-            <span className="num" aria-hidden="true">
-              {String(service.order || i + 1).padStart(2, '0')}
-            </span>
-            <h2>{service.title}</h2>
-            <p>{service.shortDescription}</p>
-          </article>
-        ))}
+      <section
+        className="section workshops-led-section"
+        id="workshops"
+        aria-labelledby="home-workshops-heading"
+      >
+        <h2 id="home-workshops-heading" className="section-title">
+          Workshop Series
+        </h2>
+        <p className="section-sub">
+          Relational Diplomacy · Live · Wednesdays 7:00–8:30 PM ET · Zoom · Join any
+          session, in any order · 18+
+        </p>
+        <div className="workshop-led-grid">
+          {(workshops || []).map((w) => {
+            const d = formatWorkshopDisplay(w.startsAt, w.timeZone)
+            const mon = d.month.slice(0, 3).toUpperCase()
+            const price = resolveWorkshopPrice(w, settings)
+            const hook = w.hook || w.shortDescription
+            return (
+              <article key={w._id} className="workshop-led">
+                <span className="num" aria-hidden="true">
+                  {String(w.sessionNumber).padStart(2, '0')}
+                </span>
+                <h2>{w.title}</h2>
+                {hook ? <p className="hook">{hook}</p> : null}
+                <div className="workshop-led-foot">
+                  <div className="accent-bar" aria-hidden="true" />
+                  <div className="meta">
+                    {d.timeWithZone}
+                    {price != null ? ` · $${price}` : null}
+                  </div>
+                  <Link className="cta" href={`/workshops/${w.slug}`}>
+                    {mon} {d.day} · Details{' '}
+                    <span aria-hidden="true">→</span>
+                  </Link>
+                </div>
+              </article>
+            )
+          })}
+        </div>
+      </section>
+
+      <section
+        className="expertise-band"
+        aria-labelledby="home-expertise-heading"
+      >
+        <div className="expertise-band-inner">
+          <h2 id="home-expertise-heading" className="expertise-band-title">
+            Areas of Expertise
+          </h2>
+          <div className="expertise-band-list">
+            {(services || []).map((service, i) => (
+              <div key={service._id} className="expertise-band-item">
+                <span className="num" aria-hidden="true">
+                  {String(service.order || i + 1).padStart(2, '0')}
+                </span>
+                <h3>{service.title}</h3>
+                {service.shortDescription ? (
+                  <p>{service.shortDescription}</p>
+                ) : null}
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
       <section className="how" aria-labelledby="home-how-heading">
@@ -138,45 +195,19 @@ export default async function HomePage() {
         </ol>
       </section>
 
-      <section className="section" id="workshops" aria-labelledby="home-workshops-heading">
-        <h2 id="home-workshops-heading" className="section-title">
-          Workshop Series
-        </h2>
-        <p className="section-sub">
-          Relational Diplomacy · Live · Wednesdays 7:00–8:30 PM ET · Zoom · Join any
-          session, in any order · 18+
-        </p>
-        <div className="sched-grid">
-          {(workshops || []).map((w) => (
-            <Link key={w._id} href={`/workshops/${w.slug}`} className="sev">
-              <WorkshopDateLabel startsAt={w.startsAt} timeZone={w.timeZone} />
-              <span className="t">{w.title}</span>
-            </Link>
-          ))}
-        </div>
-        <p style={{ marginTop: 28 }}>
-          <Link href="/workshops" className="btn">
-            All workshops
-          </Link>
-        </p>
-      </section>
-
-      <section className="fees-strip" aria-label="Fees">
+      <section className="fees-strip fees-strip--3" aria-label="Fees">
         <div className="fee">
-          <span className="k">Couples</span>
+          <span className="k">Workshops</span>
           <div className="amt">
-            {couples?.priceUSD != null ? (
+            {workshopDefault != null ? (
               <>
-                ${couples.priceUSD}{' '}
-                {couples.durationMinutes != null ? (
-                  <span>/ {couples.durationMinutes} min</span>
-                ) : null}
+                ${workshopDefault} <span>/ session</span>
               </>
             ) : (
               <span>Contact for current fees</span>
             )}
           </div>
-          <p>Private pay · online · discreet</p>
+          <p>Per participant · live on Zoom · 90 min</p>
         </div>
         <div className="fee">
           <span className="k">Individuals</span>
@@ -186,6 +217,22 @@ export default async function HomePage() {
                 ${individuals.priceUSD}{' '}
                 {individuals.durationMinutes != null ? (
                   <span>/ {individuals.durationMinutes} min</span>
+                ) : null}
+              </>
+            ) : (
+              <span>Contact for current fees</span>
+            )}
+          </div>
+          <p>Private pay · online · discreet</p>
+        </div>
+        <div className="fee">
+          <span className="k">Couples</span>
+          <div className="amt">
+            {couples?.priceUSD != null ? (
+              <>
+                ${couples.priceUSD}{' '}
+                {couples.durationMinutes != null ? (
+                  <span>/ {couples.durationMinutes} min</span>
                 ) : null}
               </>
             ) : (

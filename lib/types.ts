@@ -32,6 +32,7 @@ export type SiteSettings = {
   ogTitle: string
   mailingAddress?: string
   notificationsEnabled?: boolean
+  defaultWorkshopPrice?: number
   workshopDisclaimer?: string
 }
 
