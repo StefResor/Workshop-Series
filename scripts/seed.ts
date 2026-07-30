@@ -208,27 +208,18 @@ const services = [
   {
     _id: 'service-couples-same-fight',
     order: 1,
-    title: 'Couples Stuck in the Same Fight',
+    title: 'Couples',
     shortDescription:
-      "The repeating argument isn't about the surface topic. It's two protective patterns colliding on schedule. We interrupt the cycle at its source.",
-    priceUSD: 300, // CONFIRM WITH STEF
-    durationMinutes: 75, // CONFIRM WITH STEF
-  },
-  {
-    _id: 'service-couples-crossroads',
-    order: 2,
-    title: 'Couples at a Crossroads',
-    shortDescription:
-      'Recommit, or separate with integrity. Either way — a decision made deliberately, with structure, not by exhaustion or default.',
+      'The argument that repeats on schedule, and the decision underneath it that neither of you will say out loud. Most couples arrive naming the wrong problem — the money, the dishes, the tone. We work the pattern that generates it. If the honest answer turns out to be separation, that happens deliberately and with structure, rather than by exhaustion.',
     priceUSD: 300, // CONFIRM WITH STEF
     durationMinutes: 75, // CONFIRM WITH STEF
   },
   {
     _id: 'service-individual-relational',
-    order: 3,
-    title: 'Individual Relational Work',
+    order: 2,
+    title: 'Individuals',
     shortDescription:
-      'From shame and defensiveness toward accountability. Change how you show up in every relationship that matters to you.',
+      "For people who are precise, effective, and well-regarded at work and cannot reproduce any of it at home. Defensiveness, shame, the reflex to win, the retreat that reads as calm. These patterns were learned early, they predate the relationship you're in, and they outlast it unless something interrupts them.",
     priceUSD: 150, // CONFIRM WITH STEF
     durationMinutes: 50, // CONFIRM WITH STEF
   },

@@ -78,6 +78,16 @@ export default async function HomePage() {
   const couples = services?.find((s) => s.slug.includes('couples') && s.order === 1)
   const individuals = services?.find((s) => s.slug.includes('individual'))
   const workshopDefault = settings?.defaultWorkshopPrice ?? null
+  const practice = (services || [])
+    .filter((s) => {
+      const slug = s.slug || ''
+      return (
+        (slug.includes('couples') && s.order === 1) ||
+        slug.includes('individual')
+      )
+    })
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+    .slice(0, 2)
 
   return (
     <>
@@ -125,6 +135,10 @@ export default async function HomePage() {
           Relational Diplomacy · Live · Wednesdays 7:00–8:30 PM ET · Zoom · Join any
           session, in any order · 18+
         </p>
+        <p className="section-note">
+          Separate from the series, I see a small number of couples and individuals
+          privately.
+        </p>
         <div className="workshop-led-grid">
           {(workshops || []).map((w) => {
             const d = formatWorkshopDisplay(w.startsAt, w.timeZone)
@@ -157,18 +171,16 @@ export default async function HomePage() {
 
       <section
         className="expertise-band"
-        aria-labelledby="home-expertise-heading"
+        aria-labelledby="home-practice-heading"
       >
         <div className="expertise-band-inner">
-          <h2 id="home-expertise-heading" className="expertise-band-title">
-            Areas of Expertise
+          <h2 id="home-practice-heading" className="expertise-band-title">
+            The Practice
           </h2>
           <div className="expertise-band-list">
-            {(services || []).map((service, i) => (
+            {practice.map((service) => (
               <div key={service._id} className="expertise-band-item">
-                <span className="num" aria-hidden="true">
-                  {String(service.order || i + 1).padStart(2, '0')}
-                </span>
+                <span className="rule" aria-hidden="true" />
                 <h3>{service.title}</h3>
                 {service.shortDescription ? (
                   <p>{service.shortDescription}</p>
