@@ -29,7 +29,7 @@ export default async function FeesPage() {
     sanityFetch<SiteSettings | null>(siteSettingsQuery),
   ])
 
-  const couples = services?.find((s) => s.order === 1)
+  const couples = services?.find((s) => s.slug.includes('couples'))
   const individuals = services?.find((s) => s.slug.includes('individual'))
   const workshopDefault = settings?.defaultWorkshopPrice ?? null
 

@@ -34,7 +34,7 @@ const COUPLES = {
   _id: 'service-couples-same-fight',
   title: 'Couples',
   slug: 'couples',
-  order: 1,
+  order: 2,
   shortDescription:
     'The argument that repeats on schedule, and the decision underneath it that neither of you will say out loud. Most couples arrive naming the wrong problem — the money, the dishes, the tone. We work the pattern that generates it. If the honest answer turns out to be separation, that happens deliberately and with structure, rather than by exhaustion.',
 }
@@ -43,7 +43,7 @@ const INDIVIDUALS = {
   _id: 'service-individual-relational',
   title: 'Individuals',
   slug: 'individuals',
-  order: 2,
+  order: 1,
   shortDescription:
     "For people who are precise, effective, and well-regarded at work and cannot reproduce any of it at home. Defensiveness, shame, the reflex to win, the retreat that reads as calm. These patterns were learned early, they predate the relationship you're in, and they outlast it unless something interrupts them.",
 }

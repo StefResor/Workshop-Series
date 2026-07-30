@@ -75,16 +75,13 @@ export default async function HomePage() {
   ])
 
   const { lines, outline } = splitHeadline(home?.headline)
-  const couples = services?.find((s) => s.slug.includes('couples') && s.order === 1)
+  const couples = services?.find((s) => s.slug.includes('couples'))
   const individuals = services?.find((s) => s.slug.includes('individual'))
   const workshopDefault = settings?.defaultWorkshopPrice ?? null
   const practice = (services || [])
     .filter((s) => {
       const slug = s.slug || ''
-      return (
-        (slug.includes('couples') && s.order === 1) ||
-        slug.includes('individual')
-      )
+      return slug.includes('couples') || slug.includes('individual')
     })
     .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
     .slice(0, 2)
