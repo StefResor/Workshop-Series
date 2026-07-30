@@ -244,7 +244,7 @@ const pages = [
     title: 'Home',
     slug: 'home',
     eyebrow: 'Relational Diplomacy · For Individuals & Couples',
-    headline: 'Say the hard thing skillfully.',
+    headline: 'Relate Better.',
     summary:
       'Structured, direct relationship work for high-responsibility professionals and leaders. Deliberately small caseload. Private-pay, online, and discreet — all adults welcome.',
     body: `Accountability. Honesty. Repair. Boundaries. Family-of-origin pattern recognition. From reactivity to the Wise Adult.

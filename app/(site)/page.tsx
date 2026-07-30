@@ -49,14 +49,14 @@ const HOW = [
 ]
 
 function splitHeadline(headline?: string) {
-  const text = (headline || 'Say the hard thing skillfully.').replace(/\.$/, '')
+  const text = (headline || 'Relate Better.').replace(/\.$/, '')
   const parts = text.split(/\s+/)
   if (parts.length < 2) {
     return { lines: [text], outline: '' }
   }
   const outline = parts[parts.length - 1]
   const rest = parts.slice(0, -1)
-  // Prototype breaks: Say the / hard thing / skillfully.
+  // Longer headlines: break mid-phrase (e.g. Say the / hard thing / skillfully.)
   if (rest.length >= 4) {
     return {
       lines: [rest.slice(0, 2).join(' '), rest.slice(2).join(' ')],
