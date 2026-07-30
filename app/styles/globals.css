@@ -8,15 +8,9 @@
   padding: 0;
 }
 
-html {
-  scroll-behavior: smooth;
-}
+/* Avoid html { scroll-behavior: smooth } — breaks App Router scroll-to-top. */
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
   *,
   *::before,
   *::after {
