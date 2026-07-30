@@ -33,16 +33,37 @@ const METHOD = [
   'From reactivity to the Wise Adult',
 ]
 
+/** Desktop line break after “reactivity”; mobile stays natural wrap. */
+function splitApproachHeadline(headline?: string) {
+  const raw = (headline || 'From reactivity to the Wise Adult.').trim()
+  const hasPeriod = raw.endsWith('.')
+  const text = hasPeriod ? raw.slice(0, -1) : raw
+  const match = /^(.*?reactivity)\s+(.+)$/i.exec(text)
+  if (!match) {
+    return { before: text, after: '', hasPeriod }
+  }
+  return { before: match[1], after: match[2], hasPeriod }
+}
+
 export default async function ApproachPage() {
   const page = await sanityFetch<PageDoc | null>(pageBySlugQuery, {
     slug: 'approach',
   })
+  const { before, after, hasPeriod } = splitApproachHeadline(page?.headline)
 
   return (
     <>
-      <header className="page-hero">
+      <header className="page-hero approach-hero">
         <span className="kicker">{page?.eyebrow || 'How change actually happens'}</span>
-        <h1>{page?.headline || 'From reactivity to the Wise Adult.'}</h1>
+        <h1>
+          {before}
+          {after ? (
+            <>
+              <br className="approach-title-break" /> {after}
+            </>
+          ) : null}
+          {hasPeriod ? '.' : null}
+        </h1>
         <p className="lede">
           {page?.summary ||
             'Structured relational work built on accountability, honesty, repair, boundaries, and family-of-origin pattern recognition.'}

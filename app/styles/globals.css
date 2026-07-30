@@ -271,6 +271,16 @@ textarea {
   color: var(--color-muted);
 }
 
+.approach-title-break {
+  display: none;
+}
+
+@media (min-width: 861px) {
+  .approach-title-break {
+    display: block;
+  }
+}
+
 .section {
   padding: 9vh var(--page-pad-x);
 }
