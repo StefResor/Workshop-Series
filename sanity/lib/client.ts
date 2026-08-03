@@ -23,8 +23,12 @@ export function getReadClient() {
   const token =
     process.env.SANITY_API_READ_TOKEN || process.env.SANITY_API_WRITE_TOKEN
   if (!token) {
-    throw new Error(
-      'Missing SANITY_API_READ_TOKEN (required when the Sanity dataset is private)',
+    console.error(
+      JSON.stringify({
+        event: 'sanity_read_token_missing',
+        ok: false,
+        at: new Date().toISOString(),
+      }),
     )
   }
 
