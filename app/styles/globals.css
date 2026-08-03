@@ -677,24 +677,85 @@ textarea {
 }
 
 /* ——— The Practice ——— */
+/* Soft ink gradient + low-contrast triangular facets (token color-mix only). */
 .expertise-band {
+  --practice-facet-a: color-mix(in srgb, var(--color-bone) 2.2%, transparent);
+  --practice-facet-b: color-mix(in srgb, var(--color-bone) 3.5%, transparent);
+  --practice-facet-c: color-mix(in srgb, var(--color-accent) 1.4%, transparent);
   color: var(--color-bone);
   border-bottom: var(--rule);
   background-color: var(--color-ink);
   background-image:
-    repeating-linear-gradient(
-      45deg,
-      transparent,
-      transparent 6px,
-      color-mix(in srgb, var(--color-bone) 3.5%, transparent) 6px,
-      color-mix(in srgb, var(--color-bone) 3.5%, transparent) 7px
+    linear-gradient(
+      30deg,
+      var(--practice-facet-a) 12%,
+      transparent 12.5%,
+      transparent 87%,
+      var(--practice-facet-a) 87.5%,
+      var(--practice-facet-a)
+    ),
+    linear-gradient(
+      150deg,
+      var(--practice-facet-a) 12%,
+      transparent 12.5%,
+      transparent 87%,
+      var(--practice-facet-a) 87.5%,
+      var(--practice-facet-a)
+    ),
+    linear-gradient(
+      30deg,
+      var(--practice-facet-b) 12%,
+      transparent 12.5%,
+      transparent 87%,
+      var(--practice-facet-b) 87.5%,
+      var(--practice-facet-b)
+    ),
+    linear-gradient(
+      150deg,
+      var(--practice-facet-b) 12%,
+      transparent 12.5%,
+      transparent 87%,
+      var(--practice-facet-b) 87.5%,
+      var(--practice-facet-b)
+    ),
+    linear-gradient(
+      60deg,
+      var(--practice-facet-c) 25%,
+      transparent 25.5%,
+      transparent 75%,
+      var(--practice-facet-c) 75%,
+      var(--practice-facet-c)
+    ),
+    linear-gradient(
+      60deg,
+      var(--practice-facet-a) 25%,
+      transparent 25.5%,
+      transparent 75%,
+      var(--practice-facet-a) 75%,
+      var(--practice-facet-a)
     ),
     linear-gradient(
       180deg,
       var(--color-ink) 0%,
-      color-mix(in srgb, var(--color-ink) 94%, var(--color-bone)) 55%,
+      color-mix(in srgb, var(--color-ink) 93%, var(--color-bone)) 52%,
       color-mix(in srgb, var(--color-ink) 96%, var(--color-accent)) 100%
     );
+  background-size:
+    80px 140px,
+    80px 140px,
+    80px 140px,
+    80px 140px,
+    80px 140px,
+    80px 140px,
+    auto;
+  background-position:
+    0 0,
+    0 0,
+    40px 70px,
+    40px 70px,
+    0 0,
+    40px 70px,
+    0 0;
 }
 
 .expertise-band-inner {
