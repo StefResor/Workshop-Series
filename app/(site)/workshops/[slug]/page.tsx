@@ -123,7 +123,10 @@ export default async function WorkshopDetailPage({ params }: Props) {
                 Register — {priceLabel}
               </a>
             ) : (
-              <Link className="btn" href="/contact">
+              <Link
+                className="btn"
+                href={`/contact?workshop=${encodeURIComponent(workshop.title)}`}
+              >
                 Inquire to register — {priceLabel}
               </Link>
             )}

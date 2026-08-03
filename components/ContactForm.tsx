@@ -2,7 +2,12 @@
 
 import { FormEvent, useId, useState } from 'react'
 
-export function ContactForm() {
+type ContactFormProps = {
+  /** Workshop title from inquire CTA — emailed to admin only, not shown in UI. */
+  workshopTitle?: string
+}
+
+export function ContactForm({ workshopTitle }: ContactFormProps) {
   const [status, setStatus] = useState<'idle' | 'sending' | 'ok' | 'err'>('idle')
   const [error, setError] = useState('')
   const statusId = useId()
@@ -22,6 +27,8 @@ export function ContactForm() {
       email: String(data.get('email') || ''),
       message: String(data.get('message') || ''),
       website: String(data.get('website') || ''),
+      // From inquire CTA prop — not editable in the UI.
+      workshopTitle: workshopTitle || '',
     }
 
     try {

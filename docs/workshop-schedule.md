@@ -71,11 +71,57 @@ Document type: `workshop`
 | `zoomLink` | url | **Private** — Zoom join URL for paid-buyer confirmation email only |
 | `zoomPasscode` | string | **Private** — Zoom passcode for paid-buyer confirmation email only |
 
-Private fields live under Studio fieldset **Registration (private)**. They must never appear in public GROQ projections, pages, feeds, sitemaps, or client bundles. Join credentials are emailed via the Stripe webhook → Resend flow after `checkout.session.completed`.
+Private fields live under Studio fieldset **Registration (private)**. They must never appear in public GROQ projections, pages, feeds, sitemaps, or client bundles. Join credentials are emailed via the Stripe webhook → Resend flow after `checkout.session.completed`, and via the admin tool at `/admin/sessions`.
+
+### Credential delivery rule (date only)
+
+Compare `Date.now()` to the workshop’s stored UTC `startsAt` instant (never `startsAt.slice(0,10)` — sessions 9–10 are Thursday in UTC):
+
+| Days until `startsAt` (UTC) | Email |
+|---|---|
+| **> 8** | Welcome — schedule, no Zoom credentials |
+| **≤ 8** (including past) | Confirmation **with** Zoom credentials |
+
+Stef also sends credentials manually ~8 days before each session. Duplicate credential emails are expected; do not dedupe send history.
+
+### Series pass
+
+Identified by env **`STRIPE_SERIES_PRODUCT_ID`** (Stripe Product ID `prod_…`), not a Sanity field. On purchase: one email listing all ten published workshops; credentials inlined only for sessions inside the 8-day window.
 
 ### Stripe confirmation ops
 
-1. In Stripe, each workshop Payment Link must use a distinct Product; copy that Product ID (`prod_…`) into Studio → workshop → **Registration (private)** → `stripeProductId`.
-2. Enter `zoomLink` + `zoomPasscode` in the same fieldset before selling tickets.
-3. Stripe Dashboard → Webhooks → endpoint `https://<host>/api/stripe/webhook`, event `checkout.session.completed`. Secrets: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` (plus existing Resend/`CONTACT_FROM_EMAIL`).
-4. Local test: `stripe listen --forward-to localhost:3000/api/stripe/webhook` then complete a test Payment Link checkout.
+1. In Stripe, each workshop Payment Link must use a distinct Product; copy that Product ID (`prod_…`) into Studio → workshop → **Registration (private)** → `stripeProductId`. Paste the Payment Link URL into public `stripePaymentLink`.
+2. Create a series-pass Product; set `STRIPE_SERIES_PRODUCT_ID` on Vercel to that `prod_…`.
+3. Enter `zoomLink` + `zoomPasscode` in the private fieldset before selling tickets / blasting credentials.
+4. Stripe Dashboard → Webhooks → endpoint `https://<host>/api/stripe/webhook`, event `checkout.session.completed`. Secrets: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_SERIES_PRODUCT_ID` (plus Resend / `CONTACT_FROM_EMAIL`).
+5. Admin blast: `/admin/sessions` (Basic auth `ADMIN_USER` / `ADMIN_PASSWORD`) — unions individual + series buyers, dedupes by email, sends single-session credentials.
+6. Local test: `stripe listen --forward-to localhost:3000/api/stripe/webhook` then complete a test Payment Link checkout. Window math: `npm run test:workshop-window`.
+
+### Pre-launch verification
+
+Do these in order. Local `next start` is not a substitute for step 3 (Vercel Edge). DNS cutover only after steps 6–8 pass.
+
+1. **Env (Production, Preview, and Development on Vercel):** set a generated `ADMIN_USER` / `ADMIN_PASSWORD` (never memorable) and `STRIPE_SERIES_PRODUCT_ID` once the series Product exists. Middleware treats unset, empty string, and whitespace-only values as **not configured → 503** (never open, never compare against `""`).
+2. **Deploy** the admin / webhook / email branch.
+3. **Production re-curl** against `https://stefanie-schumacher-com.vercel.app` with no `Authorization` on all three routes — expect `401` when env is set correctly, or `503 Admin auth not configured` if missing/empty/whitespace (never `200`):
+
+```bash
+curl -s -o /dev/null -w "%{http_code}\n" \
+  "https://stefanie-schumacher-com.vercel.app/admin/sessions"
+curl -s -o /dev/null -w "%{http_code}\n" -X POST \
+  "https://stefanie-schumacher-com.vercel.app/api/admin/sessions/recipients" \
+  -H "Content-Type: application/json" -d '{"workshopId":"x"}'
+curl -s -o /dev/null -w "%{http_code}\n" -X POST \
+  "https://stefanie-schumacher-com.vercel.app/api/admin/sessions/send" \
+  -H "Content-Type: application/json" -d '{"workshopId":"x"}'
+```
+
+   Also confirm `/admin` is absent from `/sitemap.xml` and authenticated `/admin/sessions` HTML includes `noindex`. Do not Disallow `/admin` in `robots.txt`.
+
+4. **Stripe catalog:** eleven Products (10 workshops + series pass); archive superseded $45 Prices if replaced; eleven Payment Links.
+5. **Studio:** for all ten workshops, set public `stripePaymentLink` and private `stripeProductId`, `zoomLink`, `zoomPasscode`.
+6. **Workshop 01 purchase** (`startsAt` 2026-09-09, currently ~37 days out) → welcome email **without** Zoom credentials. Confirms webhook + product mapping only. Easy to misread a missing passcode as a bug; it is correct.
+7. **Near-dated fixture (do not skip):** map a test Product to a workshop with `startsAt` ≤ 8 days away (or a short-lived fixture). Buy once → credentials email with join button, plain URL, and passcode block. Step 6 passing does **not** validate this path.
+8. **Series pass purchase** → one email listing all ten sessions; credentials inlined only for in-window sessions (today: expect none inlined).
+9. **Refund** all three test charges.
+10. **Gmail + Outlook** render check on welcome and credentials variants.

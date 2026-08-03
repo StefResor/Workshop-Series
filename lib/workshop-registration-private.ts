@@ -6,6 +6,7 @@
 export type WorkshopRegistrationPrivate = {
   _id: string
   title: string
+  sessionNumber?: number
   startsAt: string
   endsAt: string
   timeZone: string
@@ -14,18 +15,58 @@ export type WorkshopRegistrationPrivate = {
   zoomPasscode?: string
 }
 
-/** Published docs only — drafts excluded. Private credentials projected. */
-export const workshopByStripeProductIdQuery = `*[
-  _type == "workshop" &&
-  stripeProductId == $productId &&
-  !(_id in path("drafts.**"))
-][0] {
+const privateProjection = `{
   _id,
   title,
+  sessionNumber,
   startsAt,
   endsAt,
   timeZone,
   stripeProductId,
   zoomLink,
   zoomPasscode
+}`
+
+/** Published docs only — drafts excluded. Private credentials projected. */
+export const workshopByStripeProductIdQuery = `*[
+  _type == "workshop" &&
+  stripeProductId == $productId &&
+  !(_id in path("drafts.**"))
+][0] ${privateProjection}`
+
+/** All published workshops, chronological — for series pass emails + admin. */
+export const publishedWorkshopsPrivateQuery = `*[
+  _type == "workshop" &&
+  status == "published" &&
+  !(_id in path("drafts.**"))
+] | order(startsAt asc) ${privateProjection}`
+
+/** Single published workshop by Sanity document id. */
+export const workshopPrivateByIdQuery = `*[
+  _type == "workshop" &&
+  _id == $id &&
+  !(_id in path("drafts.**"))
+][0] ${privateProjection}`
+
+/** Admin list — no Zoom credentials in projection. */
+export type WorkshopAdminListItem = {
+  _id: string
+  title: string
+  sessionNumber?: number
+  startsAt: string
+  timeZone: string
+  stripeProductId?: string
+}
+
+export const workshopsAdminListQuery = `*[
+  _type == "workshop" &&
+  status == "published" &&
+  !(_id in path("drafts.**"))
+] | order(startsAt asc) {
+  _id,
+  title,
+  sessionNumber,
+  startsAt,
+  timeZone,
+  stripeProductId
 }`

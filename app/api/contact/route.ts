@@ -10,6 +10,8 @@ const contactSchema = z.object({
   lastName: z.string().trim().min(1, 'lastName is required').max(100),
   email: z.string().trim().email('valid email is required').max(254),
   message: z.string().trim().min(1, 'message is required').max(5000),
+  /** Workshop inquire CTA context — admin email only. */
+  workshopTitle: z.string().trim().max(200).optional(),
   /** Honeypot — must be empty. */
   website: z.string().optional(),
 })
@@ -86,15 +88,23 @@ export async function POST(req: Request) {
 
   const resend = new Resend(apiKey)
 
+  const workshopTitle =
+    data.workshopTitle && data.workshopTitle.length > 0
+      ? data.workshopTitle
+      : null
+
   try {
     const result = await resend.emails.send({
       from,
       to: [to],
       replyTo: data.email,
-      subject: `Consultation request — ${data.firstName} ${data.lastName}`,
+      subject: workshopTitle
+        ? `Workshop inquiry — ${workshopTitle} — ${data.firstName} ${data.lastName}`
+        : `Consultation request — ${data.firstName} ${data.lastName}`,
       text: [
         `Name: ${data.firstName} ${data.lastName}`,
         `Email: ${data.email}`,
+        ...(workshopTitle ? [`Workshop: ${workshopTitle}`] : []),
         '',
         'Message:',
         data.message,
@@ -103,6 +113,7 @@ export async function POST(req: Request) {
         'Please do not include health details in form replies. This message was not stored in a database.',
       ].join('\n'),
     })
+
 
     if (result.error) {
       console.info(

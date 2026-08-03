@@ -11,7 +11,14 @@ export function generateMetadata(): Metadata {
   })
 }
 
-export default function ContactPage() {
+type ContactPageProps = {
+  searchParams: Promise<{ workshop?: string }>
+}
+
+export default async function ContactPage({ searchParams }: ContactPageProps) {
+  const params = await searchParams
+  const workshopTitle = params.workshop?.trim().slice(0, 200) || undefined
+
   return (
     <>
       <header className="page-hero">
@@ -26,7 +33,7 @@ export default function ContactPage() {
         <h2 id="contact-form-heading" className="visually-hidden">
           Consultation request form
         </h2>
-        <ContactForm />
+        <ContactForm workshopTitle={workshopTitle} />
       </section>
     </>
   )

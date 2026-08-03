@@ -2,59 +2,28 @@ import { createClient } from '@sanity/client'
 import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import Stripe from 'stripe'
-import { formatWorkshopDisplay } from '@/lib/datetime'
-import { DEFAULT_WORKSHOP_DISCLAIMER } from '@/lib/workshop-disclaimer'
 import {
+  buildConfirmationWithCredentialsEmail,
+  buildWelcomeEmail,
+  toEmailSession,
+} from '@/lib/emails/workshop-registration'
+import { productIdFromLineItem } from '@/lib/stripe-line-item'
+import {
+  publishedWorkshopsPrivateQuery,
   workshopByStripeProductIdQuery,
   type WorkshopRegistrationPrivate,
 } from '@/lib/workshop-registration-private'
+import { credentialsDueWithinWindow } from '@/lib/workshop-window'
 import { apiVersion, dataset, projectId } from '@/sanity/env'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-/**
- * In-memory idempotency for Stripe retries within a single instance lifetime.
- * TODO: persist processed event IDs (e.g. Sanity registration or KV) if volume grows.
- */
-const processedEventIds = new Set<string>()
+const SERIES_PURCHASE_LABEL = 'Relational Diplomacy Workshop Series'
 
-function productIdFromLineItem(
-  item: Stripe.LineItem | undefined,
-): string | null {
-  const product = item?.price?.product
-  if (!product) return null
-  if (typeof product === 'string') return product
-  if (typeof product === 'object' && 'id' in product && product.id) {
-    return product.id
-  }
-  return null
-}
-
-function buildConfirmationText(workshop: WorkshopRegistrationPrivate): string {
-  const when = formatWorkshopDisplay(
-    workshop.startsAt,
-    workshop.timeZone || 'America/New_York',
-  )
-  const lines = [
-    `You're registered for: ${workshop.title}`,
-    '',
-    `When: ${when.date} · ${when.timeWithZone}`,
-    '',
-  ]
-  if (workshop.zoomLink) {
-    lines.push(`Zoom join link: ${workshop.zoomLink}`)
-  }
-  if (workshop.zoomPasscode) {
-    lines.push(`Zoom passcode: ${workshop.zoomPasscode}`)
-  }
-  if (!workshop.zoomLink && !workshop.zoomPasscode) {
-    lines.push(
-      'Zoom details will follow separately — contact Stefanie if you need them sooner.',
-    )
-  }
-  lines.push('', DEFAULT_WORKSHOP_DISCLAIMER)
-  return lines.join('\n')
+function seriesProductId(): string | undefined {
+  const id = process.env.STRIPE_SERIES_PRODUCT_ID?.trim()
+  return id || undefined
 }
 
 export async function POST(req: Request) {
@@ -102,10 +71,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ received: true })
   }
 
-  if (processedEventIds.has(event.id)) {
-    return NextResponse.json({ received: true, duplicate: true })
-  }
-
   const session = event.data.object as Stripe.Checkout.Session
 
   if (session.payment_status !== 'paid') {
@@ -139,34 +104,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ received: true })
   }
 
-  const sanity = createClient({
-    projectId,
-    dataset,
-    apiVersion,
-    token: sanityToken,
-    useCdn: false,
-  })
-
-  const workshop = await sanity.fetch<WorkshopRegistrationPrivate | null>(
-    workshopByStripeProductIdQuery,
-    { productId },
-  )
-
-  if (!workshop) {
-    console.info(
-      JSON.stringify({
-        event: 'stripe_webhook_workshop_not_found',
-        ok: true,
-        productId,
-        sessionId: session.id,
-        stripeEventId: event.id,
-        at: new Date().toISOString(),
-      }),
-    )
-    return NextResponse.json({ received: true })
-  }
-
-  const buyerEmail = session.customer_details?.email
+  const buyerEmail =
+    session.customer_details?.email || session.customer_email || null
   if (!buyerEmail) {
     console.info(
       JSON.stringify({
@@ -181,30 +120,128 @@ export async function POST(req: Request) {
     return NextResponse.json({ received: true })
   }
 
+  const sanity = createClient({
+    projectId,
+    dataset,
+    apiVersion,
+    token: sanityToken,
+    useCdn: false,
+  })
+
+  const nowMs = Date.now()
+  const seriesId = seriesProductId()
+  const isSeries = Boolean(seriesId && productId === seriesId)
+
+  let email:
+    | ReturnType<typeof buildWelcomeEmail>
+    | ReturnType<typeof buildConfirmationWithCredentialsEmail>
+  let logKind: 'welcome' | 'credentials' | 'series'
+
+  try {
+    if (isSeries) {
+      const workshops = await sanity.fetch<WorkshopRegistrationPrivate[]>(
+        publishedWorkshopsPrivateQuery,
+      )
+
+      if (!workshops.length) {
+        console.info(
+          JSON.stringify({
+            event: 'stripe_webhook_series_no_workshops',
+            ok: true,
+            productId,
+            sessionId: session.id,
+            stripeEventId: event.id,
+            at: new Date().toISOString(),
+          }),
+        )
+        return NextResponse.json({ received: true })
+      }
+
+      const sessions = workshops.map((w) =>
+        toEmailSession(w, credentialsDueWithinWindow(w.startsAt, nowMs)),
+      )
+      const anyCreds = sessions.some((s) => s.includeCredentials)
+      email = anyCreds
+        ? buildConfirmationWithCredentialsEmail({
+            purchaseLabel: SERIES_PURCHASE_LABEL,
+            sessions,
+          })
+        : buildWelcomeEmail({
+            purchaseLabel: SERIES_PURCHASE_LABEL,
+            sessions,
+          })
+      logKind = 'series'
+    } else {
+      const workshop = await sanity.fetch<WorkshopRegistrationPrivate | null>(
+        workshopByStripeProductIdQuery,
+        { productId },
+      )
+
+      if (!workshop) {
+        console.info(
+          JSON.stringify({
+            event: 'stripe_webhook_unmatched_product',
+            ok: true,
+            productId,
+            sessionId: session.id,
+            stripeEventId: event.id,
+            at: new Date().toISOString(),
+          }),
+        )
+        return NextResponse.json({ received: true })
+      }
+
+      const due = credentialsDueWithinWindow(workshop.startsAt, nowMs)
+      const sessionLine = toEmailSession(workshop, due)
+      email = due
+        ? buildConfirmationWithCredentialsEmail({
+            purchaseLabel: workshop.title,
+            sessions: [sessionLine],
+          })
+        : buildWelcomeEmail({
+            purchaseLabel: workshop.title,
+            sessions: [sessionLine],
+          })
+      logKind = due ? 'credentials' : 'welcome'
+    }
+  } catch (err) {
+    console.info(
+      JSON.stringify({
+        event: 'stripe_webhook_sanity_failed',
+        ok: false,
+        productId,
+        sessionId: session.id,
+        stripeEventId: event.id,
+        error: err instanceof Error ? err.message : String(err),
+        at: new Date().toISOString(),
+      }),
+    )
+    return NextResponse.json({ error: 'Lookup failed' }, { status: 500 })
+  }
+
   const resend = new Resend(resendKey)
 
   try {
     const result = await resend.emails.send({
       from,
       to: [buyerEmail],
-      subject: `You're registered — ${workshop.title}`,
-      text: buildConfirmationText(workshop),
+      subject: email.subject,
+      html: email.html,
+      text: email.text,
     })
 
     if (result.error) {
       throw new Error(result.error.message)
     }
 
-    processedEventIds.add(event.id)
-
     console.info(
       JSON.stringify({
-        event: 'stripe_webhook_confirmation_sent',
+        event: 'stripe_webhook_email_sent',
         ok: true,
+        kind: logKind,
         productId,
         sessionId: session.id,
         stripeEventId: event.id,
-        workshopId: workshop._id,
         at: new Date().toISOString(),
       }),
     )
@@ -215,12 +252,11 @@ export async function POST(req: Request) {
       JSON.stringify({
         event: 'stripe_webhook_resend_failed',
         ok: false,
+        kind: logKind,
         productId,
         sessionId: session.id,
         stripeEventId: event.id,
-        workshopId: workshop._id,
         paymentStatus: session.payment_status,
-        customerEmail: buyerEmail,
         amountTotal: session.amount_total,
         currency: session.currency,
         error: err instanceof Error ? err.message : String(err),
