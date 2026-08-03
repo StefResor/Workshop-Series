@@ -61,6 +61,8 @@ Pre-cutover `NEXT_PUBLIC_SITE_URL` should be `https://stefanie-schumacher-com.ve
 
 Workshop purchase confirmations: Stripe webhook `POST /api/stripe/webhook` (`checkout.session.completed`) maps line-item Product ID → Sanity `workshop.stripeProductId`, then Resend emails the buyer Zoom join credentials from private Studio fields. Never project `stripeProductId` / `zoomLink` / `zoomPasscode` in public GROQ.
 
+The `production` dataset is **private**. `SANITY_API_READ_TOKEN` (Viewer) must be set on Vercel — without it, pages render empty shells (no workshops/fees). Create under Sanity → project → API → Tokens.
+
 ## Images
 
 Content images are served through the Sanity image CDN via `@sanity/image-url` with `auto('format')` and explicit width/quality. Do not convert or re-encode at upload — originals are preserved and format is negotiated per request.
