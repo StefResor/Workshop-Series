@@ -49,7 +49,7 @@ const HOW = [
 ]
 
 function splitHeadline(headline?: string) {
-  const text = (headline || 'Relate Better.').replace(/\.$/, '')
+  const text = (headline || 'Connect Better.').replace(/\.$/, '')
   const parts = text.split(/\s+/)
   if (parts.length < 2) {
     return { lines: [text], outline: '' }
@@ -90,7 +90,7 @@ export default async function HomePage() {
     <>
       <section className="home-hero">
         <span className="kicker">
-          {home?.eyebrow || 'Relational Diplomacy · For Individuals & Couples'}
+          {home?.eyebrow || 'The People Lab'}
         </span>
         <h1>
           {lines.map((line) => (

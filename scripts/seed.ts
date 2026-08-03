@@ -234,8 +234,8 @@ const pages = [
     _id: 'page-home',
     title: 'Home',
     slug: 'home',
-    eyebrow: 'Relational Diplomacy · For Individuals & Couples',
-    headline: 'Relate Better.',
+    eyebrow: 'The People Lab',
+    headline: 'Connect Better.',
     summary:
       'Structured, direct relationship work for high-responsibility professionals and leaders. Deliberately small caseload. Private-pay, online, and discreet — all adults welcome.',
     body: `Accountability. Honesty. Repair. Boundaries. Family-of-origin pattern recognition. From reactivity to the Wise Adult.

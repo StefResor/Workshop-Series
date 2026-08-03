@@ -678,9 +678,23 @@ textarea {
 
 /* ——— The Practice ——— */
 .expertise-band {
-  background: var(--color-ink);
   color: var(--color-bone);
   border-bottom: var(--rule);
+  background-color: var(--color-ink);
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 6px,
+      color-mix(in srgb, var(--color-bone) 3.5%, transparent) 6px,
+      color-mix(in srgb, var(--color-bone) 3.5%, transparent) 7px
+    ),
+    linear-gradient(
+      180deg,
+      var(--color-ink) 0%,
+      color-mix(in srgb, var(--color-ink) 94%, var(--color-bone)) 55%,
+      color-mix(in srgb, var(--color-ink) 96%, var(--color-accent)) 100%
+    );
 }
 
 .expertise-band-inner {
