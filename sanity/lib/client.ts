@@ -37,8 +37,8 @@ export function getReadClient() {
     dataset,
     apiVersion,
     token,
-    // Published content via API CDN — feeds are polled by calendar clients;
-    // pair with /api/revalidate so publishes still show up promptly.
-    useCdn: true,
+    // Private datasets: prefer the live API over API CDN so authenticated
+    // reads don't fail silently after visibility flips to private.
+    useCdn: false,
   })
 }
