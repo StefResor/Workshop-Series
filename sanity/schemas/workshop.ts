@@ -4,6 +4,15 @@ export const workshop = defineType({
   name: 'workshop',
   title: 'Workshop',
   type: 'document',
+  fieldsets: [
+    {
+      name: 'registrationPrivate',
+      title: 'Registration (private)',
+      description:
+        'Never shown on the site, in feeds, sitemaps, or client bundles. Used only for Stripe purchase → Zoom confirmation email.',
+      options: { collapsible: true, collapsed: true },
+    },
+  ],
   fields: [
     defineField({
       name: 'title',
@@ -119,13 +128,34 @@ export const workshop = defineType({
       title: 'Zoom registration URL',
       type: 'url',
       description:
-        "Zoom's public registration page for this session. Do not store join links — those are per-registrant secrets issued by Zoom.",
+        "Zoom's public registration page for this session (may appear on the site/feeds). Meeting join URL and passcode belong in Registration (private).",
     }),
     defineField({
       name: 'locationLabel',
       title: 'Location label',
       type: 'string',
       initialValue: 'Zoom',
+    }),
+    defineField({
+      name: 'stripeProductId',
+      title: 'Stripe Product ID',
+      type: 'string',
+      fieldset: 'registrationPrivate',
+      description: 'Product ID from Stripe (e.g. prod_…). Maps a Payment Link purchase to this workshop.',
+    }),
+    defineField({
+      name: 'zoomLink',
+      title: 'Zoom join URL',
+      type: 'url',
+      fieldset: 'registrationPrivate',
+      description: 'Meeting join URL emailed to the buyer after paid checkout. Never rendered publicly.',
+    }),
+    defineField({
+      name: 'zoomPasscode',
+      title: 'Zoom passcode',
+      type: 'string',
+      fieldset: 'registrationPrivate',
+      description: 'Meeting passcode emailed to the buyer after paid checkout. Never rendered publicly.',
     }),
   ],
   orderings: [

@@ -59,11 +59,23 @@ Document type: `workshop`
 | `timeZone` | string | always `America/New_York` |
 | `price` | number | optional override; else `siteSettings.defaultWorkshopPrice` ($45 seeded) |
 | `hook` | string | max ~90 chars; cards / social |
-| `stripePaymentLink` | url | Stripe Payment Link |
+| `stripePaymentLink` | url | Stripe Payment Link (public CTA) |
 | `capacity` | number | optional; empty = unlimited |
 | `registrationStatus` | string | `draft` \| `open` \| `sold-out` \| `past` |
 | `shortDescription` | text | feed / cards |
 | `body` | text | full event page (plain text paragraphs for now) |
 | `status` | string | `published` \| `draft` |
-| `zoomRegistrationUrl` | url | Zoom registration page — never store join links |
+| `zoomRegistrationUrl` | url | Zoom public registration page (may appear on site/feeds) |
 | `locationLabel` | string | default `Zoom` |
+| `stripeProductId` | string | **Private** — Stripe Product ID (`prod_…`); maps checkout → workshop |
+| `zoomLink` | url | **Private** — Zoom join URL for paid-buyer confirmation email only |
+| `zoomPasscode` | string | **Private** — Zoom passcode for paid-buyer confirmation email only |
+
+Private fields live under Studio fieldset **Registration (private)**. They must never appear in public GROQ projections, pages, feeds, sitemaps, or client bundles. Join credentials are emailed via the Stripe webhook → Resend flow after `checkout.session.completed`.
+
+### Stripe confirmation ops
+
+1. In Stripe, each workshop Payment Link must use a distinct Product; copy that Product ID (`prod_…`) into Studio → workshop → **Registration (private)** → `stripeProductId`.
+2. Enter `zoomLink` + `zoomPasscode` in the same fieldset before selling tickets.
+3. Stripe Dashboard → Webhooks → endpoint `https://<host>/api/stripe/webhook`, event `checkout.session.completed`. Secrets: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` (plus existing Resend/`CONTACT_FROM_EMAIL`).
+4. Local test: `stripe listen --forward-to localhost:3000/api/stripe/webhook` then complete a test Payment Link checkout.

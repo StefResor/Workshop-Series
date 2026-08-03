@@ -53,9 +53,13 @@ NEXT_PUBLIC_SITE_URL=
 RESEND_API_KEY=
 CONTACT_TO_EMAIL=
 CONTACT_FROM_EMAIL=
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
 ```
 
 Pre-cutover `NEXT_PUBLIC_SITE_URL` should be `https://stefanie-schumacher-com.vercel.app` so `/events.ics` and OG URLs resolve to Next, not Wix. Switch to `https://stefanie-schumacher.com` at DNS cutover.
+
+Workshop purchase confirmations: Stripe webhook `POST /api/stripe/webhook` (`checkout.session.completed`) maps line-item Product ID → Sanity `workshop.stripeProductId`, then Resend emails the buyer Zoom join credentials from private Studio fields. Never project `stripeProductId` / `zoomLink` / `zoomPasscode` in public GROQ.
 
 ## Images
 
