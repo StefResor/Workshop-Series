@@ -43,25 +43,20 @@ export async function POST(req: Request) {
         at: new Date().toISOString(),
       }),
     )
-    return NextResponse.json(
-      { ok: false },
-      {
-        status: 429,
-        headers: { 'Retry-After': String(limited.retryAfterSec) },
-      },
-    )
+    // 200 so the browser does not log a failed network request for a handled rejection.
+    return NextResponse.json({ ok: false })
   }
 
   let json: unknown
   try {
     json = await req.json()
   } catch {
-    return NextResponse.json({ ok: false }, { status: 400 })
+    return NextResponse.json({ ok: false })
   }
 
   const parsed = subscribeSchema.safeParse(json)
   if (!parsed.success) {
-    return NextResponse.json({ ok: false }, { status: 400 })
+    return NextResponse.json({ ok: false })
   }
 
   const data = parsed.data
@@ -96,7 +91,7 @@ export async function POST(req: Request) {
         },
       }),
     )
-    return NextResponse.json({ ok: false }, { status: 503 })
+    return NextResponse.json({ ok: false })
   }
 
   const blogOptIn = Boolean(data.blogOptIn)
@@ -121,47 +116,51 @@ export async function POST(req: Request) {
   const version = permissionLineVersion(data.permissionLine)
   const userAgent = req.headers.get('user-agent') || ''
 
-  try {
-    // Single opt-in today. Double opt-in would insert a confirmation send here
-    // and only call createContactInSegments after /subscribe/confirmed.
-    const result = await createContactInSegments({
-      email: data.email,
-      firstName,
-      segmentIds,
-      apiKey,
-    })
+  // Single opt-in today. Double opt-in would insert a confirmation send here
+  // and only call createContactInSegments after /subscribe/confirmed.
+  // Resend failures never throw — always { ok: true|false } at HTTP 200.
+  const result = await createContactInSegments({
+    email: data.email,
+    firstName,
+    segmentIds,
+    apiKey,
+  })
 
-    console.info(
-      JSON.stringify({
-        event: 'subscribe_consent',
-        ok: true,
-        at: new Date().toISOString(),
-        email: data.email,
-        firstName: firstName || null,
-        source: data.source,
-        blogOptIn,
-        segmentIds: result.segmentIds,
-        timestamp: new Date().toISOString(),
-        permissionLineVersion: version,
-        userAgent,
-        status: result.status,
-      }),
-    )
-
-    return NextResponse.json({ ok: true })
-  } catch {
+  if (!result.ok) {
     console.info(
       JSON.stringify({
         event: 'subscribe_failed',
         ok: false,
         at: new Date().toISOString(),
         source: data.source,
+        resendStatus: result.resendStatus,
+        resendMessage: result.resendMessage,
+        resendName: result.resendName,
       }),
     )
-    return NextResponse.json({ ok: false }, { status: 502 })
+    return NextResponse.json({ ok: false })
   }
+
+  console.info(
+    JSON.stringify({
+      event: 'subscribe_consent',
+      ok: true,
+      at: new Date().toISOString(),
+      email: data.email,
+      firstName: firstName || null,
+      source: data.source,
+      blogOptIn,
+      segmentIds: result.segmentIds,
+      timestamp: new Date().toISOString(),
+      permissionLineVersion: version,
+      userAgent,
+      status: result.status,
+    }),
+  )
+
+  return NextResponse.json({ ok: true })
 }
 
 export async function GET() {
-  return NextResponse.json({ ok: false }, { status: 405 })
+  return NextResponse.json({ ok: false })
 }

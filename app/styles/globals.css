@@ -33,8 +33,8 @@
 
 body {
   font-family: var(--font-sans);
-  background: var(--color-bone);
-  color: var(--color-ink);
+  background: var(--bone);
+  color: var(--ink);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   min-height: 100%;
@@ -45,7 +45,7 @@ body {
 }
 
 :focus-visible {
-  outline: 3px solid var(--color-accent);
+  outline: 3px solid var(--vermillion);
   outline-offset: 3px;
 }
 
@@ -55,8 +55,8 @@ body {
   top: 0;
   z-index: 200;
   transform: translateY(-120%);
-  background: var(--color-ink);
-  color: var(--color-bone);
+  background: var(--ink);
+  color: var(--bone);
   padding: 12px 18px;
   font-size: 13px;
   font-weight: 600;
@@ -93,8 +93,8 @@ body {
 
 body::selection,
 body *::selection {
-  background: var(--color-accent);
-  color: var(--color-white);
+  background: var(--vermillion);
+  color: var(--white);
 }
 
 a {
@@ -138,7 +138,7 @@ textarea {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: color-mix(in srgb, var(--color-bone) 94%, transparent);
+  background: color-mix(in srgb, var(--bone) 94%, transparent);
   backdrop-filter: blur(8px);
 }
 
@@ -150,7 +150,7 @@ textarea {
 }
 
 .wordmark:hover {
-  color: var(--color-accent);
+  color: var(--vermillion);
 }
 
 .nav {
@@ -168,7 +168,7 @@ textarea {
 
 .nav a:hover,
 .nav a[aria-current='page'] {
-  color: var(--color-accent);
+  color: var(--vermillion);
 }
 
 .nav-toggle {
@@ -185,8 +185,8 @@ textarea {
 }
 
 .nav-toggle:hover {
-  background: var(--color-ink);
-  color: var(--color-bone);
+  background: var(--ink);
+  color: var(--bone);
 }
 
 @media (max-width: 860px) {
@@ -202,7 +202,7 @@ textarea {
     right: 0;
     flex-direction: column;
     gap: 0;
-    background: var(--color-bone);
+    background: var(--bone);
     border-bottom: var(--rule-width) solid var(--rule-structural);
   }
 
@@ -219,8 +219,8 @@ textarea {
 /* ——— Shared UI ——— */
 .btn {
   display: inline-block;
-  background: var(--color-ink);
-  color: var(--color-bone);
+  background: var(--ink);
+  color: var(--bone);
   padding: 18px 34px;
   font-size: 13px;
   font-weight: 600;
@@ -232,7 +232,7 @@ textarea {
 }
 
 .btn:hover {
-  background: var(--color-accent);
+  background: var(--vermillion);
 }
 
 .btn:disabled {
@@ -245,7 +245,7 @@ textarea {
   font-weight: 600;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--color-accent);
+  color: var(--vermillion);
   display: block;
   margin-bottom: 26px;
 }
@@ -269,7 +269,7 @@ textarea {
   margin-top: 28px;
   font-size: var(--text-body);
   line-height: 1.6;
-  color: var(--color-muted);
+  color: var(--muted);
 }
 
 .approach-title-break {
@@ -294,7 +294,7 @@ textarea {
 }
 
 .section-sub {
-  color: var(--color-muted-2);
+  color: var(--muted-2);
   font-size: 14px;
   margin-bottom: 40px;
 }
@@ -304,7 +304,7 @@ textarea {
 }
 
 .workshops-led-section .section-note {
-  color: var(--color-muted);
+  color: var(--muted);
   font-size: var(--text-body-sm);
   line-height: 1.55;
   margin-bottom: 40px;
@@ -314,7 +314,7 @@ textarea {
 .site-footer {
   padding: 0;
   border-top: var(--rule-width) solid var(--rule-structural);
-  color: var(--color-muted-2);
+  color: var(--muted-2);
 }
 
 .site-footer-meta {
@@ -334,7 +334,7 @@ textarea {
 .email-signup-band {
   background: var(--bone);
   color: var(--ink);
-  padding: 45px var(--page-pad-x) 8vh;
+  padding: 90px var(--page-pad-x) 8vh;
   width: 100%;
 }
 
@@ -370,7 +370,7 @@ textarea {
 .email-signup-band-body {
   font-size: var(--text-body);
   line-height: 1.55;
-  color: var(--color-muted);
+  color: var(--muted);
   margin: 0;
   max-width: 36em;
 }
@@ -401,7 +401,7 @@ textarea {
 }
 
 .email-signup-field input::placeholder {
-  color: var(--color-muted-2);
+  color: var(--muted-2);
 }
 
 .email-signup-field input:focus {
@@ -430,8 +430,9 @@ textarea {
 }
 
 .email-signup-check-input:checked {
-  background: var(--vermillion);
-  border-color: var(--vermillion);
+  /* Vermillion fill only; ink border + ink check for contrast. */
+  background-color: var(--vermillion);
+  border-color: var(--ink);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%2314110e' stroke-width='2' d='M3 8.5l3.2 3.2L13 4'/%3E%3C/svg%3E");
   background-size: 12px 12px;
   background-position: center;
@@ -443,14 +444,14 @@ textarea {
 }
 
 .email-signup-check-input:focus-visible {
-  outline: 2px solid var(--vermillion);
+  outline: 2px solid var(--ink);
   outline-offset: 2px;
 }
 
 .email-signup-check-label {
   font-size: var(--text-body-sm);
   line-height: 1.45;
-  color: var(--color-muted);
+  color: var(--muted);
   cursor: pointer;
 }
 
@@ -483,7 +484,7 @@ textarea {
   margin: 0;
   font-size: 12.5px;
   line-height: 1.5;
-  color: var(--color-muted-2);
+  color: var(--muted-2);
   max-width: 36em;
 }
 
@@ -491,7 +492,7 @@ textarea {
   font-size: 11px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--color-muted-2);
+  color: var(--muted-2);
   max-width: none;
 }
 
@@ -504,11 +505,9 @@ textarea {
 .email-signup-error {
   margin: 0;
   font-size: 13px;
-  color: var(--vermillion);
-}
-
-.email-signup-form--footer .email-signup-error {
-  color: var(--color-accent);
+  color: var(--ink);
+  border-left: 2px solid var(--vermillion);
+  padding-left: 10px;
 }
 
 .email-signup-result {
@@ -522,7 +521,7 @@ textarea {
 }
 
 .email-signup-result--footer {
-  color: var(--color-muted);
+  color: var(--muted);
   font-size: 13px;
   text-transform: none;
   letter-spacing: 0;
@@ -622,9 +621,9 @@ textarea {
 /* Transparent fill + stroke alone is uneven on Archivo Black (S/K double-line).
    Fill with page bone on top of stroke so every letter shares one outer rim. */
 .home-hero h1 .outline {
-  color: var(--color-bone);
-  -webkit-text-fill-color: var(--color-bone);
-  -webkit-text-stroke: 3.5px var(--color-ink);
+  color: var(--bone);
+  -webkit-text-fill-color: var(--bone);
+  -webkit-text-stroke: 3.5px var(--ink);
   paint-order: stroke fill;
   letter-spacing: 0.04em;
 }
@@ -642,13 +641,13 @@ textarea {
   max-width: 520px;
   font-size: var(--text-body);
   line-height: 1.6;
-  color: var(--color-muted);
+  color: var(--muted);
 }
 
 /* ——— Marquee ——— */
 .bigband {
-  background: var(--color-accent);
-  color: var(--color-bone);
+  background: var(--vermillion);
+  color: var(--bone);
   overflow: hidden;
   padding: 13px 0;
   border-top: var(--rule-width) solid var(--rule-structural);
@@ -685,22 +684,22 @@ textarea {
 }
 
 .service-panel:hover {
-  background: var(--color-white);
+  background: var(--white);
 }
 
 .service-panel .num {
   font-family: var(--font-display);
   font-size: 44px;
   color: transparent;
-  -webkit-text-stroke: 1.5px var(--color-ink);
+  -webkit-text-stroke: 1.5px var(--ink);
   display: block;
   margin-bottom: 22px;
   transition: color 0.25s var(--ease), -webkit-text-stroke 0.25s var(--ease);
 }
 
 .service-panel:hover .num {
-  color: var(--color-accent);
-  -webkit-text-stroke: 1.5px var(--color-accent);
+  color: var(--vermillion);
+  -webkit-text-stroke: 1.5px var(--vermillion);
 }
 
 .service-panel h2 {
@@ -716,7 +715,7 @@ textarea {
 .service-panel p {
   font-size: var(--text-body-sm);
   line-height: 1.6;
-  color: var(--color-muted);
+  color: var(--muted);
 }
 
 /* ——— How ——— */
@@ -737,7 +736,7 @@ textarea {
 }
 
 .how h2 span {
-  color: var(--color-accent);
+  color: var(--vermillion);
 }
 
 .how-list li {
@@ -757,7 +756,7 @@ textarea {
 .how-list .n {
   font-family: var(--font-mono);
   font-size: 12px;
-  color: var(--color-accent);
+  color: var(--vermillion);
 }
 
 /* ——— Workshop rows ——— */
@@ -778,13 +777,13 @@ textarea {
 }
 
 .sev:hover {
-  color: var(--color-accent);
+  color: var(--vermillion);
 }
 
 .sev .d {
   font-family: var(--font-mono);
   font-size: 12px;
-  color: var(--color-accent);
+  color: var(--vermillion);
   font-weight: 500;
 }
 
@@ -809,13 +808,13 @@ textarea {
 }
 
 .workshop-row:hover {
-  color: var(--color-accent);
+  color: var(--vermillion);
 }
 
 .workshop-row .d {
   font-family: var(--font-mono);
   font-size: 12px;
-  color: var(--color-accent);
+  color: var(--vermillion);
   font-weight: 500;
 }
 
@@ -823,7 +822,7 @@ textarea {
   font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-muted-2);
+  color: var(--muted-2);
 }
 
 /* ——— Workshop LED (homepage) ——— */
@@ -834,6 +833,7 @@ textarea {
 .workshop-led-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: auto;
   /*
    * Exhibitions-index pattern: a scannable ruled list, not a table.
    * With all four sides present it reads as a box and competes with
@@ -854,6 +854,29 @@ textarea {
   transition: background 0.25s var(--ease);
 }
 
+/*
+ * Two-column only: each card spans four parent tracks (numeral · title ·
+ * hook · footer) via subgrid so paired cards share baseline alignment.
+ * Single-column keeps the flex stack — nothing to align against.
+ * Unsupported engines keep flex and reserve two title lines via 2lh.
+ */
+@supports (grid-template-rows: subgrid) {
+  @media (min-width: 861px) {
+    .workshop-led {
+      display: grid;
+      grid-template-rows: subgrid;
+      grid-row: span 4;
+      row-gap: 0;
+    }
+  }
+}
+
+@supports not (grid-template-rows: subgrid) {
+  .workshop-led h2 {
+    min-height: 2lh;
+  }
+}
+
 .workshop-led:nth-child(2n) {
   border-right: 0;
 }
@@ -866,11 +889,11 @@ textarea {
 .workshop-led:hover,
 .workshop-led:has(.cta:focus-visible) {
   /* Fill terminates on the horizontal rules; open sides are intentional. */
-  background: var(--color-white);
+  background: var(--white);
 }
 
 .workshop-led:has(.cta:focus-visible) {
-  outline: 3px solid var(--color-accent);
+  outline: 3px solid var(--vermillion);
   outline-offset: -3px;
 }
 
@@ -878,7 +901,7 @@ textarea {
   font-family: var(--font-display);
   font-size: 40px;
   color: transparent;
-  -webkit-text-stroke: 1.5px var(--color-ink);
+  -webkit-text-stroke: 1.5px var(--ink);
   display: block;
   margin-bottom: 18px;
   transition:
@@ -890,8 +913,8 @@ textarea {
 
 .workshop-led:hover .num,
 .workshop-led:has(.cta:focus-visible) .num {
-  color: var(--color-accent);
-  -webkit-text-stroke: 1.5px var(--color-accent);
+  color: var(--vermillion);
+  -webkit-text-stroke: 1.5px var(--vermillion);
 }
 
 .workshop-led h2 {
@@ -900,6 +923,7 @@ textarea {
   text-transform: uppercase;
   letter-spacing: 0.01em;
   line-height: 1.15;
+  text-wrap: balance;
   margin-bottom: 12px;
   font-weight: 400;
   position: relative;
@@ -909,7 +933,7 @@ textarea {
 .workshop-led .hook {
   font-size: var(--text-body-sm);
   line-height: 1.55;
-  color: var(--color-muted);
+  color: var(--muted);
   margin-bottom: 0;
   max-width: 36em;
   position: relative;
@@ -917,27 +941,14 @@ textarea {
 }
 
 .workshop-led-foot {
-  margin-top: auto;
-  padding-top: 18px;
-  display: flex;
-  flex-direction: column;
-}
-
-.workshop-led .accent-bar {
-  height: 1px;
-  background: color-mix(in srgb, var(--color-accent) 40%, var(--color-bone));
-  margin: 0 -28px 18px;
-  flex-shrink: 0;
-}
-
-.workshop-led .meta {
-  margin-bottom: 12px;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--color-muted-2);
-  position: relative;
-  z-index: 2;
+  /* Space above the rule only — hook margin-bottom stays 0 (no double-up). */
+  margin-top: 1.25rem;
+  padding-top: 14px;
+  border-top: 1px solid color-mix(in srgb, var(--vermillion) 40%, var(--bone));
+  margin-left: -28px;
+  margin-right: -28px;
+  padding-left: 28px;
+  padding-right: 28px;
 }
 
 .workshop-led .cta {
@@ -947,8 +958,10 @@ textarea {
   font-weight: 500;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--color-accent);
+  color: var(--vermillion);
   transition: opacity 0.2s var(--ease);
+  position: relative;
+  z-index: 2;
 }
 
 .workshop-led .cta:hover {
@@ -1066,7 +1079,7 @@ textarea {
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--color-muted-2);
+  color: var(--muted-2);
 }
 
 .fee .amt {
@@ -1079,11 +1092,11 @@ textarea {
   font-size: 0.32em;
   font-family: var(--font-sans);
   font-weight: 500;
-  color: var(--color-muted-2);
+  color: var(--muted-2);
 }
 
 .fee p {
-  color: var(--color-muted);
+  color: var(--muted);
   font-size: var(--text-body-sm);
 }
 
@@ -1105,7 +1118,7 @@ textarea {
   top: 90px;
   align-self: start;
   z-index: 1;
-  background: var(--color-bone);
+  background: var(--bone);
 }
 
 .about-portrait {
@@ -1124,7 +1137,7 @@ textarea {
   content: '';
   display: block;
   height: 12px;
-  background: var(--color-accent);
+  background: var(--vermillion);
   border-top: var(--rule-width) solid var(--rule-structural);
 }
 
@@ -1149,7 +1162,7 @@ textarea {
   line-height: 1.7;
   margin-bottom: 16px;
   max-width: 600px;
-  color: var(--color-muted);
+  color: var(--muted);
 }
 
 .about-facts {
@@ -1173,7 +1186,7 @@ textarea {
 /* ——— Workshop detail ——— */
 .ev-band {
   height: 12px;
-  background: var(--color-accent);
+  background: var(--vermillion);
   border-bottom: var(--rule-width) solid var(--rule-structural);
 }
 
@@ -1190,7 +1203,7 @@ textarea {
 }
 
 .ev-back {
-  color: var(--color-accent);
+  color: var(--vermillion);
   font-size: 13px;
   font-weight: 500;
   letter-spacing: 0.1em;
@@ -1236,7 +1249,7 @@ textarea {
   line-height: 1.65;
   margin-bottom: 18px;
   max-width: 640px;
-  color: var(--color-muted);
+  color: var(--muted);
 }
 
 .ev-note {
@@ -1263,7 +1276,7 @@ textarea {
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--color-muted-2);
+  color: var(--muted-2);
   margin-bottom: 8px;
 }
 
@@ -1274,13 +1287,13 @@ textarea {
   border: var(--rule-width) solid var(--ink);
   background: transparent;
   padding: 14px 16px;
-  color: var(--color-ink);
+  color: var(--ink);
 }
 
 .field input:focus,
 .field textarea:focus {
-  outline: 2px solid color-mix(in srgb, var(--color-accent) 35%, transparent);
-  border-color: var(--color-accent);
+  outline: 2px solid color-mix(in srgb, var(--vermillion) 35%, transparent);
+  border-color: var(--vermillion);
 }
 
 .field-row {
@@ -1300,21 +1313,21 @@ textarea {
 
 .form-status {
   font-size: 14px;
-  color: var(--color-muted);
+  color: var(--muted);
 }
 
 .form-status[data-tone='ok'] {
-  color: var(--color-ink);
+  color: var(--ink);
 }
 
 .form-status[data-tone='err'] {
-  color: var(--color-accent);
+  color: var(--vermillion);
 }
 
 .form-disclaimer {
   font-size: 13px;
   line-height: 1.55;
-  color: var(--color-muted-2);
+  color: var(--muted-2);
   max-width: 520px;
   margin-top: 8px;
 }

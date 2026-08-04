@@ -6,10 +6,10 @@
 
 | Token | Value |
 |---|---|
-| Ground | `#F3EFE7` (bone) |
-| Ink | `#1A1815` |
-| Accent | `#FF4D00` (electric orange) |
-| Muted text | `#44403A` / `#6B6459` |
+| Ground | `#F3EFE7` (`--bone`) |
+| Ink | `#14110E` (`--ink`) |
+| Accent | `#FF4A17` (`--vermillion`) |
+| Muted text | `#44403A` / `#6B6459` (`--muted` / `--muted-2`) |
 | Display | Archivo Black |
 | Body | Archivo |
 | Mono / labels | IBM Plex Mono |

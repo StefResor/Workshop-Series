@@ -10,7 +10,6 @@ import type {
   SiteSettings,
   Workshop,
 } from '@/lib/types'
-import { resolveWorkshopPrice } from '@/lib/workshop-price'
 import { sanityFetch } from '@/sanity/lib/fetch'
 import {
   emailSignupQuery,
@@ -138,8 +137,11 @@ export default async function HomePage() {
           Workshop Series
         </h2>
         <p className="section-sub">
-          Relational Diplomacy · Live · Wednesdays 7:00–8:30 PM ET · Zoom · Join any
-          session, in any order · 18+
+          {`Relational Diplomacy · Live · Wednesdays 7:00–8:30 PM ET · Zoom${
+            workshopDefault != null
+              ? ` · $${workshopDefault} per session`
+              : ''
+          } · Join any session, in any order · 18+`}
         </p>
         <p className="section-note">
           Separate from the series, I see a small number of couples and individuals
@@ -149,23 +151,40 @@ export default async function HomePage() {
           {(workshops || []).map((w) => {
             const d = formatWorkshopDisplay(w.startsAt, w.timeZone)
             const mon = d.month.slice(0, 3).toUpperCase()
-            const price = resolveWorkshopPrice(w, settings)
+            // Only surface a per-card price when it differs from the series default.
+            const cardPrice =
+              w.price != null &&
+              workshopDefault != null &&
+              w.price !== workshopDefault
+                ? w.price
+                : null
+            // Subhead covers ET/EDT; surface EST (or other) when a session differs.
+            const cardZone =
+              d.timeZoneName && d.timeZoneName !== 'EDT' && d.timeZoneName !== 'ET'
+                ? d.timeZoneName
+                : null
             const hook = w.hook || w.shortDescription
+            const ctaParts = [
+              `${mon} ${d.day}`,
+              cardPrice != null ? `$${cardPrice}` : null,
+              cardZone,
+              'Details',
+            ].filter(Boolean)
             return (
               <article key={w._id} className="workshop-led">
                 <span className="num" aria-hidden="true">
                   {String(w.sessionNumber).padStart(2, '0')}
                 </span>
                 <h2>{w.title}</h2>
-                {hook ? <p className="hook">{hook}</p> : null}
+                {/* Always present so subgrid has four tracks (numeral · title · hook · footer). */}
+                <p className="hook">{hook || null}</p>
                 <div className="workshop-led-foot">
-                  <div className="accent-bar" aria-hidden="true" />
-                  <div className="meta">
-                    {d.timeWithZone}
-                    {price != null ? ` · $${price}` : null}
-                  </div>
-                  <Link className="cta" href={`/workshops/${w.slug}`}>
-                    {mon} {d.day} · Details{' '}
+                  <Link
+                    className="cta"
+                    href={`/workshops/${w.slug}`}
+                    aria-label={`Details: ${w.title}, ${d.month} ${d.day}`}
+                  >
+                    {ctaParts.join(' · ')}{' '}
                     <span aria-hidden="true">→</span>
                   </Link>
                 </div>

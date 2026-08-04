@@ -11,10 +11,13 @@ import { Resend } from 'resend'
  */
 
 export type SubscribeResult =
-  | { status: 'subscribed'; segmentIds: string[] }
-  | { status: 'already_subscribed'; segmentIds: string[] }
-  // Reserved for Phase 2 double opt-in — not returned yet.
-  | { status: 'pending_confirmation'; segmentIds: string[] }
+  | { ok: true; status: 'subscribed' | 'already_subscribed'; segmentIds: string[] }
+  | {
+      ok: false
+      resendStatus: number | null
+      resendMessage: string
+      resendName: string | null
+    }
 
 export function permissionLineVersion(permissionLine: string): string {
   return createHash('sha256')
@@ -37,10 +40,23 @@ function isAlreadySubscribedError(error: {
   )
 }
 
+function resendFailure(error: {
+  name?: string
+  message?: string
+  statusCode?: number | null
+}): SubscribeResult {
+  return {
+    ok: false,
+    resendStatus: error.statusCode ?? null,
+    resendMessage: error.message || 'Resend contacts.create failed',
+    resendName: error.name || null,
+  }
+}
+
 /**
  * Create a global contact in one or more segments (single contacts.create call).
  * Already-subscribed is treated as success — never reveal membership.
- * Best-effort segment repair on re-submit; failures still return success.
+ * Never throws for Resend API errors — returns { ok: false } with loggable detail.
  */
 export async function createContactInSegments(opts: {
   email: string
@@ -50,39 +66,68 @@ export async function createContactInSegments(opts: {
 }): Promise<SubscribeResult> {
   const segmentIds = opts.segmentIds.filter(Boolean)
   if (segmentIds.length === 0) {
-    throw new Error('createContactInSegments requires at least one segment id')
-  }
-
-  const resend = new Resend(opts.apiKey)
-  const { error } = await resend.contacts.create({
-    email: opts.email,
-    firstName: opts.firstName || undefined,
-    unsubscribed: false,
-    segments: segmentIds.map((id) => ({ id })),
-  })
-
-  if (!error) return { status: 'subscribed', segmentIds }
-
-  if (!isAlreadySubscribedError(error)) {
-    throw new Error(error.message || 'Resend contacts.create failed')
-  }
-
-  for (const segmentId of segmentIds) {
-    const repair = await resend.contacts.segments.add({
-      email: opts.email,
-      segmentId,
-    })
-    if (repair.error) {
-      console.info(
-        JSON.stringify({
-          event: 'subscribe_segment_repair_failed',
-          ok: true,
-          at: new Date().toISOString(),
-          segmentId,
-        }),
-      )
+    return {
+      ok: false,
+      resendStatus: null,
+      resendMessage: 'createContactInSegments requires at least one segment id',
+      resendName: 'misconfigured',
     }
   }
 
-  return { status: 'already_subscribed', segmentIds }
+  try {
+    const resend = new Resend(opts.apiKey)
+    const { error } = await resend.contacts.create({
+      email: opts.email,
+      firstName: opts.firstName || undefined,
+      unsubscribed: false,
+      segments: segmentIds.map((id) => ({ id })),
+    })
+
+    if (!error) return { ok: true, status: 'subscribed', segmentIds }
+
+    if (!isAlreadySubscribedError(error)) {
+      return resendFailure(error)
+    }
+
+    for (const segmentId of segmentIds) {
+      try {
+        const repair = await resend.contacts.segments.add({
+          email: opts.email,
+          segmentId,
+        })
+        if (repair.error) {
+          console.info(
+            JSON.stringify({
+              event: 'subscribe_segment_repair_failed',
+              ok: true,
+              at: new Date().toISOString(),
+              segmentId,
+              resendStatus: repair.error.statusCode ?? null,
+              resendMessage: repair.error.message || null,
+            }),
+          )
+        }
+      } catch (repairErr) {
+        console.info(
+          JSON.stringify({
+            event: 'subscribe_segment_repair_failed',
+            ok: true,
+            at: new Date().toISOString(),
+            segmentId,
+            resendMessage:
+              repairErr instanceof Error ? repairErr.message : 'unknown',
+          }),
+        )
+      }
+    }
+
+    return { ok: true, status: 'already_subscribed', segmentIds }
+  } catch (err) {
+    return {
+      ok: false,
+      resendStatus: null,
+      resendMessage: err instanceof Error ? err.message : 'unknown Resend error',
+      resendName: 'exception',
+    }
+  }
 }

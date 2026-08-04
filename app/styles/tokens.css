@@ -1,16 +1,11 @@
 :root {
-  /* Direction C — The Wise Adult */
-  --color-bone: #f3efe7;
-  --color-ink: #1a1815;
-  --color-accent: #ff4d00;
-  --color-muted: #44403a;
-  --color-muted-2: #6b6459;
-  --color-white: #ffffff;
-
-  /* Aliases used by The Practice revision (campaign kit naming) */
+  /* Canonical palette — docs/design-decision.md (Practice revision) */
   --bone: #f3efe7;
   --ink: #14110e;
   --vermillion: #ff4a17;
+  --muted: #44403a;
+  --muted-2: #6b6459;
+  --white: #ffffff;
 
   /* The Practice section */
   --practice-ground: #f4e2d6; /* vermillion @ 8% into bone */

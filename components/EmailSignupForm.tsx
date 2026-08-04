@@ -75,13 +75,14 @@ export function EmailSignupForm({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       })
+      // Route always returns 200 + { ok }; ignore HTTP status for UX / console noise.
       const body = (await res.json().catch(() => null)) as { ok?: boolean } | null
-      if (!res.ok || !body?.ok) {
+      if (!body?.ok) {
         setStatus('err')
         return
       }
-      setStatus('ok')
       form.reset()
+      setStatus('ok')
     } catch {
       setStatus('err')
     }
