@@ -2,10 +2,18 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { formatWorkshopDisplay } from '@/lib/datetime'
 import { buildPageMetadata } from '@/lib/seo'
-import type { PageDoc, Service, SiteSettings, Workshop } from '@/lib/types'
+import { EmailSignupBand } from '@/components/EmailSignupBand'
+import type {
+  EmailSignup,
+  PageDoc,
+  Service,
+  SiteSettings,
+  Workshop,
+} from '@/lib/types'
 import { resolveWorkshopPrice } from '@/lib/workshop-price'
 import { sanityFetch } from '@/sanity/lib/fetch'
 import {
+  emailSignupQuery,
   pageBySlugQuery,
   servicesQuery,
   siteSettingsQuery,
@@ -67,11 +75,12 @@ function splitHeadline(headline?: string) {
 }
 
 export default async function HomePage() {
-  const [home, services, workshops, settings] = await Promise.all([
+  const [home, services, workshops, settings, emailSignup] = await Promise.all([
     sanityFetch<PageDoc | null>(pageBySlugQuery, { slug: 'home' }),
     sanityFetch<Service[]>(servicesQuery),
     sanityFetch<Workshop[]>(workshopsQuery),
     sanityFetch<SiteSettings | null>(siteSettingsQuery),
+    sanityFetch<EmailSignup | null>(emailSignupQuery),
   ])
 
   const { lines, outline } = splitHeadline(home?.headline)
@@ -90,7 +99,7 @@ export default async function HomePage() {
     <>
       <section className="home-hero">
         <span className="kicker">
-          {home?.eyebrow || 'The People Lab'}
+          {home?.eyebrow || 'The Connection Lab'}
         </span>
         <h1>
           {lines.map((line) => (
@@ -165,6 +174,8 @@ export default async function HomePage() {
           })}
         </div>
       </section>
+
+      {emailSignup ? <EmailSignupBand copy={emailSignup} /> : null}
 
       <section
         className="practice expertise-band"

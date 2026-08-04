@@ -234,7 +234,7 @@ const pages = [
     _id: 'page-home',
     title: 'Home',
     slug: 'home',
-    eyebrow: 'The People Lab',
+    eyebrow: 'The Connection Lab',
     headline: 'Connect Better.',
     summary:
       'Structured, direct relationship work for high-responsibility professionals and leaders. Deliberately small caseload. Private-pay, online, and discreet — all adults welcome.',
@@ -338,10 +338,32 @@ const siteSettingsDoc = {
   defaultWorkshopPrice: 47, // CONFIRM WITH STEF
 }
 
+// Public mailing list copy — see docs/email-list.md (never seed clinical contacts)
+const emailSignupDoc = {
+  _id: 'emailSignup',
+  _type: 'emailSignup',
+  enabled: true,
+  eyebrow: 'Stay in touch',
+  heading: 'Workshop updates',
+  body: 'Announcements for the workshop series, new writing, and occasional updates from the practice.',
+  nameLabel: 'First name',
+  emailLabel: 'Email',
+  buttonLabel: 'Subscribe',
+  permissionLine:
+    "A few emails a month. Unsubscribe anytime. This list isn't a way to reach Stefanie about therapy — use the consultation form for that.",
+  successMessage:
+    "You're on the list. Workshop announcements will come to this address.",
+  errorMessage:
+    "That didn't go through. Check the email address and try again.",
+  showInFooter: true,
+  footerHeading: 'Workshop announcements',
+}
+
 async function main() {
   const tx = client.transaction()
 
   tx.createOrReplace(siteSettingsDoc)
+  tx.createOrReplace(emailSignupDoc)
 
   for (const w of workshops) {
     tx.createOrReplace({
@@ -401,7 +423,7 @@ async function main() {
 
   await tx.commit()
   console.log(
-    `Seeded: siteSettings, ${workshops.length} workshops, ${services.length} services, ${pages.length} pages, ${policies.length} policies`,
+    `Seeded: siteSettings, emailSignup, ${workshops.length} workshops, ${services.length} services, ${pages.length} pages, ${policies.length} policies`,
   )
 }
 

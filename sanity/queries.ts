@@ -58,6 +58,22 @@ export const siteSettingsQuery = `*[_type == "siteSettings"][0] {
   workshopDisclaimer
 }`
 
+export const emailSignupQuery = `*[_type == "emailSignup"][0] {
+  _id,
+  enabled,
+  eyebrow,
+  heading,
+  body,
+  nameLabel,
+  emailLabel,
+  buttonLabel,
+  permissionLine,
+  successMessage,
+  errorMessage,
+  showInFooter,
+  footerHeading
+}`
+
 export const servicesQuery = `*[_type == "service"] | order(order asc) {
   _id,
   title,

@@ -1,4 +1,7 @@
-/** In-memory IP rate limiter for the contact form. Resets with the process. */
+/**
+ * In-memory IP rate limiter (contact form, email signup).
+ * Resets on cold start — acceptable at launch volume.
+ */
 
 type Bucket = { count: number; resetAt: number }
 

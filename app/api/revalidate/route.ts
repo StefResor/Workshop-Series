@@ -36,9 +36,10 @@ export function targetsForDoc(body: WebhookBody): RevalidateTarget[] {
       return []
 
     case 'siteSettings':
+    case 'emailSignup':
     case 'policy':
-      // Header/footer/metadata flow through the root layout into every page,
-      // including /workshops/[slug].
+      // Header/footer/metadata (and email signup) flow through the root layout
+      // into every page, including /workshops/[slug].
       return [{ kind: 'layout', path: '/' }]
 
     case 'workshop': {

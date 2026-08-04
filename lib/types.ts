@@ -36,6 +36,22 @@ export type SiteSettings = {
   workshopDisclaimer?: string
 }
 
+export type EmailSignup = {
+  _id: string
+  enabled?: boolean
+  eyebrow?: string
+  heading: string
+  body?: string
+  nameLabel?: string
+  emailLabel?: string
+  buttonLabel?: string
+  permissionLine: string
+  successMessage: string
+  errorMessage: string
+  showInFooter?: boolean
+  footerHeading?: string
+}
+
 export type Service = {
   _id: string
   title: string

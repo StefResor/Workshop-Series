@@ -312,6 +312,12 @@ textarea {
 }
 
 .site-footer {
+  padding: 0;
+  border-top: var(--rule-width) solid var(--rule-structural);
+  color: var(--color-muted-2);
+}
+
+.site-footer-meta {
   padding: 42px var(--page-pad-x);
   display: flex;
   justify-content: space-between;
@@ -321,8 +327,217 @@ textarea {
   font-weight: 500;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+
+/* ——— Email list signup ——— */
+/* Same ground as workshops — coda to the series, not a separate band. */
+.email-signup-band {
+  background: var(--bone);
+  color: var(--ink);
+  padding: 45px var(--page-pad-x) 8vh;
+  width: 100%;
+}
+
+.email-signup-band-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6vw;
+  align-items: start;
+}
+
+.email-signup-band-eyebrow {
+  font-family: var(--font-sans);
+  font-size: var(--text-kicker);
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--vermillion);
+  margin: 0 0 22px;
+}
+
+.email-signup-band-copy h2 {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3.6vw, 48px);
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 1.05;
+  color: var(--ink);
+  margin: 0 0 18px;
+  max-width: 14ch;
+  text-wrap: balance;
+}
+
+.email-signup-band-body {
+  font-size: var(--text-body);
+  line-height: 1.55;
+  color: var(--color-muted);
+  margin: 0;
+  max-width: 36em;
+}
+
+.email-signup-form--band {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  max-width: 28rem;
+}
+
+.email-signup-field input {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--ink);
+  border-radius: 0;
+  padding: 12px 0;
+  color: var(--ink);
+  font-size: var(--text-body);
+  font-family: inherit;
+}
+
+.email-signup-form--footer .email-signup-field input {
+  font-size: 14px;
+  padding: 8px 0;
+  min-width: 12rem;
+}
+
+.email-signup-field input::placeholder {
   color: var(--color-muted-2);
-  border-top: var(--rule-width) solid var(--rule-structural);
+}
+
+.email-signup-field input:focus {
+  outline: none;
+  border-bottom-width: 2px;
+  border-bottom-color: var(--vermillion);
+}
+
+.email-signup-submit--band {
+  align-self: flex-start;
+  background: var(--vermillion);
+  color: var(--ink);
+  border: 0;
+  border-radius: 0;
+  padding: 16px 28px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.2s var(--ease);
+}
+
+.email-signup-submit--band:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.email-signup-submit--band:disabled,
+.email-signup-submit--footer:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.email-signup-permission {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--color-muted-2);
+  max-width: 36em;
+}
+
+.email-signup-permission--footer {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-muted-2);
+  max-width: none;
+}
+
+.email-signup-permission--footer a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.email-signup-error {
+  margin: 0;
+  font-size: 13px;
+  color: var(--vermillion);
+}
+
+.email-signup-form--footer .email-signup-error {
+  color: var(--color-accent);
+}
+
+.email-signup-result {
+  font-size: var(--text-body);
+  line-height: 1.5;
+}
+
+.email-signup-result--band {
+  color: var(--ink);
+  max-width: 28rem;
+}
+
+.email-signup-result--footer {
+  color: var(--color-muted);
+  font-size: 13px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.email-signup-footer {
+  padding: 28px var(--page-pad-x) 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 16px 28px;
+  border-bottom: var(--rule-width) solid var(--rule-internal);
+  padding-bottom: 28px;
+}
+
+.email-signup-footer-heading {
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.email-signup-form--footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 12px 18px;
+  flex: 1;
+  min-width: min(100%, 20rem);
+}
+
+.email-signup-submit--footer {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--ink);
+  border-radius: 0;
+  padding: 8px 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 0.2s var(--ease), color 0.2s var(--ease);
+}
+
+.email-signup-submit--footer:hover:not(:disabled) {
+  color: var(--vermillion);
+  border-bottom-color: var(--vermillion);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .email-signup-submit--band,
+  .email-signup-submit--footer,
+  .email-signup-field input {
+    transition: none;
+  }
 }
 
 /* ——— Home: hero ——— */
@@ -569,7 +784,7 @@ textarea {
 
 /* ——— Workshop LED (homepage) ——— */
 .workshops-led-section {
-  padding-bottom: 4vh;
+  padding-bottom: 0;
 }
 
 .workshop-led-grid {
@@ -1081,8 +1296,27 @@ textarea {
   .workshop-led-grid,
   .expertise-band-list,
   .about-grid,
-  .field-row {
+  .field-row,
+  .email-signup-band-inner {
     grid-template-columns: 1fr;
+  }
+
+  .email-signup-band-copy h2 {
+    max-width: none;
+  }
+
+  .email-signup-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .email-signup-form--footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .email-signup-form--footer .email-signup-field input {
+    min-width: 0;
   }
 
   .workshop-led {

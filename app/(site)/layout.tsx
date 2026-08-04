@@ -1,16 +1,20 @@
+import { EmailSignupFooter } from '@/components/EmailSignupFooter'
 import { SiteFooter } from '@/components/SiteFooter'
 import { SiteHeader } from '@/components/SiteHeader'
 import { personJsonLd, websiteJsonLd } from '@/lib/schema'
-import type { SiteSettings } from '@/lib/types'
+import type { EmailSignup, SiteSettings } from '@/lib/types'
 import { sanityFetch } from '@/sanity/lib/fetch'
-import { siteSettingsQuery } from '@/sanity/queries'
+import { emailSignupQuery, siteSettingsQuery } from '@/sanity/queries'
 
 export default async function SiteLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const settings = await sanityFetch<SiteSettings | null>(siteSettingsQuery)
+  const [settings, emailSignup] = await Promise.all([
+    sanityFetch<SiteSettings | null>(siteSettingsQuery),
+    sanityFetch<EmailSignup | null>(emailSignupQuery),
+  ])
   const siteName = settings?.siteName || 'Stefanie Schumacher'
 
   const jsonLd = settings
@@ -38,6 +42,7 @@ export default async function SiteLayout({
         siteName={siteName}
         credentials={settings?.credentials}
         practiceLine={settings?.practiceLine}
+        signup={<EmailSignupFooter copy={emailSignup} />}
       />
     </div>
   )
