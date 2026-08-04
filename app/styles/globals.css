@@ -134,7 +134,7 @@ textarea {
   justify-content: space-between;
   align-items: center;
   padding: 24px var(--page-pad-x);
-  border-bottom: var(--rule);
+  border-bottom: var(--rule-width) solid var(--rule-structural);
   position: sticky;
   top: 0;
   z-index: 50;
@@ -173,7 +173,8 @@ textarea {
 
 .nav-toggle {
   display: none;
-  border: var(--rule);
+  /* Control chrome — not a section divider; keep full ink. */
+  border: var(--rule-width) solid var(--ink);
   background: transparent;
   padding: 8px 12px;
   font-size: 11px;
@@ -202,7 +203,7 @@ textarea {
     flex-direction: column;
     gap: 0;
     background: var(--color-bone);
-    border-bottom: var(--rule);
+    border-bottom: var(--rule-width) solid var(--rule-structural);
   }
 
   .nav.is-open {
@@ -211,7 +212,7 @@ textarea {
 
   .nav a {
     padding: 16px var(--page-pad-x);
-    border-top: 1px solid color-mix(in srgb, var(--color-ink) 18%, transparent);
+    border-top: var(--rule-width) solid var(--rule-internal);
   }
 }
 
@@ -251,7 +252,7 @@ textarea {
 
 .page-hero {
   padding: 10vh var(--page-pad-x) 8vh;
-  border-bottom: var(--rule);
+  border-bottom: var(--rule-width) solid var(--rule-structural);
   animation: rise-in 0.7s var(--ease) both;
 }
 
@@ -321,7 +322,7 @@ textarea {
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--color-muted-2);
-  border-top: var(--rule);
+  border-top: var(--rule-width) solid var(--rule-structural);
 }
 
 /* ——— Home: hero ——— */
@@ -391,8 +392,8 @@ textarea {
   color: var(--color-bone);
   overflow: hidden;
   padding: 13px 0;
-  border-top: var(--rule);
-  border-bottom: var(--rule);
+  border-top: var(--rule-width) solid var(--rule-structural);
+  border-bottom: var(--rule-width) solid var(--rule-structural);
 }
 
 .marquee-inner {
@@ -411,11 +412,11 @@ textarea {
 .service-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  border-bottom: var(--rule);
+  border-bottom: var(--rule-width) solid var(--rule-structural);
 }
 
 .service-panel {
-  border-right: var(--rule);
+  border-right: var(--rule-width) solid var(--rule-internal);
   padding: 44px 30px 50px;
   transition: background 0.25s var(--ease);
 }
@@ -465,7 +466,7 @@ textarea {
   grid-template-columns: 1fr 1.2fr;
   gap: 6vw;
   padding: 10vh var(--page-pad-x);
-  border-bottom: var(--rule);
+  border-bottom: var(--rule-width) solid var(--rule-structural);
 }
 
 .how h2 {
@@ -482,7 +483,7 @@ textarea {
 
 .how-list li {
   padding: 15px 0;
-  border-bottom: var(--rule);
+  border-bottom: var(--rule-width) solid var(--rule-internal);
   font-size: clamp(17px, 1.6vw, 23px);
   font-weight: 500;
   display: flex;
@@ -491,7 +492,7 @@ textarea {
 }
 
 .how-list li:first-child {
-  border-top: var(--rule);
+  border-top: var(--rule-width) solid var(--rule-internal);
 }
 
 .how-list .n {
@@ -513,7 +514,7 @@ textarea {
   gap: 22px;
   align-items: baseline;
   padding: 16px 0;
-  border-bottom: var(--rule);
+  border-bottom: var(--rule-width) solid var(--rule-internal);
   transition: color 0.2s var(--ease);
 }
 
@@ -534,7 +535,7 @@ textarea {
 }
 
 .workshop-list {
-  border-top: var(--rule);
+  border-top: var(--rule-width) solid var(--rule-structural);
 }
 
 .workshop-row {
@@ -543,7 +544,7 @@ textarea {
   gap: 3vw;
   align-items: baseline;
   padding: 20px 0;
-  border-bottom: var(--rule);
+  border-bottom: var(--rule-width) solid var(--rule-internal);
   transition: color 0.2s var(--ease);
 }
 
@@ -573,16 +574,21 @@ textarea {
 .workshop-led-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  border-top: var(--rule);
-  /* Bottom edge comes from .workshop-led border-bottom only — a grid
-     border-bottom here stacked to 3px on the last row. */
+  /*
+   * Exhibitions-index pattern: a scannable ruled list, not a table.
+   * With all four sides present it reads as a box and competes with
+   * The Practice band, which is the page’s only genuinely bounded region.
+   * Top/bottom match interior row dividers; no left/right outer edges.
+   */
+  border-top: var(--rule-width) solid var(--rule-internal);
+  border-bottom: var(--rule-width) solid var(--rule-internal);
 }
 
 .workshop-led {
   display: flex;
   flex-direction: column;
-  border-right: var(--rule);
-  border-bottom: var(--rule);
+  border-right: var(--rule-width) solid var(--rule-internal);
+  border-bottom: var(--rule-width) solid var(--rule-internal);
   padding: 36px 28px 28px;
   position: relative;
   transition: background 0.25s var(--ease);
@@ -592,8 +598,14 @@ textarea {
   border-right: 0;
 }
 
+/* Last row: bottom edge is the grid’s border-bottom. */
+.workshop-led-grid > .workshop-led:nth-last-child(-n + 2) {
+  border-bottom: 0;
+}
+
 .workshop-led:hover,
 .workshop-led:has(.cta:focus-visible) {
+  /* Fill terminates on the horizontal rules; open sides are intentional. */
   background: var(--color-white);
 }
 
@@ -705,7 +717,7 @@ textarea {
   color: var(--ink);
   background-color: var(--practice-ground);
   border-top: 2px solid var(--vermillion);
-  border-bottom: var(--rule);
+  border-bottom: var(--rule-width) solid var(--rule-structural);
 }
 
 .practice::before {
@@ -772,8 +784,8 @@ textarea {
 .fees-strip {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  border-top: var(--rule);
-  border-bottom: var(--rule);
+  border-top: var(--rule-width) solid var(--rule-structural);
+  border-bottom: var(--rule-width) solid var(--rule-structural);
 }
 
 .fees-strip--3 {
@@ -782,7 +794,7 @@ textarea {
 
 .fee {
   padding: 8vh var(--page-pad-x);
-  border-right: var(--rule);
+  border-right: var(--rule-width) solid var(--rule-internal);
 }
 
 .fee:last-child {
@@ -837,7 +849,7 @@ textarea {
 }
 
 .about-portrait {
-  border: var(--rule);
+  border: var(--rule-width) solid var(--rule-structural);
 }
 
 .about-portrait img {
@@ -853,7 +865,7 @@ textarea {
   display: block;
   height: 12px;
   background: var(--color-accent);
-  border-top: var(--rule);
+  border-top: var(--rule-width) solid var(--rule-structural);
 }
 
 .about-caption {
@@ -883,7 +895,7 @@ textarea {
 .about-facts {
   margin-top: 30px;
   padding-top: 18px;
-  border-top: var(--rule);
+  border-top: var(--rule-width) solid var(--rule-internal);
   font-size: 12.5px;
   line-height: 2;
   letter-spacing: 0.04em;
@@ -902,7 +914,7 @@ textarea {
 .ev-band {
   height: 12px;
   background: var(--color-accent);
-  border-bottom: var(--rule);
+  border-bottom: var(--rule-width) solid var(--rule-structural);
 }
 
 .ev-shell {
@@ -946,8 +958,8 @@ textarea {
   gap: 12px 34px;
   padding: 20px 0;
   margin-bottom: 34px;
-  border-top: var(--rule);
-  border-bottom: var(--rule);
+  border-top: var(--rule-width) solid var(--rule-internal);
+  border-bottom: var(--rule-width) solid var(--rule-internal);
 }
 
 .ev-meta .k {
@@ -972,7 +984,7 @@ textarea {
   line-height: 1.6;
   opacity: 0.65;
   max-width: 560px;
-  border-top: var(--rule);
+  border-top: var(--rule-width) solid var(--rule-internal);
   padding-top: 18px;
   margin-top: 44px;
 }
@@ -998,7 +1010,8 @@ textarea {
 .field input,
 .field textarea {
   width: 100%;
-  border: var(--rule);
+  /* Form control chrome — not a section divider; keep full ink. */
+  border: var(--rule-width) solid var(--ink);
   background: transparent;
   padding: 14px 16px;
   color: var(--color-ink);
@@ -1053,7 +1066,11 @@ textarea {
 
   .service-panel {
     border-right: 0;
-    border-bottom: var(--rule);
+    border-bottom: var(--rule-width) solid var(--rule-internal);
+  }
+
+  .service-panel:last-child {
+    border-bottom: 0; /* grid border-bottom is the structural edge */
   }
 
   .how,
@@ -1069,6 +1086,15 @@ textarea {
 
   .workshop-led {
     border-right: 0;
+  }
+
+  /* 1-col: only the final cell defers bottom edge to the grid’s bottom rule. */
+  .workshop-led-grid > .workshop-led:nth-last-child(-n + 2) {
+    border-bottom: var(--rule-width) solid var(--rule-internal);
+  }
+
+  .workshop-led-grid > .workshop-led:last-child {
+    border-bottom: 0;
   }
 
   .about-grid > .about-sticky {

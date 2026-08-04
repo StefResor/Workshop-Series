@@ -22,7 +22,11 @@
   --font-display: var(--font-archivo-black), 'Archivo Black', sans-serif;
   --font-mono: var(--font-ibm-plex-mono), 'IBM Plex Mono', monospace;
 
-  --rule: 1.5px solid var(--color-ink);
+  /* Two-tier ink rules — colors only; pair with 1.5px solid in declarations */
+  --rule-structural: var(--ink); /* section / container edges */
+  --rule-internal: rgba(20, 17, 14, 0.2); /* sibling dividers inside a region */
+  --rule-width: 1.5px;
+
   --page-pad-x: 4vw;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 
