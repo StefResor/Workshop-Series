@@ -535,7 +535,8 @@ textarea {
 }
 
 .workshop-list {
-  border-top: var(--rule-width) solid var(--rule-structural);
+  /* Ruled list (same pattern as .workshop-led-grid): top matches row dividers. */
+  border-top: var(--rule-width) solid var(--rule-internal);
 }
 
 .workshop-row {
