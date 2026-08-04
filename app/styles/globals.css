@@ -330,6 +330,27 @@ textarea {
   animation: rise-in 0.75s var(--ease) both;
 }
 
+/*
+  Hero eyebrow size = section eyebrow/heading ratio × hero display.
+  Section pair: .kicker (12px / --text-kicker) over .page-hero h1 min (36px)
+  → ratio 12/36. Applied to --text-display clamp(44px, 8.2vw, 128px).
+  Max ≈ 42.67px, below .section-title max (46px) — no further clamp needed.
+*/
+.home-hero .kicker {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(
+    calc(44px * 12 / 36),
+    calc(8.2vw * 12 / 36),
+    calc(128px * 12 / 36)
+  );
+  letter-spacing: 0.06em;
+  color: var(--ink);
+  /* Match CONNECT→BETTER optical gap: h1 line-height 0.92 packs lines by
+     (1 − 0.92) of display. Margin (not line-height) keeps em-derived size. */
+  margin-bottom: calc(var(--text-display) * (1 - 0.92));
+}
+
 .home-hero h1 {
   font-family: var(--font-display);
   font-size: var(--text-display);
@@ -553,7 +574,8 @@ textarea {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   border-top: var(--rule);
-  border-bottom: var(--rule);
+  /* Bottom edge comes from .workshop-led border-bottom only — a grid
+     border-bottom here stacked to 3px on the last row. */
 }
 
 .workshop-led {
