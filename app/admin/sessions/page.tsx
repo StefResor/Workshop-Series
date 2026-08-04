@@ -67,6 +67,12 @@ export default async function AdminSessionsPage() {
           )
           const days = daysUntilStartsAt(w.startsAt, nowMs)
           const n = w.sessionNumber != null ? `#${w.sessionNumber}` : ''
+          const missing: string[] = []
+          if (!w.stripeProductId) missing.push('missing Stripe product ID')
+          if (!w.hasZoomLink) missing.push('missing Zoom link')
+          if (!w.hasZoomPasscode) missing.push('missing passcode')
+          const canSend = Boolean(w.hasZoomLink && w.hasZoomPasscode)
+
           return (
             <li
               key={w._id}
@@ -82,11 +88,12 @@ export default async function AdminSessionsPage() {
               <div style={{ color: '#44403A', fontSize: 14, marginTop: 4 }}>
                 {when.date} · 7:00–8:30 PM ET · {formatDaysUntil(days)} until
                 start
-                {!w.stripeProductId ? ' · missing Stripe product ID' : ''}
+                {missing.length ? ` · ${missing.join(' · ')}` : ''}
               </div>
               <SendCredentialsButton
                 workshopId={w._id}
                 workshopTitle={w.title}
+                canSend={canSend}
               />
             </li>
           )

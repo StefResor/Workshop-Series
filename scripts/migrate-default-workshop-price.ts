@@ -1,6 +1,6 @@
 /**
- * Set siteSettings.defaultWorkshopPrice = 45 and clear stale per-workshop
- * price overrides that equal 35 (old Wix multi-event plan confusion).
+ * Set siteSettings.defaultWorkshopPrice = 47 and clear stale per-workshop
+ * price overrides that equal old defaults (35 from Wix confusion, 45 prior default).
  *
  * Usage:
  *   npx tsx scripts/migrate-default-workshop-price.ts --dry-run
@@ -30,18 +30,19 @@ const client = createClient({
   useCdn: false,
 })
 
-const DEFAULT = 45 // CONFIRM WITH STEF
-const STALE = 35
+const DEFAULT = 47 // CONFIRM WITH STEF
+const STALE = new Set([35, 45])
 
 async function main() {
-  const settings = await client.fetch<{ _id: string; defaultWorkshopPrice?: number } | null>(
-    `*[_type == "siteSettings"][0]{ _id, defaultWorkshopPrice }`,
-  )
+  const settings = await client.fetch<{
+    _id: string
+    defaultWorkshopPrice?: number
+  } | null>(`*[_type == "siteSettings"][0]{ _id, defaultWorkshopPrice }`)
   if (!settings?._id) throw new Error('No siteSettings document found')
 
-  const workshops = await client.fetch<{ _id: string; price?: number; title?: string }[]>(
-    `*[_type == "workshop" && defined(price)]{ _id, price, title }`,
-  )
+  const workshops = await client.fetch<
+    { _id: string; price?: number; title?: string }[]
+  >(`*[_type == "workshop" && defined(price)]{ _id, price, title }`)
 
   console.log(
     dryRun ? '[dry-run]' : '[write]',
@@ -49,15 +50,18 @@ async function main() {
   )
 
   if (!dryRun) {
-    await client.patch(settings._id).set({ defaultWorkshopPrice: DEFAULT }).commit()
+    await client
+      .patch(settings._id)
+      .set({ defaultWorkshopPrice: DEFAULT })
+      .commit()
   }
 
   for (const w of workshops) {
-    if (w.price !== STALE) {
+    if (w.price == null || !STALE.has(w.price)) {
       console.log(`keep override $${w.price} on ${w._id} (${w.title || ''})`)
       continue
     }
-    console.log(`unset stale price $${STALE} on ${w._id} (${w.title || ''})`)
+    console.log(`unset stale price $${w.price} on ${w._id} (${w.title || ''})`)
     if (!dryRun) {
       await client.patch(w._id).unset(['price']).commit()
       const draftId = `drafts.${w._id}`

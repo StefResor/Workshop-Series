@@ -48,7 +48,9 @@ export const workshopPrivateByIdQuery = `*[
   !(_id in path("drafts.**"))
 ][0] ${privateProjection}`
 
-/** Admin list — no Zoom credentials in projection. */
+/**
+ * Admin list — booleans only for Zoom presence (never project join URL/passcode).
+ */
 export type WorkshopAdminListItem = {
   _id: string
   title: string
@@ -56,6 +58,8 @@ export type WorkshopAdminListItem = {
   startsAt: string
   timeZone: string
   stripeProductId?: string
+  hasZoomLink: boolean
+  hasZoomPasscode: boolean
 }
 
 export const workshopsAdminListQuery = `*[
@@ -68,5 +72,7 @@ export const workshopsAdminListQuery = `*[
   sessionNumber,
   startsAt,
   timeZone,
-  stripeProductId
+  stripeProductId,
+  "hasZoomLink": defined(zoomLink) && zoomLink != "",
+  "hasZoomPasscode": defined(zoomPasscode) && zoomPasscode != ""
 }`

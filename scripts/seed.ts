@@ -335,7 +335,7 @@ const siteSettingsDoc = {
     'Structured, direct relationship work for high-responsibility professionals and leaders. Private-pay, online, and discreet.',
   twitterTitle: 'Stefanie Schumacher — Relational Diplomacy',
   ogTitle: 'Stefanie Schumacher — Relational Diplomacy',
-  defaultWorkshopPrice: 45, // CONFIRM WITH STEF
+  defaultWorkshopPrice: 47, // CONFIRM WITH STEF
 }
 
 async function main() {

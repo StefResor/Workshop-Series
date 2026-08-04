@@ -5,11 +5,17 @@ import { useState } from 'react'
 type Props = {
   workshopId: string
   workshopTitle: string
+  /** False when Zoom link or passcode is missing in Studio. */
+  canSend: boolean
 }
 
 type Phase = 'idle' | 'loading' | 'confirm' | 'sending' | 'done' | 'error'
 
-export function SendCredentialsButton({ workshopId, workshopTitle }: Props) {
+export function SendCredentialsButton({
+  workshopId,
+  workshopTitle,
+  canSend,
+}: Props) {
   const [phase, setPhase] = useState<Phase>('idle')
   const [count, setCount] = useState(0)
   const [sent, setSent] = useState(0)
@@ -17,6 +23,7 @@ export function SendCredentialsButton({ workshopId, workshopTitle }: Props) {
   const [error, setError] = useState('')
 
   async function loadRecipients() {
+    if (!canSend) return
     setPhase('loading')
     setError('')
     try {
@@ -41,6 +48,7 @@ export function SendCredentialsButton({ workshopId, workshopTitle }: Props) {
   }
 
   async function sendAll() {
+    if (!canSend || count === 0) return
     setPhase('sending')
     setError('')
     try {
@@ -66,19 +74,22 @@ export function SendCredentialsButton({ workshopId, workshopTitle }: Props) {
     }
   }
 
+  const sendDisabled = !canSend
+
   return (
     <div style={{ marginTop: 8 }}>
       {phase === 'idle' || phase === 'error' ? (
         <button
           type="button"
           onClick={loadRecipients}
+          disabled={sendDisabled}
           style={{
-            background: '#FF4A17',
+            background: sendDisabled ? '#999' : '#FF4A17',
             color: '#fff',
             border: 'none',
             padding: '8px 14px',
             fontWeight: 600,
-            cursor: 'pointer',
+            cursor: sendDisabled ? 'not-allowed' : 'pointer',
           }}
         >
           Send credentials
@@ -96,14 +107,14 @@ export function SendCredentialsButton({ workshopId, workshopTitle }: Props) {
           <button
             type="button"
             onClick={sendAll}
-            disabled={count === 0}
+            disabled={count === 0 || !canSend}
             style={{
-              background: count === 0 ? '#999' : '#14110E',
+              background: count === 0 || !canSend ? '#999' : '#14110E',
               color: '#fff',
               border: 'none',
               padding: '8px 14px',
               fontWeight: 600,
-              cursor: count === 0 ? 'not-allowed' : 'pointer',
+              cursor: count === 0 || !canSend ? 'not-allowed' : 'pointer',
               marginRight: 8,
             }}
           >

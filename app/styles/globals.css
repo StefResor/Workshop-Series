@@ -677,88 +677,27 @@ textarea {
 }
 
 /* ——— The Practice ——— */
-/* Soft ink gradient + low-contrast triangular facets (token color-mix only). */
-.expertise-band {
-  --practice-facet-a: color-mix(in srgb, var(--color-bone) 2.2%, transparent);
-  --practice-facet-b: color-mix(in srgb, var(--color-bone) 3.5%, transparent);
-  --practice-facet-c: color-mix(in srgb, var(--color-accent) 1.4%, transparent);
-  color: var(--color-bone);
+/* Flat warm tint; no gradient / polygon texture. See docs/design-decision.md. */
+.practice {
+  position: relative;
+  color: var(--ink);
+  background-color: var(--practice-ground);
+  border-top: 2px solid var(--vermillion);
   border-bottom: var(--rule);
-  background-color: var(--color-ink);
-  background-image:
-    linear-gradient(
-      30deg,
-      var(--practice-facet-a) 12%,
-      transparent 12.5%,
-      transparent 87%,
-      var(--practice-facet-a) 87.5%,
-      var(--practice-facet-a)
-    ),
-    linear-gradient(
-      150deg,
-      var(--practice-facet-a) 12%,
-      transparent 12.5%,
-      transparent 87%,
-      var(--practice-facet-a) 87.5%,
-      var(--practice-facet-a)
-    ),
-    linear-gradient(
-      30deg,
-      var(--practice-facet-b) 12%,
-      transparent 12.5%,
-      transparent 87%,
-      var(--practice-facet-b) 87.5%,
-      var(--practice-facet-b)
-    ),
-    linear-gradient(
-      150deg,
-      var(--practice-facet-b) 12%,
-      transparent 12.5%,
-      transparent 87%,
-      var(--practice-facet-b) 87.5%,
-      var(--practice-facet-b)
-    ),
-    linear-gradient(
-      60deg,
-      var(--practice-facet-c) 25%,
-      transparent 25.5%,
-      transparent 75%,
-      var(--practice-facet-c) 75%,
-      var(--practice-facet-c)
-    ),
-    linear-gradient(
-      60deg,
-      var(--practice-facet-a) 25%,
-      transparent 25.5%,
-      transparent 75%,
-      var(--practice-facet-a) 75%,
-      var(--practice-facet-a)
-    ),
-    linear-gradient(
-      180deg,
-      var(--color-ink) 0%,
-      color-mix(in srgb, var(--color-ink) 93%, var(--color-bone)) 52%,
-      color-mix(in srgb, var(--color-ink) 96%, var(--color-accent)) 100%
-    );
-  background-size:
-    80px 140px,
-    80px 140px,
-    80px 140px,
-    80px 140px,
-    80px 140px,
-    80px 140px,
-    auto;
-  background-position:
-    0 0,
-    0 0,
-    40px 70px,
-    40px 70px,
-    0 0,
-    40px 70px,
-    0 0;
+}
+
+.practice::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: var(--practice-grain);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 .expertise-band-inner {
+  position: relative;
+  z-index: 1;
   padding: 10vh var(--page-pad-x) 11vh;
 }
 
@@ -768,6 +707,7 @@ textarea {
   text-transform: uppercase;
   letter-spacing: -0.01em;
   margin-bottom: 48px;
+  color: var(--ink);
 }
 
 .expertise-band-list {
@@ -783,8 +723,8 @@ textarea {
 .expertise-band-item .rule {
   display: block;
   width: 48px;
-  height: 1px;
-  background: var(--color-accent);
+  height: 2px;
+  background: var(--vermillion);
   margin-bottom: 20px;
 }
 
@@ -796,12 +736,13 @@ textarea {
   line-height: 1.15;
   margin-bottom: 14px;
   font-weight: 400;
+  color: var(--ink);
 }
 
 .expertise-band-item p {
   font-size: var(--text-body-sm);
   line-height: 1.65;
-  color: color-mix(in srgb, var(--color-bone) 78%, transparent);
+  color: var(--practice-body);
   max-width: 36em;
 }
 

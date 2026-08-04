@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint .",
     "seed": "tsx scripts/seed.ts",
+    "seed:stripe": "tsx scripts/seed-stripe-products.ts",
     "fix-typos": "tsx scripts/fix-typos.ts",
     "backfill:workshop-fields": "tsx scripts/backfill-workshop-fields.ts",
     "migrate:workshop-fields": "tsx scripts/migrate-workshop-fields.ts",

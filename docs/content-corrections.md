@@ -80,4 +80,4 @@ Short description:
 
 - Couples: **$300 / 75 min**
 - Individuals: **$150 / 50 min**
-- Workshops: **$45 / participant** (site default; per-session override optional)
+- Workshops: **$47 / participant** (site default; per-session override optional)

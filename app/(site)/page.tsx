@@ -167,7 +167,7 @@ export default async function HomePage() {
       </section>
 
       <section
-        className="expertise-band"
+        className="practice expertise-band"
         aria-labelledby="home-practice-heading"
       >
         <div className="expertise-band-inner">

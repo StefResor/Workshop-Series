@@ -7,6 +7,17 @@
   --color-muted-2: #6b6459;
   --color-white: #ffffff;
 
+  /* Aliases used by The Practice revision (campaign kit naming) */
+  --bone: #f3efe7;
+  --ink: #14110e;
+  --vermillion: #ff4a17;
+
+  /* The Practice section */
+  --practice-ground: #f4e2d6; /* vermillion @ 8% into bone */
+  --practice-body: #4a3a32; /* softened ink for body copy */
+  --practice-label: #b23410; /* vermillion darkened 30% — small text only */
+  --practice-grain: 0; /* grain overlay opacity, 0–0.04. Ship at 0. */
+
   --font-sans: var(--font-archivo), 'Archivo', sans-serif;
   --font-display: var(--font-archivo-black), 'Archivo Black', sans-serif;
   --font-mono: var(--font-ibm-plex-mono), 'IBM Plex Mono', monospace;

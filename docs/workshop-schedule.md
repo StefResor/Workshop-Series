@@ -35,7 +35,7 @@ For sessions 9 and 10, 7:00 PM Eastern is **exactly midnight UTC**, so the **UTC
 9. The Art of Generosity & Empowering Your Partner  
 10. The Art of the Apology  
 
-Price: default **$45** per participant on `siteSettings.defaultWorkshopPrice` (mark `// CONFIRM WITH STEF` in seed). Per-workshop `price` is an optional override. Location: Zoom. Status: published.
+Price: default **$47** per participant on `siteSettings.defaultWorkshopPrice` (mark `// CONFIRM WITH STEF` in seed). Per-workshop `price` is an optional override. Location: Zoom. Status: published.
 
 ## Timezone assertion (write this test before any feed code)
 
@@ -57,7 +57,7 @@ Document type: `workshop`
 | `startsAt` | datetime | UTC ISO from table |
 | `endsAt` | datetime | UTC ISO from table |
 | `timeZone` | string | always `America/New_York` |
-| `price` | number | optional override; else `siteSettings.defaultWorkshopPrice` ($45 seeded) |
+| `price` | number | optional override; else `siteSettings.defaultWorkshopPrice` ($47 seeded) |
 | `hook` | string | max ~90 chars; cards / social |
 | `stripePaymentLink` | url | Stripe Payment Link (public CTA) |
 | `capacity` | number | optional; empty = unlimited |
@@ -118,7 +118,7 @@ curl -s -o /dev/null -w "%{http_code}\n" -X POST \
 
    Also confirm `/admin` is absent from `/sitemap.xml` and authenticated `/admin/sessions` HTML includes `noindex`. Do not Disallow `/admin` in `robots.txt`.
 
-4. **Stripe catalog:** eleven Products (10 workshops + series pass); archive superseded $45 Prices if replaced; eleven Payment Links.
+4. **Stripe catalog:** eleven Products (10 workshops + series pass); archive superseded $45 Prices if replaced by $47; eleven Payment Links.
 5. **Studio:** for all ten workshops, set public `stripePaymentLink` and private `stripeProductId`, `zoomLink`, `zoomPasscode`.
 6. **Workshop 01 purchase** (`startsAt` 2026-09-09, currently ~37 days out) → welcome email **without** Zoom credentials. Confirms webhook + product mapping only. Easy to misread a missing passcode as a bug; it is correct.
 7. **Near-dated fixture (do not skip):** map a test Product to a workshop with `startsAt` ≤ 8 days away (or a short-lived fixture). Buy once → credentials email with join button, plain URL, and passcode block. Step 6 passing does **not** validate this path.
