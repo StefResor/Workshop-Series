@@ -33,7 +33,7 @@ export const emailSignup = defineType({
       type: 'text',
       rows: 2,
       initialValue:
-        'Announcements for the workshop series, new writing, and occasional updates from the practice.',
+        'Announcements for the workshop series — dates, topics, and when registration opens.',
       validation: (rule) => rule.max(160),
     }),
 
@@ -53,6 +53,15 @@ export const emailSignup = defineType({
       validation: (rule) => rule.max(30),
     }),
     defineField({
+      name: 'checkboxLabel',
+      title: 'Opt-in checkbox label',
+      type: 'string',
+      initialValue: 'Also send me blog posts and practice updates',
+      description:
+        'Secondary opt-in to the Blog & Practice Updates list. Unchecked by default.',
+      validation: (rule) => rule.required().max(80),
+    }),
+    defineField({
       name: 'buttonLabel',
       title: 'Button label',
       type: 'string',
@@ -65,7 +74,7 @@ export const emailSignup = defineType({
       type: 'text',
       rows: 2,
       description:
-        'Shown directly below the button. Must state what subscribers receive and that they can unsubscribe.',
+        'Shown below the button. Must state what subscribers receive and that they can unsubscribe.',
       initialValue:
         "A few emails a month. Unsubscribe anytime. This list isn't a way to reach Stefanie about therapy — use the consultation form for that.",
       validation: (rule) => rule.required().max(180),

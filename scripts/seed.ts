@@ -345,9 +345,10 @@ const emailSignupDoc = {
   enabled: true,
   eyebrow: 'Stay in touch',
   heading: 'Workshop updates',
-  body: 'Announcements for the workshop series, new writing, and occasional updates from the practice.',
+  body: 'Announcements for the workshop series — dates, topics, and when registration opens.',
   nameLabel: 'First name',
   emailLabel: 'Email',
+  checkboxLabel: 'Also send me blog posts and practice updates',
   buttonLabel: 'Subscribe',
   permissionLine:
     "A few emails a month. Unsubscribe anytime. This list isn't a way to reach Stefanie about therapy — use the consultation form for that.",

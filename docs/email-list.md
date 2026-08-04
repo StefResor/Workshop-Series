@@ -1,88 +1,62 @@
 # Email list (public signup)
 
-Phase 1: single general-list capture via Sanity-editable band/footer → `POST /api/subscribe` → Resend global contacts + segment + topics.
+Phase 1: public capture via Sanity-editable band/footer → `POST /api/subscribe` → Resend global contacts in one or two segments.
 
-## The two lists
+## The lists
 
-These are different kinds of list and must not be conflated.
-
-| | **General list** | **Cohort list** |
+| Segment | Resend ID | Who's on it |
 |---|---|---|
-| Resend segment | Website Signups | Workshop 2026-09 |
-| Segment ID | `a75708de-21c5-44ff-875a-63517f37333f` | `2e8f9e58-4e9f-4391-aa05-433b0fec68eb` |
-| Who's in it | Anyone who submits the website form | People who registered and paid for the Sep–Nov series |
-| Joined via | Band / footer form — **this build** | Stripe registration — **not this build** |
-| Receives | Workshop-series announcements, blog posts, practice updates | Operational mail only: reminders, Zoom/recording links, schedule changes |
-| Nature | Marketing, opt-in | Transactional, tied to a purchase |
-| Lifespan | Indefinite | Ends with the series |
+| Workshop Announcements | `a75708de-21c5-44ff-875a-63517f37333f` | Everyone who submits the form |
+| Blog & Practice Updates | `2e8f9e58-4e9f-4391-aa05-433b0fec68eb` | Only those who tick the band checkbox |
 
-### Overlap rule
+A person can be on one or both. Contacts are global — one contact, one quota seat.
 
-A person can be in both segments. To prevent double-sends and keep consent clean:
+The band’s primary offer is workshop announcements. The checkbox is a secondary opt-in to Blog & Practice Updates (unchecked by default). The footer subscribes to Workshop Announcements only (no checkbox).
 
-- Cohort receives **only** operational mail about the series that person paid for.
-- Announcements of *future* series go to the general list **only**.
-- A cohort member who wants future announcements joins the general list like anyone else. Never move them across automatically.
+### Not in this build
 
-Rationale: emailing a paying attendee about the thing they bought is transactional. Using that same list to sell the next series is marketing and requires opt-in.
-
-## Topics (general list only)
-
-| Topic | Env |
-|---|---|
-| Workshop announcements | `RESEND_TOPIC_WORKSHOP_ANNOUNCEMENTS_ID` |
-| Practice news & writing | `RESEND_TOPIC_PRACTICE_NEWS_ID` |
-
-When both IDs are set, new signups are opted into **both** at creation. Missing topic IDs do not block signup — the contact is still added to Website Signups and a `subscribe_topics_incomplete` warning is logged. The form shows no topic checkboxes — the general list means “everything,” and the permission line says so. Resend’s hosted preference page is the escape hatch. Operational cohort mail is not topic-scoped.
+A paid Sep–Nov **cohort** segment (reminders, Zoom, recordings) is out of scope. Manual from Stripe later — no registration→segment automation here.
 
 ## Surfaces
 
 | Surface | Where | Fields | `source` |
 |---|---|---|---|
-| Band | Home only, after workshops teaser | first name, email | `home_band` |
+| Band | Home only, after workshops teaser | first name, email, blog checkbox | `home_band` |
 | Footer | Every page except home and `/workshops/[slug]` | email | `footer` |
 
-Gated on Sanity `emailSignup.enabled` (and `showInFooter` for the footer variant). Band and footer never render on the same page.
+Gated on Sanity `emailSignup.enabled` (and `showInFooter` for the footer). Band and footer never render on the same page.
 
 Studio: **Site Settings → Email List Signup** (singleton `_id: emailSignup`).
 
 ## Env
 
 ```
-RESEND_API_KEY=                              # shared with contact form; contacts need full-access
-RESEND_SEGMENT_ID=                           # Website Signups — required
-RESEND_TOPIC_WORKSHOP_ANNOUNCEMENTS_ID=      # optional until topics exist
-RESEND_TOPIC_PRACTICE_NEWS_ID=               # optional until topics exist
+RESEND_API_KEY=                      # required; contacts need full-access
+RESEND_SEGMENT_WORKSHOPS_ID=         # required
+RESEND_SEGMENT_BLOG_PRACTICE_ID=     # optional; warn + skip if missing when checkbox ticked
 ```
 
-Missing `RESEND_API_KEY` or `RESEND_SEGMENT_ID` → `{ ok: false }` / 503. Missing topic IDs → signup still succeeds (segment only).
-
-Signup capture works without sending-domain DNS. Broadcasts need SPF/DKIM/DMARC on the sending subdomain.
+Missing API key or workshops segment → `{ ok: false }` / 503.
 
 ## API
 
-`POST /api/subscribe` — honeypot `website`, rate limit 5 / 10 min / IP (in-memory; resets on cold start), `{ ok: true | false }` only.
+`POST /api/subscribe` — body includes `blogOptIn: boolean`. Honeypot `website`, rate limit 5 / 10 min / IP.
 
-Creates a global contact via `resend.contacts.create` with:
+Always adds Workshop Announcements. When `blogOptIn` is true and the blog segment env is set, both IDs go in a **single** `contacts.create` call.
 
-- `segments: [{ id: RESEND_SEGMENT_ID }]`
-- `topics: [{ id, subscription: 'opt_in' }, …]` for both topic env vars
+Already-subscribed → success (no membership disclosure); best-effort segment repair. Consent log: email, firstName, source, blogOptIn, segmentIds, timestamp, permissionLineVersion, userAgent.
 
-Already-subscribed addresses return success (no membership disclosure). Consent trail is a structured `subscribe_consent` log: email, firstName, source, timestamp, permissionLineVersion, userAgent.
-
-Single opt-in today. `lib/subscribe.ts` is structured so double opt-in can gate `createContactInSegment()` behind a confirmation token without rewriting the route.
+Single opt-in today. `lib/subscribe.ts` keeps a hook point for double opt-in later.
 
 ## List hygiene — hard constraint
 
-**Stef's clinical client roster must never be uploaded to Resend or any ESP.** Both segments are populated only by self-signup or by workshop purchase.
+**Stef's clinical client roster must never be uploaded to Resend or any ESP.** Both segments are populated only by self-signup through this form.
 
 - No manual contact adds from any clinical source.
-- No properties, topics, or segment names that could imply clinical status.
-- Both segments stay separate from anything clinical.
-- Workshop attendees are **not** auto-added to the general list at registration.
+- No properties or segment names that could imply clinical status.
 
 ## Open questions (do not build ahead)
 
-1. Single vs double opt-in — building single; API keeps a confirmation hook point.
-2. Cohort automation (Stripe → Workshop 2026-09) — manual for now.
-3. Cross-promotion path — how cohort members are invited onto the general list (confirmation page / wrap-up email); copy not yet written.
+1. Single vs double opt-in — building single.
+2. Checkbox default — unchecked (honest opt-in); Stef may flip later.
+3. Cohort segment + Stripe — out of scope.

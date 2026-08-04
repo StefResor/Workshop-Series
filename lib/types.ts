@@ -44,6 +44,7 @@ export type EmailSignup = {
   body?: string
   nameLabel?: string
   emailLabel?: string
+  checkboxLabel?: string
   buttonLabel?: string
   permissionLine: string
   successMessage: string

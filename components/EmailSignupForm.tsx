@@ -9,13 +9,15 @@ export type EmailSignupFormCopy = {
   permissionLine: string
   successMessage: string
   errorMessage: string
+  checkboxLabel?: string
 }
 
 type EmailSignupFormProps = EmailSignupFormCopy & {
   source: string
   variant: 'band' | 'footer'
-  /** Band collects first name; footer does not. */
+  /** Band collects first name + optional blog checkbox; footer does not. */
   showName?: boolean
+  showBlogCheckbox?: boolean
   /** Footer: short privacy link instead of full permission paragraph. */
   privacyHref?: string
 }
@@ -24,6 +26,7 @@ export function EmailSignupForm({
   source,
   variant,
   showName = false,
+  showBlogCheckbox = false,
   privacyHref = '/contact',
   nameLabel,
   emailLabel,
@@ -31,11 +34,13 @@ export function EmailSignupForm({
   permissionLine,
   successMessage,
   errorMessage,
+  checkboxLabel = 'Also send me blog posts and practice updates',
 }: EmailSignupFormProps) {
   const [status, setStatus] = useState<'idle' | 'sending' | 'ok' | 'err'>('idle')
   const statusId = useId()
   const nameId = useId()
   const emailId = useId()
+  const checkboxId = useId()
   const permissionId = useId()
   const hpId = useId()
 
@@ -58,6 +63,7 @@ export function EmailSignupForm({
     const payload = {
       firstName: showName ? String(data.get('firstName') || '').trim() : '',
       email,
+      blogOptIn: showBlogCheckbox ? data.get('blogOptIn') === 'on' : false,
       source,
       permissionLine,
       website: String(data.get('website') || ''),
@@ -133,6 +139,20 @@ export function EmailSignupForm({
         />
       </div>
 
+      {showBlogCheckbox ? (
+        <div className="email-signup-check">
+          <input
+            id={checkboxId}
+            name="blogOptIn"
+            type="checkbox"
+            className="email-signup-check-input"
+          />
+          <label htmlFor={checkboxId} className="email-signup-check-label">
+            {checkboxLabel}
+          </label>
+        </div>
+      ) : null}
+
       <div className="hp" aria-hidden="true">
         <label htmlFor={hpId}>Website</label>
         <input id={hpId} name="website" tabIndex={-1} autoComplete="off" />
@@ -151,7 +171,10 @@ export function EmailSignupForm({
           {permissionLine}
         </p>
       ) : (
-        <p className="email-signup-permission email-signup-permission--footer" id={permissionId}>
+        <p
+          className="email-signup-permission email-signup-permission--footer"
+          id={permissionId}
+        >
           <a href={privacyHref} title={permissionLine}>
             Privacy note
           </a>

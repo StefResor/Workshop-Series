@@ -410,6 +410,50 @@ textarea {
   border-bottom-color: var(--vermillion);
 }
 
+.email-signup-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.email-signup-check-input {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  margin: 3px 0 0;
+  flex-shrink: 0;
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.email-signup-check-input:checked {
+  background: var(--vermillion);
+  border-color: var(--vermillion);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%2314110e' stroke-width='2' d='M3 8.5l3.2 3.2L13 4'/%3E%3C/svg%3E");
+  background-size: 12px 12px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.email-signup-check-input:focus {
+  outline: none;
+}
+
+.email-signup-check-input:focus-visible {
+  outline: 2px solid var(--vermillion);
+  outline-offset: 2px;
+}
+
+.email-signup-check-label {
+  font-size: var(--text-body-sm);
+  line-height: 1.45;
+  color: var(--color-muted);
+  cursor: pointer;
+}
+
 .email-signup-submit--band {
   align-self: flex-start;
   background: var(--vermillion);

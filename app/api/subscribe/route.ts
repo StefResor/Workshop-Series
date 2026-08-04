@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { rateLimit } from '@/lib/rate-limit'
 import {
-  createContactInSegment,
+  createContactInSegments,
   permissionLineVersion,
 } from '@/lib/subscribe'
 
@@ -11,6 +11,7 @@ export const dynamic = 'force-dynamic'
 const subscribeSchema = z.object({
   firstName: z.string().trim().max(100).optional(),
   email: z.string().trim().email('valid email is required').max(254),
+  blogOptIn: z.boolean().optional().default(false),
   source: z.string().trim().min(1).max(64),
   /** Hash/version of the permission copy shown at submit time. */
   permissionLine: z.string().trim().min(1).max(180),
@@ -79,13 +80,11 @@ export async function POST(req: Request) {
   }
 
   const apiKey = process.env.RESEND_API_KEY
-  const segmentId = process.env.RESEND_SEGMENT_ID
-  const topicWorkshopAnnouncements =
-    process.env.RESEND_TOPIC_WORKSHOP_ANNOUNCEMENTS_ID?.trim() || ''
-  const topicPracticeNews =
-    process.env.RESEND_TOPIC_PRACTICE_NEWS_ID?.trim() || ''
+  const workshopsId = process.env.RESEND_SEGMENT_WORKSHOPS_ID?.trim() || ''
+  const blogPracticeId =
+    process.env.RESEND_SEGMENT_BLOG_PRACTICE_ID?.trim() || ''
 
-  if (!apiKey || !segmentId) {
+  if (!apiKey || !workshopsId) {
     console.info(
       JSON.stringify({
         event: 'subscribe_misconfigured',
@@ -93,28 +92,28 @@ export async function POST(req: Request) {
         at: new Date().toISOString(),
         missing: {
           apiKey: !apiKey,
-          segmentId: !segmentId,
+          workshopsId: !workshopsId,
         },
       }),
     )
     return NextResponse.json({ ok: false }, { status: 503 })
   }
 
-  const topicIds = [topicWorkshopAnnouncements, topicPracticeNews].filter(
-    Boolean,
-  )
-  if (topicIds.length < 2) {
-    console.warn(
-      JSON.stringify({
-        event: 'subscribe_topics_incomplete',
-        ok: true,
-        at: new Date().toISOString(),
-        missing: {
-          workshopAnnouncements: !topicWorkshopAnnouncements,
-          practiceNews: !topicPracticeNews,
-        },
-      }),
-    )
+  const blogOptIn = Boolean(data.blogOptIn)
+  const segmentIds = [workshopsId]
+  if (blogOptIn) {
+    if (blogPracticeId) {
+      segmentIds.push(blogPracticeId)
+    } else {
+      console.warn(
+        JSON.stringify({
+          event: 'subscribe_blog_segment_missing',
+          ok: true,
+          at: new Date().toISOString(),
+          source: data.source,
+        }),
+      )
+    }
   }
 
   const firstName =
@@ -124,12 +123,11 @@ export async function POST(req: Request) {
 
   try {
     // Single opt-in today. Double opt-in would insert a confirmation send here
-    // and only call createContactInSegment after /subscribe/confirmed.
-    const result = await createContactInSegment({
+    // and only call createContactInSegments after /subscribe/confirmed.
+    const result = await createContactInSegments({
       email: data.email,
       firstName,
-      segmentId,
-      topicIds: topicIds.length > 0 ? topicIds : undefined,
+      segmentIds,
       apiKey,
     })
 
@@ -141,11 +139,12 @@ export async function POST(req: Request) {
         email: data.email,
         firstName: firstName || null,
         source: data.source,
+        blogOptIn,
+        segmentIds: result.segmentIds,
         timestamp: new Date().toISOString(),
         permissionLineVersion: version,
         userAgent,
         status: result.status,
-        topicsApplied: topicIds.length,
       }),
     )
 

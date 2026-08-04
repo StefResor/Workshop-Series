@@ -4,9 +4,10 @@ import type { EmailSignup } from '@/lib/types'
 const DEFAULTS = {
   eyebrow: 'Stay in touch',
   heading: 'Workshop updates',
-  body: 'Announcements for the workshop series, new writing, and occasional updates from the practice.',
+  body: 'Announcements for the workshop series — dates, topics, and when registration opens.',
   nameLabel: 'First name',
   emailLabel: 'Email',
+  checkboxLabel: 'Also send me blog posts and practice updates',
   buttonLabel: 'Subscribe',
   permissionLine:
     "A few emails a month. Unsubscribe anytime. This list isn't a way to reach Stefanie about therapy — use the consultation form for that.",
@@ -46,8 +47,12 @@ export function EmailSignupBand({ copy }: EmailSignupBandProps) {
             source="home_band"
             variant="band"
             showName
+            showBlogCheckbox
             nameLabel={copy.nameLabel?.trim() || DEFAULTS.nameLabel}
             emailLabel={copy.emailLabel?.trim() || DEFAULTS.emailLabel}
+            checkboxLabel={
+              copy.checkboxLabel?.trim() || DEFAULTS.checkboxLabel
+            }
             buttonLabel={copy.buttonLabel?.trim() || DEFAULTS.buttonLabel}
             permissionLine={
               copy.permissionLine.trim() || DEFAULTS.permissionLine

@@ -66,6 +66,7 @@ export const emailSignupQuery = `*[_type == "emailSignup"][0] {
   body,
   nameLabel,
   emailLabel,
+  checkboxLabel,
   buttonLabel,
   permissionLine,
   successMessage,
