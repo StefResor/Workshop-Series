@@ -15,6 +15,14 @@ export const workshop = defineType({
   ],
   fields: [
     defineField({
+      name: 'series',
+      title: 'Series',
+      type: 'reference',
+      to: [{ type: 'series' }],
+      description:
+        'Workshop series cohort (registration system). Optional until series docs are seeded.',
+    }),
+    defineField({
       name: 'title',
       title: 'Title',
       type: 'string',
@@ -29,8 +37,10 @@ export const workshop = defineType({
     }),
     defineField({
       name: 'sessionNumber',
-      title: 'Session number',
+      title: 'Workshop number',
       type: 'number',
+      description:
+        'Position in the series, 1–10. Displays everywhere as "Workshop 01". Field name is legacy — do not rename without a content migration.',
       validation: (rule) => rule.required().min(1).max(10),
     }),
     defineField({
@@ -47,6 +57,12 @@ export const workshop = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: 'durationMinutes',
+      title: 'Duration (minutes)',
+      type: 'number',
+      initialValue: 90,
+    }),
+    defineField({
       name: 'timeZone',
       title: 'Display time zone',
       type: 'string',
@@ -59,6 +75,13 @@ export const workshop = defineType({
       type: 'string',
       description: 'One-line summary for cards and social captions.',
       validation: (rule) => rule.max(90),
+    }),
+    defineField({
+      name: 'summary',
+      title: 'One-line hook (registration pack)',
+      type: 'text',
+      rows: 2,
+      description: 'Used by ICS / registration pack. Prefer Hook for marketing cards.',
     }),
     defineField({
       name: 'price',
@@ -74,6 +97,20 @@ export const workshop = defineType({
       title: 'Stripe Payment Link',
       type: 'url',
       description: 'External Stripe Payment Link for this session.',
+    }),
+    defineField({
+      name: 'paymentLink',
+      title: 'Stripe Payment Link (registration pack)',
+      type: 'url',
+      description:
+        'Alias field from registration pack. Prefer Stripe Payment Link above until migrated.',
+    }),
+    defineField({
+      name: 'registrationOpen',
+      title: 'Registration open',
+      type: 'boolean',
+      initialValue: true,
+      description: 'Registration-pack commerce flag. Prefer Registration status for site UI.',
     }),
     defineField({
       name: 'capacity',
@@ -156,7 +193,8 @@ export const workshop = defineType({
       title: 'Zoom passcode',
       type: 'string',
       fieldset: 'registrationPrivate',
-      description: 'Meeting passcode emailed to the buyer after paid checkout. Never rendered publicly.',
+      description:
+        'Meeting passcode emailed to the buyer after paid checkout / credentials cron. Never rendered publicly.',
     }),
   ],
   orderings: [

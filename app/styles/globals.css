@@ -1,5 +1,18 @@
 @import './tokens.css';
 
+/* Tailwind utilities for registration thank-you page — theme only, no preflight
+   (site styles remain in this file / tokens.css). */
+@layer theme, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+@theme {
+  --color-bone: #f3efe7;
+  --color-ink: #14110e;
+  --color-vermillion: #ff4a17;
+  --font-display: var(--font-archivo-black), 'Archivo Black', sans-serif;
+}
+
 *,
 *::before,
 *::after {

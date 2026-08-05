@@ -42,3 +42,6 @@ export function getReadClient() {
     useCdn: false,
   })
 }
+
+/** Read client alias for workshop registration pack (`import { client } from "@/sanity/lib/client"`). */
+export const client = getReadClient()

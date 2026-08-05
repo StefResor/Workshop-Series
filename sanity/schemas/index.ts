@@ -4,9 +4,10 @@ import { page } from './page'
 import { siteSettings } from './siteSettings'
 import { emailSignup } from './emailSignup'
 import { policy } from './policy'
-import { registration } from './registration'
+import { series, registration } from './workshop-system'
 
 export const schemaTypes = [
+  series,
   workshop,
   service,
   page,

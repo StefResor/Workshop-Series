@@ -14,6 +14,7 @@ Read this file and everything in `/docs` before writing any code.
 | `@sanity/client` | `7.25.0` | **Peer of next-sanity — install explicitly.** |
 | `styled-components` | `6.4.4` | **Peer for Sanity Studio — install explicitly.** App UI still uses CSS tokens, not styled-components. |
 | `@sanity/vision` | `6.6.0` | Match `sanity` major/minor. |
+| `stripe` | `22.4.0` | Server webhook + Checkout Session lookup. Not used in client components. |
 
 Do not invent older Sanity v2 `sanityClient` configs, `lib/sanity.js` patterns, or Pages Router API routes.
 
@@ -58,6 +59,9 @@ CONTACT_FROM_EMAIL=
 STRIPE_SECRET_KEY=
 STRIPE_WEBHOOK_SECRET=
 STRIPE_SERIES_PRODUCT_ID=
+WORKSHOP_FROM_EMAIL=
+WORKSHOP_REPLY_TO=
+CRON_SECRET=
 ADMIN_USER=
 ADMIN_PASSWORD=
 ```
