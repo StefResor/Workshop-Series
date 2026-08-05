@@ -31,7 +31,7 @@ Do not invent older Sanity v2 `sanityClient` configs, `lib/sanity.js` patterns, 
 
 ## Site map
 
-`/`, `/about`, `/approach`, `/workshops`, `/workshops/[slug]`, `/fees`, `/contact`
+`/`, `/about`, `/approach`, `/workshops`, `/workshops/[slug]`, `/fees`, `/contact`, `/terms` (rewrite → `/policies/terms`; `/privacy` same pattern when published)
 
 Private agency notes (`correspondence/`, `meetings/`, `ideas/`) live in **endesignllc/endesign-stef-notes**, not this client-facing repo.
 

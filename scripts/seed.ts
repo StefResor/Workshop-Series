@@ -310,13 +310,191 @@ const policies = [
     _id: 'policy-workshop-disclaimer',
     title: 'Workshop disclaimer',
     slug: 'workshop-disclaimer',
+    showInFooter: false,
     body: `Relational Diplomacy Workshops are educational in nature and are not psychotherapy, mental health treatment, or crisis services. Participation does not establish a therapist–client relationship. Registration is per participant; workshop registrations are non-refundable. Adults 18+.`,
   },
   {
     _id: 'policy-consult-form-notice',
     title: 'Consultation form notice',
     slug: 'consult-form-notice',
+    showInFooter: false,
     body: `Please do not include health details, diagnoses, or other sensitive clinical information in this form. Share only what we need to schedule a confidential consultation. Submissions are emailed and not stored in a database.`,
+  },
+  // Full Terms — source docs/terms.md. Fail-safe in lib/terms.ts is for CMS outage only.
+  {
+    _id: 'policy-terms',
+    title: 'Terms & Policies',
+    slug: 'terms',
+    showInFooter: true,
+    footerOrder: 1,
+    footerLabel: 'Terms',
+    body: `## Registration
+
+Registration is required for each participant. If you are attending with a spouse or partner, each person must register individually, even if you will be participating from the same device or Zoom connection.
+
+Individual registration helps support the continued development of the workshop series and allows these workshops to remain accessible while maintaining the quality of the educational experience.
+
+Workshops are open to adults 18 and over.
+
+## Refunds
+
+Because each workshop requires advance planning, scheduling, and preparation, all registrations are non-refundable.
+
+Thank you for supporting the time, preparation, and care that goes into creating each workshop.
+
+## Cancellation by Stefanie Schumacher
+
+If a workshop is cancelled and not rescheduled, registrants will receive a full refund for that workshop.
+
+If a workshop is rescheduled, registration carries over to the new date. Registrants who are unable to attend the rescheduled date may request a refund for that workshop.
+
+## These workshops are not therapy
+
+The workshop series is educational and skills-based. These workshops are not psychotherapy, mental health treatment, crisis intervention, or a substitute for professional counseling. Participation does not establish a therapist–client relationship with Stefanie Schumacher.
+
+No particular outcome is promised or guaranteed. What participants take from the material depends on their own circumstances and engagement.
+
+## Emotional wellbeing during workshops
+
+While relationship topics can naturally evoke emotional responses, participants are encouraged to engage at a level that feels comfortable and to take breaks as needed.
+
+If you are experiencing significant emotional distress, please seek support from a licensed professional in your area. If you are in crisis or thinking about harming yourself, call or text 988 to reach the Suicide and Crisis Lifeline, available 24 hours a day in the United States.
+
+## Conduct
+
+To help create a respectful learning environment, participants are expected to treat one another with courtesy and professionalism. Harassing, disruptive, or abusive behavior may result in removal from a workshop without refund.
+
+## Recording and group privacy
+
+Zoom recording will be disabled by the host. Participants are prohibited from recording, photographing, screenshotting, or otherwise capturing any portion of a workshop without prior written permission.
+
+To help create a safe and respectful learning environment, participants are asked to honor the privacy of everyone attending. While every effort is made to foster a respectful atmosphere, these are group educational workshops and complete confidentiality cannot be guaranteed. Participants are encouraged to share only what feels comfortable in a group setting.
+
+## Your information
+
+Information collected when you register — your name and email address — is used to deliver workshop materials and correspondence. Payment information is handled by Stripe and is never stored by Stefanie Schumacher.
+
+Workshop registration is not clinical care. Registration information is not a clinical record and is not protected health information.
+
+See the [Privacy Policy](/privacy) for how information is collected, used, and retained.
+
+## Changes to these terms
+
+These terms may be updated from time to time. The effective date above reflects the most recent revision. Registrations are governed by the terms in effect on the date of registration.
+
+## Governing law
+
+These terms are governed by the laws of the State of Ohio.
+
+## Contact
+
+Questions about these terms can be sent through the contact form at [stefanie-schumacher.com/contact](/contact).`,
+  },
+  // Privacy — source docs/privacy.md. Keep unpublished while DECISION NEEDED remains.
+  {
+    _id: 'policy-privacy',
+    title: 'Privacy Policy',
+    slug: 'privacy',
+    showInFooter: true,
+    footerOrder: 2,
+    footerLabel: 'Privacy',
+    body: `## What this policy covers
+
+This policy describes how information is handled on stefanie-schumacher.com and in connection with the Relational Diplomacy workshop series.
+
+It does not cover clinical services. Information shared in the course of therapy is governed separately by professional confidentiality obligations and applicable health privacy law, and is described in the paperwork provided to therapy clients directly.
+
+**Workshop registration is not clinical care.** Registering for a workshop does not make you a client, does not create a therapist–client relationship, and does not produce a clinical record. Registration information is not protected health information.
+
+## What is collected
+
+**When you register for a workshop.** Your name and email address, collected through Stripe at checkout, along with which workshop you registered for and the date of registration. If you choose to receive announcements about future workshops, that choice is recorded along with the date you made it.
+
+**When you pay.** Payment card details are entered directly with Stripe and are never received or stored by Stefanie Schumacher. Stripe provides only a confirmation of payment, the amount, and the name and email address you supplied.
+
+**When you use the contact form.** Your name, email address, and whatever you choose to write.
+
+**When you attend a workshop.** Zoom collects the name you join under, your email address, and technical connection information. Workshops are not recorded.
+
+**When you visit the site.** [DECISION NEEDED — see Analytics below.]
+
+## Who processes this information
+
+- **Stripe** — Payment processing and workshop registration
+- **Resend** — Registration confirmations and workshop correspondence
+- **Vercel** — Website hosting
+- **Sanity** — Website content and registration records
+- **Zoom** — Live workshop delivery
+
+Each of these providers handles information under its own privacy terms. Information is shared with them only as needed to run the workshops and the site.
+
+## Analytics
+
+**DECISION NEEDED.** What the site runs determines both this section and whether a cookie banner is required.
+
+**If no analytics:** "This site does not use analytics, advertising cookies, or third-party tracking."
+
+**If privacy-preserving analytics** (Plausible, Fathom, Vercel Analytics): "This site uses privacy-preserving analytics that count visits without cookies and without collecting personal information or building profiles of visitors."
+
+**If Google Analytics:** the section has to disclose cookie-based tracking, data sharing with Google, and — for visitors in the EU/UK — requires a consent banner before any tracking script loads.
+
+**Recommendation: don't use Google Analytics on this site.** A visitor browsing a therapy practice is doing something sensitive. Cookieless analytics answers the only questions worth asking here — which pages get read, which workshops get clicked — with no banner, no consent infrastructure, and no third-party profile of who was reading about couples therapy at 2am. It also costs about the same as nothing.
+
+## How information is used
+
+To confirm your registration, send you the Zoom link and passcode, remind you before a workshop, respond to messages you send, and — only if you have opted in — tell you when new workshop series are announced.
+
+Information is not sold. It is not shared with anyone other than the service providers listed above, except where required by law.
+
+## Announcements and how to stop them
+
+You may opt in to workshop announcements when you register. Every announcement email includes an unsubscribe link, and unsubscribing takes effect immediately.
+
+Unsubscribing does not affect the emails required to deliver a workshop you have already paid for — your confirmation, your Zoom link, and your reminder will still arrive.
+
+## How long information is kept
+
+**DECISION NEEDED.** The system is built so past workshops go inert on their own, but "kept indefinitely" and "deleted after twelve months" are different promises and one has to be made. Options:
+
+- **A.** Registration records are kept for twelve months after a workshop series ends, then deleted.
+- **B.** Registration records are kept for three years for business and tax purposes, then deleted.
+- **C.** Registration records are kept indefinitely.
+
+Payment records are separate: Stripe retains transaction records on its own schedule for financial and legal reasons, and that is outside Stef's control either way. Contact form messages need their own answer too.
+
+B is the common choice and aligns with how long financial records are typically retained. A is the more privacy-protective position and fits the practice's positioning. C is hard to justify and hard to defend.
+
+## Your choices
+
+You may ask what information is held about you, ask that it be corrected, ask that it be deleted, and withdraw your consent to announcements at any time. Requests can be sent through the [contact form](/contact) and will be answered within a reasonable time.
+
+Some information cannot be deleted on request where it must be retained for tax or legal reasons — payment records in particular.
+
+## Children
+
+The workshops are for adults 18 and over. Information is not knowingly collected from anyone under 18.
+
+## Security
+
+Information is held in the services listed above, each of which encrypts data in transit and at rest. No system is perfectly secure, and no guarantee of absolute security can be made.
+
+## Visitors outside the United States
+
+**DECISION NEEDED.** Does Stef expect registrants outside the US?
+
+Her clientele includes people at multinational technology and aerospace companies, so EU or UK attendees are plausible rather than hypothetical. If so, GDPR obligations attach — a lawful basis for processing, explicit consent for marketing, and data subject rights with defined response times.
+
+If she wants to keep it simple, the alternative is stating that workshops are offered to participants in the United States only, and enforcing it at registration.
+
+Information is processed and stored in the United States.
+
+## Changes to this policy
+
+This policy may be updated. The effective date above reflects the most recent revision.
+
+## Contact
+
+Questions about this policy can be sent through the contact form at [stefanie-schumacher.com/contact](/contact).`,
   },
 ]
 
@@ -430,6 +608,9 @@ async function main() {
       title: pol.title,
       slug: { _type: 'slug', current: pol.slug },
       body: pol.body,
+      showInFooter: pol.showInFooter ?? false,
+      ...(pol.footerOrder != null ? { footerOrder: pol.footerOrder } : {}),
+      ...(pol.footerLabel ? { footerLabel: pol.footerLabel } : {}),
     })
   }
 
