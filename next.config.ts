@@ -6,6 +6,13 @@ const nextConfig: NextConfig = {
   experimental: {
     useTypeScriptCli: true,
   },
+  async rewrites() {
+    // Public URLs stay /terms and /privacy; pages live under /policies/[slug].
+    return [
+      { source: '/terms', destination: '/policies/terms' },
+      { source: '/privacy', destination: '/policies/privacy' },
+    ]
+  },
   async redirects() {
     return [
       {

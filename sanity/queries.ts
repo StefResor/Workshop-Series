@@ -107,3 +107,27 @@ export const pageBySlugQuery = `*[_type == "page" && slug.current == $slug][0] {
   ctaLabel,
   ctaHref
 }`
+
+/** Published policies only — drafts are excluded by the API unless previewed. */
+export const policyBySlugQuery = `*[_type == "policy" && slug.current == $slug][0] {
+  _id,
+  title,
+  "slug": slug.current,
+  body,
+  showInFooter,
+  footerOrder,
+  footerLabel
+}`
+
+/** All published policies — footer visibility is separate (`footerPoliciesQuery`). */
+export const policiesForStaticParamsQuery = `*[_type == "policy" && defined(slug.current)]{
+  "slug": slug.current
+}`
+
+export const footerPoliciesQuery = `*[_type == "policy" && showInFooter == true] | order(footerOrder asc) {
+  _id,
+  title,
+  "slug": slug.current,
+  footerLabel,
+  footerOrder
+}`

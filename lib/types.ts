@@ -86,3 +86,13 @@ export type PageDoc = {
   ctaLabel?: string
   ctaHref?: string
 }
+
+export type Policy = {
+  _id: string
+  title: string
+  slug: string
+  body: string
+  showInFooter?: boolean
+  footerOrder?: number
+  footerLabel?: string
+}
