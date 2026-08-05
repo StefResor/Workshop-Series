@@ -5,7 +5,6 @@ import { siteSettings } from './siteSettings'
 import { emailSignup } from './emailSignup'
 import { policy } from './policy'
 import { registration } from './registration'
-import { seasonPass } from './seasonPass'
 
 export const schemaTypes = [
   workshop,
@@ -15,5 +14,4 @@ export const schemaTypes = [
   emailSignup,
   policy,
   registration,
-  seasonPass,
 ]

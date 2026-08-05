@@ -9,7 +9,7 @@ const DEFAULTS = {
   buttonLabel: 'Subscribe',
   footerHeading: 'Workshop announcements',
   permissionLine:
-    "A few emails a month. Unsubscribe anytime. This list isn't a way to reach Stefanie about therapy — use the consultation form for that.",
+    "This list isn't a way to reach Stefanie about therapy — use the consultation form for that. Unsubscribe anytime.",
   successMessage:
     "You're on the list. Workshop announcements will come to this address.",
   errorMessage:

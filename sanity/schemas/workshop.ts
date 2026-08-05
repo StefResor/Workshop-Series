@@ -65,7 +65,8 @@ export const workshop = defineType({
       title: 'Price override',
       type: 'number',
       description:
-        'Optional per-participant USD override. Leave empty to use Site settings → Session price.',
+        'Set in Stripe — this field is display only. Contact Mike to change the actual charge.',
+      readOnly: true,
       validation: (rule) => rule.min(0),
     }),
     defineField({

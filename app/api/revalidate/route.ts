@@ -31,7 +31,6 @@ export function targetsForDoc(body: WebhookBody): RevalidateTarget[] {
 
   switch (type) {
     case 'registration':
-    case 'seasonPass':
       // Transactional records — not published marketing content.
       return []
 

@@ -76,7 +76,7 @@ export const emailSignup = defineType({
       description:
         'Shown below the button. Must state what subscribers receive and that they can unsubscribe.',
       initialValue:
-        "A few emails a month. Unsubscribe anytime. This list isn't a way to reach Stefanie about therapy — use the consultation form for that.",
+        "This list isn't a way to reach Stefanie about therapy — use the consultation form for that. Unsubscribe anytime.",
       validation: (rule) => rule.required().max(180),
     }),
 

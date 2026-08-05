@@ -101,7 +101,8 @@ export const siteSettings = defineType({
       title: 'Full series price',
       type: 'number',
       description:
-        'USD for the full 10-session package (homepage + /workshops offer band). Leave empty to hide the band.',
+        'Set in Stripe — this field is display only. Contact Mike to change the actual charge.',
+      readOnly: true,
       validation: (rule) => rule.min(0),
     }),
     defineField({
