@@ -39,6 +39,7 @@ const PENDING = `{
   "credentials": *[
     _type == "registration" &&
     status == "active" &&
+    testMode != true &&
     !defined(credentialsSentAt) &&
     workshop->startsAt > $now &&
     workshop->startsAt < $credsCutoff
@@ -49,6 +50,7 @@ const PENDING = `{
   "reminders": *[
     _type == "registration" &&
     status == "active" &&
+    testMode != true &&
     !defined(reminderSentAt) &&
     workshop->startsAt > $now &&
     workshop->startsAt < $reminderCutoff

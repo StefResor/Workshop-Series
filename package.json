@@ -13,6 +13,7 @@
     "wire:sanity-links": "node scripts/wire-sanity-links.mjs",
     "backfill:series": "node scripts/backfill-series.mjs",
     "sync:payment-link-metadata": "node scripts/sync-payment-link-metadata.mjs",
+    "purge:test-registrations": "node scripts/purge-test-registrations.mjs",
     "fix-typos": "tsx scripts/fix-typos.ts",
     "backfill:workshop-fields": "tsx scripts/backfill-workshop-fields.ts",
     "migrate:workshop-fields": "tsx scripts/migrate-workshop-fields.ts",

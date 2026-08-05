@@ -22,35 +22,44 @@ export type RegistrationInput = {
   stripeSessionId: string;
   source: "single" | "pass";
   passId?: string;
+  /** From `!event.livemode` — required, never defaulted at call sites. */
+  testMode: boolean;
 };
 
 /**
- * Deterministic document ID: (workshop, email) is the natural key.
+ * Deterministic document ID: (mode, workshop, email) is the natural key.
  *
- * The email is hashed rather than embedded, so addresses don't end up in
- * document IDs — which show up in URLs, logs, and the Studio's history pane.
- * Hashing the normalized form means the same person can't hold two
- * registrations for one workshop, which is what makes the pass fan-out safe
- * to run over someone who already bought a workshop individually.
+ * Mode is a path segment (`live` | `test`) so it is visible in IDs/logs/Studio
+ * and so test rows purge with `_id in path("registration.test.**")`. Email is
+ * hashed, not embedded.
+ *
+ * Test and live never collide — the same person can hold both without one
+ * overwriting the other via createIfNotExists.
  */
-export function registrationId(workshopId: string, email: string) {
+export function registrationId(
+  workshopId: string,
+  email: string,
+  testMode: boolean,
+) {
+  const mode = testMode ? "test" : "live";
   const hash = createHash("sha256")
     .update(email.trim().toLowerCase())
     .digest("hex")
     .slice(0, 16);
-  return `registration.${workshopId}.${hash}`;
+  return `registration.${mode}.${workshopId}.${hash}`;
 }
 
 /**
- * Idempotent. Safe to call twice for the same (workshop, email) — Stripe does
- * retry webhooks, and someone who bought a single workshop and later upgraded
- * to a pass must not end up with two registrations and two of every email.
+ * Idempotent. Safe to call twice for the same (mode, workshop, email) — Stripe
+ * does retry webhooks, and someone who bought a single workshop and later
+ * upgraded to a pass must not end up with two registrations and two of every
+ * email within the same mode.
  *
  * An existing 'single' registration is never downgraded to 'pass': they paid
  * for it directly, and that's the record worth keeping.
  */
 export async function createRegistration(input: RegistrationInput) {
-  const _id = registrationId(input.workshopId, input.email);
+  const _id = registrationId(input.workshopId, input.email, input.testMode);
 
   await writeClient.createIfNotExists({
     _id,
@@ -62,25 +71,27 @@ export async function createRegistration(input: RegistrationInput) {
     passId: input.passId,
     stripeSessionId: input.stripeSessionId,
     status: "active",
+    testMode: input.testMode,
     registeredAt: new Date().toISOString(),
   });
 
   // Reactivate only on a genuinely new purchase after a refund — never when
   // fanOutSeriesPass backfills a workshop onto an already-refunded pass.
+  // Test/live IDs cannot collide, so a test retry cannot flip a live row.
   const existing = await writeClient.fetch<{
-    status?: string
-    stripeSessionId?: string
-  } | null>(`*[_id == $_id][0]{ status, stripeSessionId }`, { _id })
+    status?: string;
+    stripeSessionId?: string;
+  } | null>(`*[_id == $_id][0]{ status, stripeSessionId }`, { _id });
 
   if (
-    existing?.status === 'refunded' &&
+    existing?.status === "refunded" &&
     existing.stripeSessionId != null &&
     existing.stripeSessionId !== input.stripeSessionId
   ) {
     await writeClient
       .patch(_id)
-      .set({ status: 'active' })
-      .commit({ autoGenerateArrayKeys: true })
+      .set({ status: "active" })
+      .commit({ autoGenerateArrayKeys: true });
   }
 
   return _id;
@@ -101,6 +112,7 @@ export async function fanOutSeriesPass(opts: {
   email: string;
   firstName?: string;
   stripeSessionId: string;
+  testMode: boolean;
 }) {
   const workshops: { _id: string }[] = await writeClient.fetch(
     `*[_type == "workshop" && series._ref == $seriesId]{ _id }`,
@@ -108,7 +120,9 @@ export async function fanOutSeriesPass(opts: {
   );
 
   if (workshops.length === 0) {
-    throw new Error(`Series pass purchased but series ${opts.seriesId} has no workshops`);
+    throw new Error(
+      `Series pass purchased but series ${opts.seriesId} has no workshops`,
+    );
   }
 
   for (const w of workshops) {
@@ -119,6 +133,7 @@ export async function fanOutSeriesPass(opts: {
       stripeSessionId: opts.stripeSessionId,
       source: "pass",
       passId: opts.stripeSessionId,
+      testMode: opts.testMode,
     });
   }
 
@@ -128,7 +143,7 @@ export async function fanOutSeriesPass(opts: {
 /**
  * Refund handling. Voids by Stripe Checkout Session ID, which covers both a
  * single workshop and an entire pass fan-out — the pass writes its session ID
- * onto all ten rows.
+ * onto all ten rows. Mode-agnostic: test session IDs only exist in test mode.
  *
  * Refunded registrations stay in the dataset rather than being deleted: the
  * record of what happened is worth more than the tidiness, and status is what

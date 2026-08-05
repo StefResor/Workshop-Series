@@ -103,12 +103,15 @@ export async function POST(req: NextRequest) {
           console.info("[stripe] Session complete, payment pending:", session.id);
           return NextResponse.json({ received: true });
         }
-        await handlePurchase(session);
+        await handlePurchase(session, !event.livemode);
         break;
       }
 
       case "checkout.session.async_payment_succeeded": {
-        await handlePurchase(event.data.object as Stripe.Checkout.Session);
+        await handlePurchase(
+          event.data.object as Stripe.Checkout.Session,
+          !event.livemode,
+        );
         break;
       }
 
@@ -148,7 +151,10 @@ export async function POST(req: NextRequest) {
 
 /* ------------------------------------------------------------------ */
 
-async function handlePurchase(session: Stripe.Checkout.Session) {
+async function handlePurchase(
+  session: Stripe.Checkout.Session,
+  testMode: boolean,
+) {
   const email = session.customer_details?.email;
   if (!email) {
     console.error("[stripe] No email on session", session.id);
@@ -177,8 +183,12 @@ async function handlePurchase(session: Stripe.Checkout.Session) {
       email,
       firstName,
       stripeSessionId: session.id,
+      testMode,
     });
-    console.info(`[stripe] Pass fanned out to ${count} workshops for ${session.id}`);
+    console.info(
+      `[stripe] Pass fanned out to ${count} workshops for ${session.id}` +
+        (testMode ? " (testMode)" : ""),
+    );
 
     // One confirmation per workshop, so each is findable on its own terms and
     // each carries its own calendar file. Sent oldest first so the inbox reads
@@ -216,6 +226,7 @@ async function handlePurchase(session: Stripe.Checkout.Session) {
     firstName,
     stripeSessionId: session.id,
     source: "single",
+    testMode,
   });
 
   await sendConfirmation(workshop, email, firstName, amountPaid, {

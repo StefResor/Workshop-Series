@@ -200,6 +200,13 @@ export const registration = defineType({
       initialValue: "active",
       description: "Refunded registrations are excluded from every send.",
     }),
+    defineField({
+      name: "testMode",
+      type: "boolean",
+      initialValue: false,
+      description:
+        "Written by a Stripe test-mode purchase. Excluded from all sends and from headcount. Safe to delete.",
+    }),
     defineField({ name: "registeredAt", type: "datetime" }),
     defineField({
       name: "credentialsSentAt",
@@ -209,10 +216,19 @@ export const registration = defineType({
     defineField({ name: "reminderSentAt", type: "datetime" }),
   ],
   preview: {
-    select: { email: "email", workshop: "workshop.title", status: "status", source: "source" },
-    prepare: ({ email, workshop, status, source }) => ({
-      title: email,
-      subtitle: `${workshop ?? "—"} · ${source ?? "?"}${status === "refunded" ? " · REFUNDED" : ""}`,
-    }),
+    select: {
+      email: "email",
+      workshop: "workshop.title",
+      status: "status",
+      source: "source",
+      testMode: "testMode",
+    },
+    prepare: ({ email, workshop, status, source, testMode }) => {
+      const base = `${workshop ?? "—"} · ${source ?? "?"}${status === "refunded" ? " · REFUNDED" : ""}`
+      return {
+        title: email,
+        subtitle: testMode ? `TEST · ${base}` : base,
+      }
+    },
   },
 });
