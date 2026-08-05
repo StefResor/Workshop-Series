@@ -36,13 +36,23 @@ export function targetsForDoc(body: WebhookBody): RevalidateTarget[] {
 
     case 'siteSettings':
     case 'emailSignup':
-    case 'policy':
       // Header/footer/metadata (and email signup) flow through the root layout
       // into every page, including /workshops/[slug]. Series package copy too.
       return [
         { kind: 'layout', path: '/' },
         { kind: 'path', path: '/workshops/series' },
       ]
+
+    case 'policy': {
+      const paths = new Set<string>(['/'])
+      if (slug) paths.add(`/${slug}`)
+      // Disclaimer snippets on workshop surfaces + footer link target.
+      paths.add('/workshops/series')
+      return [
+        { kind: 'layout', path: '/' },
+        ...[...paths].map((path) => ({ kind: 'path' as const, path })),
+      ]
+    }
 
     case 'workshop': {
       const paths = new Set<string>([

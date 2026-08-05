@@ -329,6 +329,69 @@ textarea {
   text-transform: uppercase;
 }
 
+.site-footer-link {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.site-footer-link:hover {
+  color: var(--ink);
+}
+
+.policy-hero {
+  border-bottom: 0;
+  padding-bottom: 4vh;
+}
+
+.policy-body {
+  /* ~65–70ch measure + page pad so the column aligns with other surfaces */
+  padding: 0 var(--page-pad-x) 12vh;
+  max-width: calc(68ch + 2 * var(--page-pad-x));
+  font-size: var(--text-body);
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.policy-body p {
+  margin: 0 0 1.15em;
+}
+
+.policy-body a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.policy-body a:hover {
+  color: var(--vermillion);
+}
+
+.policy-body strong {
+  font-weight: 600;
+}
+
+.policy-list {
+  margin: 0 0 1.15em;
+  padding-left: 1.25em;
+}
+
+.policy-list li {
+  margin-bottom: 0.4em;
+}
+
+.policy-body .policy-h2 {
+  font-family: var(--font-display);
+  font-size: clamp(22px, 2.4vw, 32px);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin: 0 0 0.75em;
+  padding-top: 48px;
+  border-top: var(--rule-width) solid var(--vermillion);
+  scroll-margin-top: 1.5rem;
+}
+
 /* ——— Email list signup ——— */
 /* Same ground as workshops — coda to the series, not a separate band. */
 .email-signup-band {

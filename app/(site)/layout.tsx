@@ -2,18 +2,25 @@ import { EmailSignupFooter } from '@/components/EmailSignupFooter'
 import { SiteFooter } from '@/components/SiteFooter'
 import { SiteHeader } from '@/components/SiteHeader'
 import { personJsonLd, websiteJsonLd } from '@/lib/schema'
-import type { EmailSignup, SiteSettings } from '@/lib/types'
+import type { EmailSignup, Policy, SiteSettings } from '@/lib/types'
 import { sanityFetch } from '@/sanity/lib/fetch'
-import { emailSignupQuery, siteSettingsQuery } from '@/sanity/queries'
+import {
+  emailSignupQuery,
+  footerPoliciesQuery,
+  siteSettingsQuery,
+} from '@/sanity/queries'
 
 export default async function SiteLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const [settings, emailSignup] = await Promise.all([
+  const [settings, emailSignup, footerPolicies] = await Promise.all([
     sanityFetch<SiteSettings | null>(siteSettingsQuery),
     sanityFetch<EmailSignup | null>(emailSignupQuery),
+    sanityFetch<Pick<Policy, 'slug' | 'title' | 'footerLabel'>[]>(
+      footerPoliciesQuery,
+    ).catch(() => []),
   ])
   const siteName = settings?.siteName || 'Stefanie Schumacher'
 
@@ -43,6 +50,7 @@ export default async function SiteLayout({
         credentials={settings?.credentials}
         practiceLine={settings?.practiceLine}
         signup={<EmailSignupFooter copy={emailSignup} />}
+        policies={footerPolicies || []}
       />
     </div>
   )
