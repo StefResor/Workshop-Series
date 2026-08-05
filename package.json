@@ -11,6 +11,8 @@
     "seed:stripe-links": "node scripts/seed-stripe-links.mjs",
     "seed:stripe-links:backfill": "node scripts/seed-stripe-links.mjs --backfill",
     "wire:sanity-links": "node scripts/wire-sanity-links.mjs",
+    "backfill:series": "node scripts/backfill-series.mjs",
+    "sync:payment-link-metadata": "node scripts/sync-payment-link-metadata.mjs",
     "fix-typos": "tsx scripts/fix-typos.ts",
     "backfill:workshop-fields": "tsx scripts/backfill-workshop-fields.ts",
     "migrate:workshop-fields": "tsx scripts/migrate-workshop-fields.ts",

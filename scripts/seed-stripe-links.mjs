@@ -34,7 +34,7 @@ const SKIP = []
 
 const SERIES = 'relational-diplomacy-2026'
 /** Sanity `series.slug.current` the webhook looks up (create that doc separately). */
-const SERIES_SLUG = 'relational-diplomacy-2026'
+const SERIES_SLUG = 'fall-2026'
 const UNIT_AMOUNT = 4700
 const SERIES_UNIT_AMOUNT = 42300
 const CURRENCY = 'usd'

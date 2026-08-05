@@ -187,6 +187,28 @@ NEXT_PUBLIC_SITE_URL
 
 ---
 
+## Deploy order
+
+The webhook reads **only** `workshop_slug` and `series_slug` on Checkout
+Session metadata. There is no legacy fallback.
+
+Live Payment Links currently carry `workshop: "01"`…`"10"` (session numbers)
+and `series: "relational-diplomacy-2026"`. Until those links are updated:
+
+1. Run `scripts/sync-payment-link-metadata.mjs --commit` against a **live**
+   Stripe key (after Sanity has `series` slug `fall-2026` and workshop slugs
+   are stable).
+2. **Then** deploy this branch.
+
+Between those two moments every purchase throws and Stripe retries. Do not
+deploy the strict webhook before the live metadata sync.
+
+Also backfill `workshop.series` refs (`scripts/backfill-series.mjs --commit`)
+before relying on series-pass fan-out — without refs, `fanOutSeriesPass`
+queries an empty set.
+
+---
+
 ## Testing
 
 Stripe test mode is a separate universe — products, prices, Payment Links,
@@ -212,7 +234,7 @@ days out and run it.
 - [ ] Refund a pass → all 10 go `refunded`, none receive credentials
 - [ ] Cron with `startsAt` 7 days out → credentials send, `credentialsSentAt` set
 - [ ] Run cron twice → second run sends nothing
-- [ ] Workshop with no `joinUrl` → skipped, not marked, appears in `missingJoinUrl`
+- [ ] Workshop with no `zoomLink` → skipped, not marked, appears in `missingZoomLink`
 - [ ] Thank-you page with a bogus `session_id` → does not claim registration failed
 - [ ] Confirmation renders in Gmail, Apple Mail, and Outlook (Arial Black fallback)
 
