@@ -179,7 +179,9 @@ export const workshop = defineType({
       title: 'Stripe Product ID',
       type: 'string',
       fieldset: 'registrationPrivate',
-      description: 'Product ID from Stripe (e.g. prod_…). Maps a Payment Link purchase to this workshop.',
+      hidden: true,
+      readOnly: true,
+      description: 'Deprecated — superseded by paymentLink.',
     }),
     defineField({
       name: 'zoomLink',

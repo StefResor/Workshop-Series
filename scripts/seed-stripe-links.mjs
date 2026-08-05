@@ -33,9 +33,21 @@ loadEnv({ override: false })
 const SKIP = []
 
 const SERIES = 'relational-diplomacy-2026'
+/** Sanity `series.slug.current` the webhook looks up (create that doc separately). */
+const SERIES_SLUG = 'relational-diplomacy-2026'
 const UNIT_AMOUNT = 4700
 const SERIES_UNIT_AMOUNT = 42300
 const CURRENCY = 'usd'
+
+/** Match scripts/seed.ts so Payment Link metadata aligns with workshop slugs. */
+function slugify(input) {
+  return input
+    .toLowerCase()
+    .replace(/[\u201C\u201D"']/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+    .slice(0, 96)
+}
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
@@ -162,14 +174,17 @@ function catalogKey(product) {
   return null
 }
 
-function findExistingLink(links, key) {
+function findExistingLink(links, key, workshopSlug) {
   return (
     links.find((l) => {
       if (l.metadata?.series !== SERIES || l.active === false || !l.url) {
         return false
       }
       if (key === 'SERIES') return l.metadata?.kind === 'series_pass'
-      return l.metadata?.workshop === key
+      return (
+        l.metadata?.workshop === key ||
+        (workshopSlug && l.metadata?.workshop_slug === workshopSlug)
+      )
     }) ?? null
   )
 }
@@ -233,13 +248,18 @@ async function resolvePriceId(stripe, product) {
 function buildCatalog(workshops) {
   const items = workshops.map((w) => {
     const dateLabel = dateLabelFromLocalDate(w.localDate)
+    const workshopSlug = slugify(w.title)
     return {
       key: w.nn,
+      workshopSlug,
       productName: `Workshop ${w.nn}: ${w.title}`,
       description: `${dateLabel} · 7:00–8:30 PM ET · Zoom`,
       unitAmount: UNIT_AMOUNT,
       metadata: {
+        // workshop = zero-padded session number — kept for catalog dedupe of
+        // products already created. Webhook reads workshop_slug.
         workshop: w.nn,
+        workshop_slug: workshopSlug,
         date: w.localDate,
         series: SERIES,
       },
@@ -248,12 +268,14 @@ function buildCatalog(workshops) {
 
   items.push({
     key: 'SERIES',
+    workshopSlug: null,
     productName: 'Relational Diplomacy — All Ten Sessions',
     description: 'All ten sessions · Sep 9 – Nov 11 · one session free',
     unitAmount: SERIES_UNIT_AMOUNT,
     metadata: {
       kind: 'series_pass',
       series: SERIES,
+      series_slug: SERIES_SLUG,
     },
   })
 
@@ -308,7 +330,7 @@ async function runBackfill(stripe) {
     }
 
     const priceId = await resolvePriceId(stripe, product)
-    const stripeLink = findExistingLink(links, key)
+    const stripeLink = findExistingLink(links, key, null)
     const url = prev?.url || stripeLink?.url || null
     const record = linkRecord({
       url,
@@ -380,7 +402,7 @@ async function main() {
     const existingProduct = existingByKey.get(item.key)
     if (existingProduct) {
       const priorEntry = normalizeEntry(results[item.key])
-      const stripeLink = findExistingLink(links, item.key)
+      const stripeLink = findExistingLink(links, item.key, item.workshopSlug)
       const url = priorEntry?.url || stripeLink?.url || null
       const priceId =
         (await resolvePriceId(stripe, existingProduct)) ||

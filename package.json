@@ -19,8 +19,7 @@
     "migrate:practice-services": "tsx scripts/migrate-practice-services.ts",
     "audit:schema": "tsx scripts/audit-schema-drift.ts",
     "test:revalidate": "tsx scripts/verify-revalidate.ts",
-    "test:timezone": "tsx scripts/timezone-assertion.ts",
-    "test:workshop-window": "tsx scripts/workshop-window-assertion.ts"
+    "test:timezone": "tsx scripts/timezone-assertion.ts"
   },
   "dependencies": {
     "@sanity/client": "7.25.0",

@@ -11,26 +11,28 @@ Next.js App Router + Sanity CMS rebuild of stefanie-schumacher.com.
 5. `npm run seed` — requires `SANITY_API_WRITE_TOKEN`.
 6. `npm run dev` → Studio at [http://localhost:3000/studio](http://localhost:3000/studio).
 
-## Stripe + admin env
+## Stripe + workshop registration
 
 | Key | Purpose |
 |---|---|
-| `STRIPE_SECRET_KEY` | Webhook + admin buyer lookup |
-| `STRIPE_WEBHOOK_SECRET` | `checkout.session.completed` signature |
-| `STRIPE_SERIES_PRODUCT_ID` | Product ID (`prod_…`) for the full-series pass |
-| `ADMIN_USER` / `ADMIN_PASSWORD` | HTTP Basic for `/admin/*` and `/api/admin/*` (generated password; unset → 503, not open) |
-| `CONTACT_FROM_EMAIL` / `RESEND_API_KEY` | Transactional email From + API |
+| `STRIPE_SECRET_KEY` | Webhook + thank-you Checkout Session lookup |
+| `STRIPE_WEBHOOK_SECRET` | Signature for `POST /api/stripe/webhook` |
+| `WORKSHOP_FROM_EMAIL` | From on confirmation / credentials mail |
+| `WORKSHOP_REPLY_TO` | Reply-To on those mails |
+| `CRON_SECRET` | Bearer for `GET /api/cron/workshop-credentials` |
+| `CONTACT_FROM_EMAIL` / `RESEND_API_KEY` | Contact form + Resend API |
 
-Credential delivery is **date-based** (welcome if the session is more than 8 days away; Zoom details if 8 days or fewer). Series pass matching uses `STRIPE_SERIES_PRODUCT_ID` only (no Sanity series product field). Admin credential sends: `/admin/sessions`.
+Registration and credentials flow: see [`docs/workshop-registration-system.md`](./docs/workshop-registration-system.md). Payment Links must carry `workshop_slug` or `series_slug` metadata.
 
 ## Current milestone
 
-Marketing site is live on Vercel preview. Outstanding: Sanity revalidate webhook, Resend domain, Stef confirmations (fees, photo, address, Squarespace), custom domain cutover.
+Marketing site is live on Vercel preview. Outstanding: Sanity revalidate webhook, Resend domain, Stef confirmations (fees, photo, address), custom domain cutover, Payment Link metadata migration to `workshop_slug` / `series_slug`.
 
 Do **not** hardcode session fees as JSX fallbacks — missing Sanity values must fail visible (`Contact for current fees`). Workshop legal disclaimer may keep a hardcoded fail-safe.
 
 ## Docs that matter most
 
+- `docs/workshop-registration-system.md` — purchase, confirmations, cron credentials
 - `docs/workshop-schedule.md` — UTC table + DST trap for sessions 9–10
 - `docs/content-corrections.md` — typo / copy fixes applied in seed
 - `docs/metadata-truth.md` — ban list for Wix transferred-account metadata leftovers

@@ -58,17 +58,14 @@ CONTACT_TO_EMAIL=
 CONTACT_FROM_EMAIL=
 STRIPE_SECRET_KEY=
 STRIPE_WEBHOOK_SECRET=
-STRIPE_SERIES_PRODUCT_ID=
 WORKSHOP_FROM_EMAIL=
 WORKSHOP_REPLY_TO=
 CRON_SECRET=
-ADMIN_USER=
-ADMIN_PASSWORD=
 ```
 
 Pre-cutover `NEXT_PUBLIC_SITE_URL` should be `https://stefanie-schumacher-com.vercel.app` so `/events.ics` and OG URLs resolve to Next, not Wix. Switch to `https://stefanie-schumacher.com` at DNS cutover.
 
-Workshop purchase confirmations: Stripe webhook `POST /api/stripe/webhook` (`checkout.session.completed`) maps line-item Product ID → Sanity `workshop.stripeProductId` (or `STRIPE_SERIES_PRODUCT_ID` for the series pass). Delivery is date-based: welcome only when the session is more than 8 days away; Zoom credentials when ≤8 days (UTC instant math on stored `startsAt`). Series buyers get one email with the full schedule and credentials inlined only for in-window sessions. Never project `stripeProductId` / `zoomLink` / `zoomPasscode` in public GROQ. Admin credential blasts: `/admin/sessions` (HTTP Basic via `ADMIN_USER` / `ADMIN_PASSWORD`).
+Workshop registration: see `docs/workshop-registration-system.md`. Webhook matches Payment Link metadata `workshop_slug` / `series_slug` → Sanity workshop/series, writes `registration` docs, sends confirmation (no Zoom). Cron at `/api/cron/workshop-credentials` sends Zoom from `zoomLink` / `zoomPasscode` eight days out. Never project `zoomLink` / `zoomPasscode` / `stripeProductId` in public GROQ.
 
 The `production` dataset is **private**. `SANITY_API_READ_TOKEN` (Viewer) must be set on Vercel — without it, pages render empty shells (no workshops/fees). Create under Sanity → project → API → Tokens.
 
