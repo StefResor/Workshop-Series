@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { formatWorkshopDisplay } from '@/lib/datetime'
 import { buildPageMetadata } from '@/lib/seo'
 import { EmailSignupBand } from '@/components/EmailSignupBand'
+import { SeriesPackageBand } from '@/components/SeriesPackageBand'
 import type {
   EmailSignup,
   PageDoc,
@@ -10,6 +11,10 @@ import type {
   SiteSettings,
   Workshop,
 } from '@/lib/types'
+import {
+  resolveSessionPrice,
+  workshopSeriesPriceClause,
+} from '@/lib/workshop-price'
 import { sanityFetch } from '@/sanity/lib/fetch'
 import {
   emailSignupQuery,
@@ -85,7 +90,8 @@ export default async function HomePage() {
   const { lines, outline } = splitHeadline(home?.headline)
   const couples = services?.find((s) => s.slug.includes('couples'))
   const individuals = services?.find((s) => s.slug.includes('individual'))
-  const workshopDefault = settings?.defaultWorkshopPrice ?? null
+  const workshopDefault = resolveSessionPrice(settings)
+  const priceClause = workshopSeriesPriceClause(settings)
   const practice = (services || [])
     .filter((s) => {
       const slug = s.slug || ''
@@ -137,11 +143,7 @@ export default async function HomePage() {
           Workshop Series
         </h2>
         <p className="section-sub">
-          {`Relational Diplomacy · Live · Wednesdays 7:00–8:30 PM ET · Zoom${
-            workshopDefault != null
-              ? ` · $${workshopDefault} per session`
-              : ''
-          } · Join any session, in any order · 18+`}
+          {`Relational Diplomacy · Live · Wednesdays 7:00–8:30 PM ET · Zoom${priceClause} · Join any session, in any order · 18+`}
         </p>
         <p className="section-note">
           Separate from the series, I see a small number of couples and individuals
@@ -191,6 +193,7 @@ export default async function HomePage() {
               </article>
             )
           })}
+          <SeriesPackageBand settings={settings} embedded />
         </div>
       </section>
 

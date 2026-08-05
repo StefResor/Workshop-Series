@@ -81,11 +81,82 @@ export const siteSettings = defineType({
     }),
     defineField({
       name: 'defaultWorkshopPrice',
-      title: 'Default workshop price',
+      title: 'Default workshop price (legacy)',
       type: 'number',
       description:
-        'Default per-participant USD for workshops when a session has no override.',
+        'Legacy alias for Session price. Prefer Session price below; kept so older documents keep resolving.',
+      validation: (rule) => rule.min(0),
+      hidden: ({ document }) => document?.sessionPrice != null,
+    }),
+    defineField({
+      name: 'sessionPrice',
+      title: 'Session price',
+      type: 'number',
+      description:
+        'Per-participant USD for a single workshop when the session has no price override.',
       validation: (rule) => rule.required().min(0),
+    }),
+    defineField({
+      name: 'seriesPrice',
+      title: 'Full series price',
+      type: 'number',
+      description:
+        'USD for the full 10-session package (homepage + /workshops offer band). Leave empty to hide the band.',
+      validation: (rule) => rule.min(0),
+    }),
+    defineField({
+      name: 'seriesEyebrow',
+      title: 'Series band eyebrow',
+      type: 'string',
+      description: 'e.g. The Full Series',
+    }),
+    defineField({
+      name: 'seriesDisplayLine',
+      title: 'Series band display line',
+      type: 'string',
+      description: 'Hero line under the eyebrow — e.g. All Ten Sessions',
+    }),
+    defineField({
+      name: 'seriesSupportingLine',
+      title: 'Series band supporting line',
+      type: 'text',
+      rows: 3,
+      description:
+        'One sentence about the arc (left column). Draft until client review.',
+    }),
+    defineField({
+      name: 'seriesOfferLine',
+      title: 'Series meta — offer phrase',
+      type: 'string',
+      description:
+        'Phrase after the price in the meta line (no dollar amounts). e.g. ten sessions, one free → “$423 · ten sessions, one free”',
+    }),
+    defineField({
+      name: 'seriesScheduleLine',
+      title: 'Series meta — schedule',
+      type: 'string',
+      description: 'e.g. Wednesdays · 7:00–8:30 PM ET · Zoom',
+    }),
+    defineField({
+      name: 'seriesInclusions',
+      title: 'Series inclusions (unused in band)',
+      type: 'array',
+      of: [{ type: 'string' }],
+      description:
+        'Retained for Studio; the band no longer lists inclusions. Do not mention recordings (Phase 2).',
+      hidden: true,
+    }),
+    defineField({
+      name: 'seriesCtaLabel',
+      title: 'Series CTA label',
+      type: 'string',
+    }),
+    defineField({
+      name: 'seriesPaymentLink',
+      title: 'Series payment link',
+      type: 'url',
+      description:
+        'Stripe Payment Link for the full-series pass. Required for the band CTA.',
     }),
     defineField({
       name: 'workshopDisclaimer',

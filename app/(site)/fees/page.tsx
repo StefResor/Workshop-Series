@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { buildPageMetadata } from '@/lib/seo'
 import type { PageDoc, Service, SiteSettings } from '@/lib/types'
+import { resolveSessionPrice } from '@/lib/workshop-price'
 import { sanityFetch } from '@/sanity/lib/fetch'
 import {
   pageBySlugQuery,
@@ -31,7 +32,7 @@ export default async function FeesPage() {
 
   const couples = services?.find((s) => s.slug.includes('couples'))
   const individuals = services?.find((s) => s.slug.includes('individual'))
-  const workshopDefault = settings?.defaultWorkshopPrice ?? null
+  const workshopDefault = resolveSessionPrice(settings)
 
   return (
     <>

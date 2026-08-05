@@ -55,6 +55,16 @@ export const siteSettingsQuery = `*[_type == "siteSettings"][0] {
   mailingAddress,
   notificationsEnabled,
   defaultWorkshopPrice,
+  sessionPrice,
+  seriesPrice,
+  seriesEyebrow,
+  seriesDisplayLine,
+  seriesSupportingLine,
+  seriesOfferLine,
+  seriesScheduleLine,
+  seriesInclusions,
+  seriesCtaLabel,
+  seriesPaymentLink,
   workshopDisclaimer
 }`
 

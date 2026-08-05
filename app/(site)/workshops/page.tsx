@@ -1,9 +1,11 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { WorkshopDateLabel, WorkshopWhen } from '@/components/WorkshopWhen'
+import { SeriesPackageBand } from '@/components/SeriesPackageBand'
+import { WorkshopDateLabel } from '@/components/WorkshopWhen'
+import { formatWorkshopDisplay } from '@/lib/datetime'
 import { buildPageMetadata } from '@/lib/seo'
 import type { SiteSettings, Workshop } from '@/lib/types'
-import { resolveWorkshopPrice } from '@/lib/workshop-price'
+import { workshopSeriesPriceClause } from '@/lib/workshop-price'
 import { sanityFetch } from '@/sanity/lib/fetch'
 import { siteSettingsQuery, workshopsQuery } from '@/sanity/queries'
 
@@ -22,55 +24,63 @@ export default async function WorkshopsPage() {
     sanityFetch<SiteSettings | null>(siteSettingsQuery),
   ])
 
+  const priceClause = workshopSeriesPriceClause(settings)
+
   return (
     <>
       <header className="page-hero">
         <span className="kicker">Relational Diplomacy</span>
         <h1>Workshop Series</h1>
         <p className="lede">
-          Live · Wednesdays 7:00–8:30 PM ET · Zoom · Join any session, in any order ·
-          18+. Educational in nature — not psychotherapy.
+          {`Relational Diplomacy · Live · Wednesdays 7:00–8:30 PM ET · Zoom${priceClause} · Join any session, in any order · 18+. Educational in nature — not psychotherapy.`}
         </p>
       </header>
 
-      <section className="section" aria-labelledby="workshop-list-heading">
+      <section
+        className="section workshops-index-section"
+        aria-labelledby="workshop-list-heading"
+      >
         <h2 id="workshop-list-heading" className="visually-hidden">
           Upcoming workshops
         </h2>
         <div className="workshop-list">
           {(workshops || []).map((w) => {
-            const price = resolveWorkshopPrice(w, settings)
+            const d = formatWorkshopDisplay(w.startsAt, w.timeZone)
+            const hook = w.hook || w.shortDescription
             return (
               <Link
                 key={w._id}
                 href={`/workshops/${w.slug}`}
                 className="workshop-row"
-                aria-label={
-                  price != null
-                    ? `${w.title}, ${price} dollars`
-                    : `${w.title}, contact for current fees`
-                }
+                aria-label={`Register: ${w.title}, ${d.month} ${d.day}`}
               >
-                <WorkshopDateLabel startsAt={w.startsAt} timeZone={w.timeZone} />
-                <span>
-                  <span style={{ fontWeight: 600 }}>{w.title}</span>
-                  <br />
-                  <span className="meta">
-                    <WorkshopWhen startsAt={w.startsAt} timeZone={w.timeZone} />
-                  </span>
+                <span className="num" aria-hidden="true">
+                  {String(w.sessionNumber).padStart(2, '0')}
                 </span>
-                <span className="meta">
-                  {price != null ? `$${price}` : 'Contact for fees'}
+                <WorkshopDateLabel
+                  startsAt={w.startsAt}
+                  timeZone={w.timeZone}
+                />
+                <span className="workshop-row-copy">
+                  <span className="workshop-row-title">{w.title}</span>
+                  {hook ? (
+                    <span className="workshop-row-hook">{hook}</span>
+                  ) : null}
+                </span>
+                <span className="workshop-row-cta">
+                  Register <span aria-hidden="true">→</span>
                 </span>
               </Link>
             )
           })}
+          <SeriesPackageBand settings={settings} embedded />
         </div>
-        <p style={{ marginTop: 36 }}>
-          <a className="btn" href="/events.ics">
-            Subscribe · Calendar (.ics)
-          </a>
-        </p>
+      </section>
+
+      <section className="section workshops-index-footer">
+        <a className="btn" href="/events.ics">
+          Subscribe · Calendar (.ics)
+        </a>
       </section>
     </>
   )

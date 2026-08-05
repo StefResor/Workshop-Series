@@ -65,7 +65,7 @@ export const workshop = defineType({
       title: 'Price override',
       type: 'number',
       description:
-        'Optional per-participant USD override. Leave empty to use Site settings → Default workshop price.',
+        'Optional per-participant USD override. Leave empty to use Site settings → Session price.',
       validation: (rule) => rule.min(0),
     }),
     defineField({

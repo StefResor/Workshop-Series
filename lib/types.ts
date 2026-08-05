@@ -32,7 +32,18 @@ export type SiteSettings = {
   ogTitle: string
   mailingAddress?: string
   notificationsEnabled?: boolean
+  /** @deprecated Prefer sessionPrice */
   defaultWorkshopPrice?: number
+  sessionPrice?: number
+  seriesPrice?: number
+  seriesEyebrow?: string
+  seriesDisplayLine?: string
+  seriesSupportingLine?: string
+  seriesOfferLine?: string
+  seriesScheduleLine?: string
+  seriesInclusions?: string[]
+  seriesCtaLabel?: string
+  seriesPaymentLink?: string
   workshopDisclaimer?: string
 }
 

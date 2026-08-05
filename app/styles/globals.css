@@ -458,20 +458,21 @@ textarea {
 .email-signup-submit--band {
   align-self: flex-start;
   background: var(--vermillion);
-  color: var(--ink);
+  color: var(--bone);
   border: 0;
   border-radius: 0;
-  padding: 16px 28px;
-  font-size: 13px;
+  padding: 12px 22px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: opacity 0.2s var(--ease);
+  transition: background 0.2s var(--ease);
 }
 
 .email-signup-submit--band:hover:not(:disabled) {
-  opacity: 0.9;
+  background: var(--ink);
+  color: var(--bone);
 }
 
 .email-signup-submit--band:disabled,
@@ -799,16 +800,43 @@ textarea {
 
 .workshop-row {
   display: grid;
-  grid-template-columns: 110px 1fr auto;
-  gap: 3vw;
+  grid-template-columns: 4.5rem 5.5rem 1fr auto;
+  gap: 1.5rem 2.5vw;
   align-items: baseline;
-  padding: 20px 0;
+  padding: 22px 0;
   border-bottom: var(--rule-width) solid var(--rule-internal);
-  transition: color 0.2s var(--ease);
+  transition: background 0.2s var(--ease);
 }
 
-.workshop-row:hover {
+.workshop-row:hover,
+.workshop-row:focus-visible {
+  background: var(--white);
+}
+
+.workshop-row:focus {
+  outline: none;
+}
+
+.workshop-row:focus-visible {
+  outline: 3px solid var(--vermillion);
+  outline-offset: -3px;
+}
+
+.workshop-row .num {
+  font-family: var(--font-display);
+  font-size: 28px;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1.25px var(--ink);
+  transition:
+    color 0.2s var(--ease),
+    -webkit-text-stroke 0.2s var(--ease);
+}
+
+.workshop-row:hover .num,
+.workshop-row:focus-visible .num {
   color: var(--vermillion);
+  -webkit-text-stroke: 1.25px var(--vermillion);
 }
 
 .workshop-row .d {
@@ -816,13 +844,281 @@ textarea {
   font-size: 12px;
   color: var(--vermillion);
   font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
-.workshop-row .meta {
+.workshop-row-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.workshop-row-title {
+  font-family: var(--font-display);
+  font-size: clamp(15px, 1.35vw, 18px);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+.workshop-row-hook {
+  font-size: var(--text-body-sm);
+  line-height: 1.45;
+  color: var(--muted);
+  max-width: 42em;
+}
+
+.workshop-row-cta {
+  font-family: var(--font-mono);
   font-size: 12px;
-  letter-spacing: 0.08em;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--vermillion);
+  white-space: nowrap;
+  align-self: center;
+}
+
+/* Collapse the void under the series card — section 9vh was reading as a new page. */
+.workshops-index-section {
+  padding-bottom: 0;
+}
+
+.workshops-index-footer {
+  padding: 28px var(--page-pad-x) 6vh;
+}
+
+/* Series package offer — centering is the one break; everything else matches the list. */
+.series-package-band {
+  background: var(--bone);
+  color: var(--ink);
+  padding: 56px var(--page-pad-x);
+  width: 100%;
+}
+
+.series-package-cell {
+  grid-column: 1 / -1;
+  padding: 48px 28px 36px;
+  border-top: 0;
+  border-right: 0;
+  border-bottom: 0;
+  transition: background 0.25s var(--ease);
+}
+
+/* Same white fill as .workshop-led / .workshop-row on hover. */
+.series-package-cell:hover,
+.series-package-cell:has(.series-package-cta:focus-visible) {
+  background: var(--white);
+}
+
+/*
+ * /workshops list: bracket the centered offer with the same hairlines as rows.
+ * Top rule = previous row’s border-bottom; this cell closes with its own bottom.
+ */
+.workshop-list > .series-package-cell {
+  padding: 48px 0 36px;
+  border-bottom: var(--rule-width) solid var(--rule-internal);
+  transition: background 0.2s var(--ease);
+}
+
+.series-package-band-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 46rem;
+  margin-inline: auto;
+}
+
+/*
+ * Outline numeral — same recipe as listing numbers.
+ * On the workshops list, match .workshop-row .num (28px).
+ * Inside the homepage LED grid, match .workshop-led .num (40px) so it
+ * doesn’t read undersized next to the session cards.
+ */
+.series-package-num {
+  font-family: var(--font-display);
+  font-size: 28px;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1.25px var(--ink);
+  margin: 0 0 10px;
+  transition:
+    color 0.25s var(--ease),
+    -webkit-text-stroke 0.25s var(--ease);
+}
+
+.workshop-led-grid .series-package-num {
+  font-size: 40px;
+  -webkit-text-stroke: 1.5px var(--ink);
+  margin-bottom: 14px;
+}
+
+/* Optical parity: longer “01 - 10” reads smaller than a single “10” at the same px. */
+.workshop-list .series-package-num {
+  font-size: 34px;
+  -webkit-text-stroke: 1.35px var(--ink);
+  transition:
+    color 0.2s var(--ease),
+    -webkit-text-stroke 0.2s var(--ease);
+}
+
+.series-package-cell:hover .series-package-num,
+.series-package-cell:has(.series-package-cta:focus-visible) .series-package-num {
+  color: var(--vermillion);
+  -webkit-text-stroke-color: var(--vermillion);
+}
+
+.series-package-eyebrow {
+  font-family: var(--font-sans);
+  font-size: var(--text-kicker);
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--vermillion);
+  margin: 0 0 6px;
+}
+
+/* ~workshop-title step (or one above) — one line at desktop. */
+.series-package-display {
+  font-family: var(--font-display);
+  font-size: clamp(15px, 1.4vw, 20px);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: 0.01em;
+  margin: 0 0 6px;
+  text-transform: uppercase;
+  text-wrap: nowrap;
+}
+
+.series-package-support {
+  font-size: var(--text-body-sm);
+  line-height: 1.45;
+  color: var(--muted);
+  margin: 0 0 8px;
+  max-width: 34em;
+}
+
+/* Same mono / uppercase scale as workshop row meta. */
+.series-package-meta {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--muted-2);
+  margin: 0 0 2px;
+}
+
+/* CTA keeps its own vermillion → ink swap; row hover is the white fill above. */
+.series-package-cta.btn {
+  margin-top: 20px;
+  padding: 12px 22px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  background: var(--vermillion);
+  color: var(--bone);
+  transition: background 0.2s var(--ease);
+}
+
+.series-package-cta.btn:hover {
+  background: var(--ink);
+  color: var(--bone);
+  opacity: 1;
+}
+
+/* ——— Series package detail (/workshops/series) ——— */
+.series-detail-inclusions {
+  list-style: none;
+  margin: 28px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: var(--text-body-sm);
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.series-detail-inclusions li::before {
+  content: '·';
+  margin-right: 0.55em;
+  color: var(--vermillion);
+}
+
+.series-detail-sessions-heading {
+  font-family: var(--font-display);
+  font-size: clamp(18px, 2vw, 24px);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  margin: 48px 0 18px;
+}
+
+.series-detail-sessions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: var(--rule-width) solid var(--rule-internal);
+}
+
+.series-detail-sessions li {
+  border-bottom: var(--rule-width) solid var(--rule-internal);
+}
+
+.series-detail-sessions a {
+  display: grid;
+  grid-template-columns: 3rem 1fr;
+  gap: 1rem;
+  align-items: baseline;
+  padding: 16px 0;
+  transition: color 0.2s var(--ease);
+}
+
+.series-detail-sessions a:hover {
+  color: var(--vermillion);
+}
+
+.series-detail-session-num {
+  font-family: var(--font-display);
+  font-size: 22px;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1.25px var(--ink);
+}
+
+.series-detail-sessions a:hover .series-detail-session-num {
+  color: var(--vermillion);
+  -webkit-text-stroke: 1.25px var(--vermillion);
+}
+
+.series-detail-session-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.series-detail-session-title {
+  font-family: var(--font-display);
+  font-size: clamp(14px, 1.2vw, 17px);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+}
+
+.series-detail-session-meta {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--vermillion);
 }
 
 /* ——— Workshop LED (homepage) ——— */
@@ -881,8 +1177,13 @@ textarea {
   border-right: 0;
 }
 
-/* Last row: bottom edge is the grid’s border-bottom. */
-.workshop-led-grid > .workshop-led:nth-last-child(-n + 2) {
+/*
+ * Last card row: drop bottom borders only when nothing follows inside the grid.
+ * When the series cell is present, keep those borders — they are the rule above
+ * All Ten Sessions.
+ */
+.workshop-led-grid:not(:has(.series-package-cell))
+  > .workshop-led:nth-last-child(-n + 2) {
   border-bottom: 0;
 }
 
@@ -1380,13 +1681,25 @@ textarea {
     border-right: 0;
   }
 
-  /* 1-col: only the final cell defers bottom edge to the grid’s bottom rule. */
+  /*
+   * 1-col: restore row dividers on what was the 2-col last pair, then drop the
+   * final card’s bottom edge — unless the series cell follows (it needs that rule).
+   */
   .workshop-led-grid > .workshop-led:nth-last-child(-n + 2) {
     border-bottom: var(--rule-width) solid var(--rule-internal);
   }
 
-  .workshop-led-grid > .workshop-led:last-child {
+  .workshop-led-grid:not(:has(.series-package-cell)) > .workshop-led:last-child {
     border-bottom: 0;
+  }
+
+  .series-package-cell {
+    padding: 48px 0 36px;
+  }
+
+  .series-package-display {
+    text-wrap: wrap;
+    text-wrap: balance;
   }
 
   .about-grid > .about-sticky {
@@ -1398,11 +1711,42 @@ textarea {
   }
 
   .workshop-row {
-    grid-template-columns: 84px 1fr;
+    grid-template-columns: 3.25rem 1fr;
+    gap: 10px 16px;
+    padding: 20px 0;
   }
 
-  .workshop-row .meta {
+  .workshop-row .d {
     grid-column: 2;
+    grid-row: 1;
+  }
+
+  .workshop-row .num {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    align-self: start;
+    font-size: 24px;
+  }
+
+  .workshop-list .series-package-num {
+    font-size: 28px;
+    -webkit-text-stroke: 1.25px var(--ink);
+  }
+
+  .workshop-row-copy {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .workshop-row-cta {
+    grid-column: 2;
+    grid-row: 3;
+    justify-self: start;
+    margin-top: 4px;
+  }
+
+  .series-package-band {
+    padding: 44px var(--page-pad-x);
   }
 
   .ev-back-nav {
