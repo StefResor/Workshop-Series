@@ -3,7 +3,9 @@
  *
  * Matches live links by legacy metadata.workshop ("01"…"10") / kind=series_pass.
  * Adds workshop_slug + series_slug (both required for singles); leaves legacy keys.
- * Also requires individual name collection and terms-of-service agreement.
+ * Also requires individual name collection and terms-of-service agreement,
+ * and clears custom_fields (Dashboard can't edit API-created links).
+ * Clearing uses rawRequest with custom_fields='' — stripe-node drops [].
  *
  * Live key: put STRIPE_SECRET_KEY=sk_live_… in gitignored `.env.stripe.live`
  * (overrides .env.local for this script only). Do not inline the key on the CLI.
@@ -64,6 +66,17 @@ async function listAllPaymentLinks(stripe) {
   return out
 }
 
+/** Compact custom_fields for dry-run (key / type / optional / label). */
+function customFieldsSnapshot(fields) {
+  if (!Array.isArray(fields) || fields.length === 0) return []
+  return fields.map((f) => ({
+    key: f.key ?? null,
+    type: f.type ?? null,
+    optional: Boolean(f.optional),
+    label: f.label?.custom ?? f.label?.type ?? null,
+  }))
+}
+
 /** Snapshot of fields this script manages (for dry-run diffs). */
 function checkoutSnapshot(link) {
   const individual = link.name_collection?.individual
@@ -79,6 +92,7 @@ function checkoutSnapshot(link) {
     consent_collection: {
       terms_of_service: link.consent_collection?.terms_of_service ?? null,
     },
+    custom_fields: customFieldsSnapshot(link.custom_fields),
   }
 }
 
@@ -88,6 +102,7 @@ function desiredCheckoutSnapshot() {
       individual: { ...DESIRED_NAME_COLLECTION.individual },
     },
     consent_collection: { ...DESIRED_CONSENT_COLLECTION },
+    custom_fields: [],
   }
 }
 
@@ -102,9 +117,12 @@ function checkoutChanged(current, proposed) {
 /**
  * Build the paymentLinks.update payload.
  * Preserve unrelated consent/name keys Stripe may already have set.
+ *
+ * custom_fields: stripe-node silently drops `[]`, so clearing must use the
+ * empty-string unset form via rawRequest (see applyUpdate).
  */
 function updateParams(link, proposedMetadata) {
-  const params = {
+  return {
     metadata: proposedMetadata,
     name_collection: {
       ...(link.name_collection?.business
@@ -119,7 +137,15 @@ function updateParams(link, proposedMetadata) {
       ...DESIRED_CONSENT_COLLECTION,
     },
   }
-  return params
+}
+
+async function applyUpdate(stripe, linkId, link, proposedMetadata) {
+  const params = updateParams(link, proposedMetadata)
+  // Empty string = unset array. `custom_fields: []` never leaves the SDK.
+  return stripe.rawRequest('POST', `/v1/payment_links/${linkId}`, {
+    ...params,
+    custom_fields: '',
+  })
 }
 
 async function main() {
@@ -138,7 +164,8 @@ async function main() {
   )
   console.log(`Stripe mode: ${mode}`)
   console.log(
-    'Also enforcing: name_collection.individual required, consent_collection.terms_of_service=required',
+    'Also enforcing: name_collection.individual required, ' +
+      'consent_collection.terms_of_service=required, custom_fields=[]',
   )
 
   if (commit && mode !== 'live') {
@@ -265,7 +292,9 @@ async function main() {
   )
 
   console.log('')
-  console.log('link ID                         kind            meta / name / tos')
+  console.log(
+    'link ID                         kind            meta / name / tos / custom_fields',
+  )
   console.log('-'.repeat(100))
   for (const row of rows) {
     const metaDirty = metadataChanged(row.currentMeta, row.proposedMeta)
@@ -288,6 +317,12 @@ async function main() {
     )
     console.log(
       `  consent_collection.terms_of_service proposed: ${JSON.stringify(row.proposedCheckout.consent_collection.terms_of_service)}`,
+    )
+    console.log(
+      `  custom_fields current:  ${JSON.stringify(row.currentCheckout.custom_fields)}`,
+    )
+    console.log(
+      `  custom_fields proposed: ${JSON.stringify(row.proposedCheckout.custom_fields)}`,
     )
   }
 
@@ -332,10 +367,7 @@ async function main() {
   }
 
   for (const row of toWrite) {
-    await stripe.paymentLinks.update(
-      row.id,
-      updateParams(row.link, row.proposedMeta),
-    )
+    await applyUpdate(stripe, row.id, row.link, row.proposedMeta)
     console.log(`updated ${row.id}`)
   }
   console.log(

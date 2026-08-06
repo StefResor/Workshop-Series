@@ -70,8 +70,36 @@ Every Stripe Payment Link must carry exactly one of:
 | `workshop_slug` | the workshop slug  | single workshop sale  |
 | `series_slug`   | the series slug    | full-series pass      |
 
-Without it the webhook throws and Stripe retries. This is the single most
-likely configuration mistake across eleven Payment Links.
+Singles need **both** `workshop_slug` and `series_slug`. Passes need
+`series_slug` only (plus `kind: series_pass`). Without the pair the webhook
+throws and Stripe retries. This is the single most likely configuration
+mistake across eleven Payment Links.
+
+### Canonical Payment Link management
+
+These links were created via the API. The Stripe Dashboard **cannot** edit
+metadata, name collection, terms-of-service consent, or custom fields on
+API-created Payment Links — the UI will look broken or read-only. Do not try
+to “fix” checkout fields there.
+
+**Source of truth for link configuration:** `scripts/sync-payment-link-metadata.mjs`
+
+It owns:
+
+- `workshop_slug` + `series_slug` (and leaves legacy `workshop` / `series` keys)
+- `name_collection.individual` required (Stripe’s “Full name”)
+- `consent_collection.terms_of_service` required
+- `custom_fields` cleared (no duplicate “Attendee name” custom field)
+
+```bash
+# Live key in gitignored .env.stripe.live (sk_live_ or rk_live_)
+node scripts/sync-payment-link-metadata.mjs           # dry-run
+node scripts/sync-payment-link-metadata.mjs --commit  # write
+```
+
+Always dry-run and read the table before `--commit`. After writes, open one
+buy URL in a browser — API state and the hosted checkout page have diverged
+before.
 
 Success URL per link:
 
@@ -190,18 +218,10 @@ NEXT_PUBLIC_SITE_URL
 ## Deploy order
 
 The webhook reads **only** `workshop_slug` and `series_slug` on Checkout
-Session metadata. There is no legacy fallback.
-
-Live Payment Links currently carry `workshop: "01"`…`"10"` (session numbers)
-and `series: "relational-diplomacy-2026"`. Until those links are updated:
-
-1. Run `scripts/sync-payment-link-metadata.mjs --commit` against a **live**
-   Stripe key (after Sanity has `series` slug `fall-2026` and workshop slugs
-   are stable).
-2. **Then** deploy this branch.
-
-Between those two moments every purchase throws and Stripe retries. Do not
-deploy the strict webhook before the live metadata sync.
+Session metadata. There is no legacy fallback. Live links were synced via
+`scripts/sync-payment-link-metadata.mjs` (see Canonical Payment Link
+management above). Re-run that script whenever checkout fields or slugs
+change — not the Dashboard.
 
 Also backfill `workshop.series` refs (`scripts/backfill-series.mjs --commit`)
 before relying on series-pass fan-out — without refs, `fanOutSeriesPass`
