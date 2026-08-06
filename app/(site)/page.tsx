@@ -16,12 +16,13 @@ import {
   workshopSeriesPriceClause,
 } from '@/lib/workshop-price'
 import { sanityFetch } from '@/sanity/lib/fetch'
+import { workshopPath } from '@/lib/workshop-paths'
 import {
   emailSignupQuery,
+  homeUpcomingWorkshopsQuery,
   pageBySlugQuery,
   servicesQuery,
   siteSettingsQuery,
-  workshopsQuery,
 } from '@/sanity/queries'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -82,7 +83,7 @@ export default async function HomePage() {
   const [home, services, workshops, settings, emailSignup] = await Promise.all([
     sanityFetch<PageDoc | null>(pageBySlugQuery, { slug: 'home' }),
     sanityFetch<Service[]>(servicesQuery),
-    sanityFetch<Workshop[]>(workshopsQuery),
+    sanityFetch<Workshop[]>(homeUpcomingWorkshopsQuery),
     sanityFetch<SiteSettings | null>(siteSettingsQuery),
     sanityFetch<EmailSignup | null>(emailSignupQuery),
   ])
@@ -150,49 +151,64 @@ export default async function HomePage() {
           privately.
         </p>
         <div className="workshop-led-grid">
-          {(workshops || []).map((w) => {
-            const d = formatWorkshopDisplay(w.startsAt, w.timeZone)
-            const mon = d.month.slice(0, 3).toUpperCase()
-            // Only surface a per-card price when it differs from the series default.
-            const cardPrice =
-              w.price != null &&
-              workshopDefault != null &&
-              w.price !== workshopDefault
-                ? w.price
-                : null
-            // Subhead covers ET/EDT; surface EST (or other) when a session differs.
-            const cardZone =
-              d.timeZoneName && d.timeZoneName !== 'EDT' && d.timeZoneName !== 'ET'
-                ? d.timeZoneName
-                : null
-            const hook = w.hook || w.shortDescription
-            const ctaParts = [
-              `${mon} ${d.day}`,
-              cardPrice != null ? `$${cardPrice}` : null,
-              cardZone,
-              'Details',
-            ].filter(Boolean)
-            return (
-              <article key={w._id} className="workshop-led">
-                <span className="num" aria-hidden="true">
-                  {String(w.sessionNumber).padStart(2, '0')}
-                </span>
-                <h2>{w.title}</h2>
-                {/* Always present so subgrid has four tracks (numeral · title · hook · footer). */}
-                <p className="hook">{hook || null}</p>
-                <div className="workshop-led-foot">
-                  <Link
-                    className="cta"
-                    href={`/workshops/${w.slug}`}
-                    aria-label={`Details: ${w.title}, ${d.month} ${d.day}`}
-                  >
-                    {ctaParts.join(' · ')}{' '}
-                    <span aria-hidden="true">→</span>
-                  </Link>
-                </div>
-              </article>
-            )
-          })}
+          {(workshops || []).length === 0 ? (
+            <div className="workshops-empty">
+              <p className="workshops-empty-heading">
+                This series has finished.
+              </p>
+              <p className="workshops-empty-body">
+                New dates are announced soon. Leave your email below and
+                you&rsquo;ll hear when registration opens — nothing else.
+              </p>
+            </div>
+          ) : (
+            (workshops || []).map((w) => {
+              const d = formatWorkshopDisplay(w.startsAt, w.timeZone)
+              const mon = d.month.slice(0, 3).toUpperCase()
+              const cardPrice =
+                w.price != null &&
+                workshopDefault != null &&
+                w.price !== workshopDefault
+                  ? w.price
+                  : null
+              const cardZone =
+                d.timeZoneName &&
+                d.timeZoneName !== 'EDT' &&
+                d.timeZoneName !== 'ET'
+                  ? d.timeZoneName
+                  : null
+              const hook = w.hook || w.shortDescription
+              const href =
+                w.seriesSlug && w.slug
+                  ? workshopPath(w.seriesSlug, w.slug)
+                  : '/workshops'
+              const ctaParts = [
+                `${mon} ${d.day}`,
+                cardPrice != null ? `$${cardPrice}` : null,
+                cardZone,
+                'Details',
+              ].filter(Boolean)
+              return (
+                <article key={w._id} className="workshop-led">
+                  <span className="num" aria-hidden="true">
+                    {String(w.sessionNumber).padStart(2, '0')}
+                  </span>
+                  <h2>{w.title}</h2>
+                  <p className="hook">{hook || null}</p>
+                  <div className="workshop-led-foot">
+                    <Link
+                      className="cta"
+                      href={href}
+                      aria-label={`Details: ${w.title}, ${d.month} ${d.day}`}
+                    >
+                      {ctaParts.join(' · ')}{' '}
+                      <span aria-hidden="true">→</span>
+                    </Link>
+                  </div>
+                </article>
+              )
+            })
+          )}
           <SeriesPackageBand settings={settings} embedded />
         </div>
       </section>

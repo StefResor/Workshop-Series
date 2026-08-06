@@ -7,6 +7,7 @@ import {
   workshopsQuery,
 } from '@/sanity/queries'
 import type { Policy, SiteSettings, Workshop } from '@/lib/types'
+import { workshopPath } from '@/lib/workshop-paths'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [workshops, settings, footerPolicies] = await Promise.all([
@@ -51,12 +52,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })
   }
 
-  const workshopRoutes: MetadataRoute.Sitemap = (workshops || []).map((w) => ({
-    url: absoluteUrl(`/workshops/${w.slug}`),
-    lastModified: new Date(w.startsAt),
-    changeFrequency: 'weekly' as const,
-    priority: 0.8,
-  }))
+  const workshopRoutes: MetadataRoute.Sitemap = (workshops || [])
+    .filter((w) => w.seriesSlug && w.slug)
+    .map((w) => ({
+      url: absoluteUrl(workshopPath(w.seriesSlug!, w.slug)),
+      lastModified: new Date(w.startsAt),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    }))
 
   return [...staticRoutes, ...workshopRoutes]
 }

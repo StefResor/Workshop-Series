@@ -1,12 +1,16 @@
 /** Central GROQ queries — no inline queries elsewhere. */
 
-export const workshopsQuery = `*[_type == "workshop" && status == "published"] | order(startsAt asc) {
+const workshopProjection = `{
   _id,
   title,
   "slug": slug.current,
+  "seriesSlug": series->slug.current,
+  "seriesTitle": series->title,
+  "seriesActive": series->active,
   sessionNumber,
   startsAt,
   endsAt,
+  durationMinutes,
   timeZone,
   price,
   hook,
@@ -17,28 +21,38 @@ export const workshopsQuery = `*[_type == "workshop" && status == "published"] |
   shortDescription,
   body,
   status,
-  locationLabel
+  locationLabel,
+  "isPast": startsAt <= now()
 }`
 
-export const workshopBySlugQuery = `*[_type == "workshop" && slug.current == $slug][0] {
+/** Homepage: next 4 upcoming across active series. */
+export const homeUpcomingWorkshopsQuery = `*[
+  _type == "workshop" &&
+  startsAt > now() &&
+  series->active == true
+] | order(startsAt asc) [0...4] ${workshopProjection}`
+
+/** Archive list — all workshops; UI groups by series. */
+export const workshopsQuery = `*[_type == "workshop"] | order(startsAt asc) ${workshopProjection}`
+
+/** Series documents that have at least one workshop, newest first. */
+export const workshopSeriesListQuery = `*[_type == "series" && count(*[_type == "workshop" && series._ref == ^._id]) > 0] | order(title desc) {
   _id,
   title,
   "slug": slug.current,
-  sessionNumber,
-  startsAt,
-  endsAt,
-  timeZone,
-  price,
-  hook,
-  stripePaymentLink,
-  zoomRegistrationUrl,
-  capacity,
-  registrationStatus,
-  shortDescription,
-  body,
-  status,
-  locationLabel
+  active,
+  passPrice,
+  passPaymentLink
 }`
+
+export const workshopBySeriesAndSlugQuery = `*[
+  _type == "workshop" &&
+  slug.current == $slug &&
+  series->slug.current == $series
+][0] ${workshopProjection}`
+
+/** Flat slug lookup for 301 redirects from legacy /workshops/[slug]. */
+export const workshopBySlugQuery = `*[_type == "workshop" && slug.current == $slug][0] ${workshopProjection}`
 
 export const siteSettingsQuery = `*[_type == "siteSettings"][0] {
   _id,
@@ -130,4 +144,9 @@ export const footerPoliciesQuery = `*[_type == "policy" && showInFooter == true]
   "slug": slug.current,
   footerLabel,
   footerOrder
+}`
+
+export const workshopsForStaticParamsQuery = `*[_type == "workshop" && defined(slug.current) && defined(series->slug.current)]{
+  "slug": slug.current,
+  "series": series->slug.current
 }`

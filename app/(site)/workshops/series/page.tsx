@@ -8,6 +8,7 @@ import type { SiteSettings, Workshop } from '@/lib/types'
 import { DEFAULT_WORKSHOP_DISCLAIMER } from '@/lib/workshop-disclaimer'
 import { resolveSessionPrice } from '@/lib/workshop-price'
 import { sanityFetch } from '@/sanity/lib/fetch'
+import { workshopPath } from '@/lib/workshop-paths'
 import { siteSettingsQuery, workshopsQuery } from '@/sanity/queries'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -112,7 +113,13 @@ export default async function SeriesPackagePage() {
           <ol className="series-detail-sessions">
             {(workshops || []).map((w) => (
               <li key={w._id}>
-                <Link href={`/workshops/${w.slug}`}>
+                <Link
+                  href={
+                    w.seriesSlug
+                      ? workshopPath(w.seriesSlug, w.slug)
+                      : `/workshops/${w.slug}`
+                  }
+                >
                   <span className="series-detail-session-num" aria-hidden="true">
                     {String(w.sessionNumber).padStart(2, '0')}
                   </span>

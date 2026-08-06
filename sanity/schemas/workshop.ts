@@ -1,17 +1,15 @@
 import { defineType, defineField } from 'sanity'
+import { isUniqueWorkshopSlug } from '../lib/isUniqueWorkshopSlug'
 
 export const workshop = defineType({
   name: 'workshop',
   title: 'Workshop',
   type: 'document',
-  fieldsets: [
-    {
-      name: 'registrationPrivate',
-      title: 'Registration (private)',
-      description:
-        'Never shown on the site, in feeds, sitemaps, or client bundles. Used only for Stripe purchase → Zoom confirmation email.',
-      options: { collapsible: true, collapsed: true },
-    },
+  groups: [
+    { name: 'content', title: 'Content', default: true },
+    { name: 'schedule', title: 'Schedule' },
+    { name: 'commerce', title: 'Commerce' },
+    { name: 'private', title: 'Private' },
   ],
   fields: [
     defineField({
@@ -19,77 +17,137 @@ export const workshop = defineType({
       title: 'Series',
       type: 'reference',
       to: [{ type: 'series' }],
+      group: 'content',
       description:
-        'The cohort this workshop belongs to. Required — determines pass eligibility, listing, and URL.',
+        'The cohort this workshop belongs to. Determines pass eligibility, listing, and URL.',
       validation: (rule) => rule.required(),
     }),
     defineField({
       name: 'title',
       title: 'Title',
       type: 'string',
+      group: 'content',
       validation: (rule) => rule.required(),
     }),
     defineField({
       name: 'slug',
       title: 'Slug',
       type: 'slug',
-      options: { source: 'title', maxLength: 96 },
+      group: 'content',
+      options: {
+        source: 'title',
+        maxLength: 96,
+        isUnique: isUniqueWorkshopSlug,
+      },
+      description: 'Unique within its series. Same title may reuse this slug in another series.',
       validation: (rule) => rule.required(),
     }),
     defineField({
       name: 'sessionNumber',
       title: 'Workshop number',
       type: 'number',
+      group: 'content',
       description:
         'Position in the series. Displays everywhere as "Workshop 01". Field name is legacy — do not rename without a content migration.',
       validation: (rule) => rule.required().integer().min(1),
     }),
     defineField({
-      name: 'startsAt',
-      title: 'Starts at (UTC)',
-      type: 'datetime',
-      description: 'Store UTC from docs/workshop-schedule.md. Do not enter local wall time here.',
-      validation: (rule) => rule.required(),
-    }),
-    defineField({
-      name: 'endsAt',
-      title: 'Ends at (UTC)',
-      type: 'datetime',
-      validation: (rule) => rule.required(),
-    }),
-    defineField({
-      name: 'durationMinutes',
-      title: 'Duration (minutes)',
-      type: 'number',
-      initialValue: 90,
-    }),
-    defineField({
-      name: 'timeZone',
-      title: 'Display time zone',
-      type: 'string',
-      initialValue: 'America/New_York',
-      validation: (rule) => rule.required(),
-    }),
-    defineField({
       name: 'hook',
       title: 'Hook',
       type: 'string',
-      description: 'One-line summary for cards and social captions.',
+      group: 'content',
+      description: 'One-line summary for cards, ICS, and social captions.',
       validation: (rule) => rule.max(90),
     }),
+    // PENDING DELETE (§2) — empty on all 10; awaiting go-ahead before removal.
     defineField({
       name: 'summary',
       title: 'One-line hook (registration pack)',
       type: 'text',
       rows: 2,
-      description: 'Used by ICS / registration pack. Prefer Hook for marketing cards.',
+      group: 'content',
+      hidden: true,
+      description: 'Deprecated — use Hook. Pending removal after migration approval.',
     }),
+    defineField({
+      name: 'shortDescription',
+      title: 'Short description',
+      type: 'text',
+      rows: 3,
+      group: 'content',
+    }),
+    defineField({
+      name: 'body',
+      title: 'Full description',
+      type: 'text',
+      rows: 12,
+      group: 'content',
+    }),
+    defineField({
+      name: 'locationLabel',
+      title: 'Location label',
+      type: 'string',
+      group: 'content',
+      initialValue: 'Zoom',
+    }),
+    defineField({
+      name: 'zoomRegistrationUrl',
+      title: 'Zoom registration URL',
+      type: 'url',
+      group: 'content',
+      description:
+        "Zoom's public registration page for this session (may appear on the site/feeds). Meeting join URL and passcode belong in Private.",
+    }),
+
+    defineField({
+      name: 'startsAt',
+      title: 'Starts at (UTC)',
+      type: 'datetime',
+      group: 'schedule',
+      description: 'Store UTC from docs/workshop-schedule.md. Do not enter local wall time here.',
+      validation: (rule) => rule.required(),
+    }),
+    // PENDING DELETE (§5) — emails/ICS use startsAt + durationMinutes.
+    defineField({
+      name: 'endsAt',
+      title: 'Ends at (UTC)',
+      type: 'datetime',
+      group: 'schedule',
+      description: 'Deprecated — derive from startsAt + durationMinutes. Pending removal.',
+    }),
+    defineField({
+      name: 'durationMinutes',
+      title: 'Duration (minutes)',
+      type: 'number',
+      group: 'schedule',
+      initialValue: 90,
+      validation: (rule) => rule.integer().min(1),
+    }),
+    defineField({
+      name: 'timeZone',
+      title: 'Display time zone',
+      type: 'string',
+      group: 'schedule',
+      initialValue: 'America/New_York',
+      options: {
+        list: [
+          { title: 'Eastern (America/New_York)', value: 'America/New_York' },
+          { title: 'Central (America/Chicago)', value: 'America/Chicago' },
+          { title: 'Mountain (America/Denver)', value: 'America/Denver' },
+          { title: 'Pacific (America/Los_Angeles)', value: 'America/Los_Angeles' },
+        ],
+        layout: 'dropdown',
+      },
+      validation: (rule) => rule.required(),
+    }),
+
     defineField({
       name: 'price',
       title: 'Price override',
       type: 'number',
+      group: 'commerce',
       description:
-        'Set in Stripe — this field is display only. Contact Mike to change the actual charge.',
+        'Display only. The charged amount is set on the Stripe Payment Link.',
       readOnly: true,
       validation: (rule) => rule.min(0),
     }),
@@ -97,61 +155,61 @@ export const workshop = defineType({
       name: 'stripePaymentLink',
       title: 'Stripe Payment Link',
       type: 'url',
+      group: 'commerce',
       description: 'External Stripe Payment Link for this session.',
     }),
+    // PENDING DELETE (§2) — empty on all 10.
     defineField({
       name: 'paymentLink',
       title: 'Stripe Payment Link (registration pack)',
       type: 'url',
-      description:
-        'Alias field from registration pack. Prefer Stripe Payment Link above until migrated.',
-    }),
-    defineField({
-      name: 'registrationOpen',
-      title: 'Registration open',
-      type: 'boolean',
-      initialValue: true,
-      description: 'Registration-pack commerce flag. Prefer Registration status for site UI.',
-    }),
-    defineField({
-      name: 'capacity',
-      title: 'Capacity',
-      type: 'number',
-      description: 'Leave empty for unlimited.',
-      validation: (rule) => rule.min(1).integer(),
+      group: 'commerce',
+      hidden: true,
+      description: 'Deprecated — use Stripe Payment Link. Pending removal.',
     }),
     defineField({
       name: 'registrationStatus',
       title: 'Registration status',
       type: 'string',
+      group: 'commerce',
       options: {
         list: [
           { title: 'Draft', value: 'draft' },
           { title: 'Open', value: 'open' },
+          { title: 'Closed', value: 'closed' },
           { title: 'Sold out', value: 'sold-out' },
-          { title: 'Past', value: 'past' },
         ],
         layout: 'radio',
       },
       initialValue: 'draft',
+      description:
+        'Can buyers purchase this session. Past/upcoming is derived from Starts at — not set here.',
       validation: (rule) => rule.required(),
     }),
+    // PENDING DELETE (§2/§3) — null on all 10; register button ignores it today.
     defineField({
-      name: 'shortDescription',
-      title: 'Short description',
-      type: 'text',
-      rows: 3,
+      name: 'registrationOpen',
+      title: 'Registration open',
+      type: 'boolean',
+      group: 'commerce',
+      hidden: true,
+      description: 'Deprecated — use Registration status. Pending removal.',
     }),
     defineField({
-      name: 'body',
-      title: 'Full description',
-      type: 'text',
-      rows: 12,
+      name: 'capacity',
+      title: 'Capacity',
+      type: 'number',
+      group: 'commerce',
+      description: 'Leave empty for unlimited.',
+      validation: (rule) => rule.min(1).integer(),
     }),
+    // PENDING DELETE (§3) — replaced by Sanity native publish. Hidden until field removal.
     defineField({
       name: 'status',
       title: 'Publish status',
       type: 'string',
+      group: 'commerce',
+      hidden: true,
       options: {
         list: [
           { title: 'Published', value: 'published' },
@@ -160,44 +218,34 @@ export const workshop = defineType({
         layout: 'radio',
       },
       initialValue: 'draft',
-      validation: (rule) => rule.required(),
-    }),
-    defineField({
-      name: 'zoomRegistrationUrl',
-      title: 'Zoom registration URL',
-      type: 'url',
       description:
-        "Zoom's public registration page for this session (may appear on the site/feeds). Meeting join URL and passcode belong in Registration (private).",
+        'Deprecated — use Sanity Publish. Pending removal after migration approval.',
     }),
-    defineField({
-      name: 'locationLabel',
-      title: 'Location label',
-      type: 'string',
-      initialValue: 'Zoom',
-    }),
+
     defineField({
       name: 'stripeProductId',
       title: 'Stripe Product ID',
       type: 'string',
-      fieldset: 'registrationPrivate',
+      group: 'private',
       hidden: true,
       readOnly: true,
-      description: 'Deprecated — superseded by paymentLink.',
+      description: 'Deprecated — superseded by stripePaymentLink.',
     }),
     defineField({
       name: 'zoomLink',
       title: 'Zoom join URL',
       type: 'url',
-      fieldset: 'registrationPrivate',
-      description: 'Meeting join URL emailed to the buyer after paid checkout. Never rendered publicly.',
+      group: 'private',
+      description:
+        'Sent 8 days before the workshop and again on the day. Never published on the site.',
     }),
     defineField({
       name: 'zoomPasscode',
       title: 'Zoom passcode',
       type: 'string',
-      fieldset: 'registrationPrivate',
+      group: 'private',
       description:
-        'Meeting passcode emailed to the buyer after paid checkout / credentials cron. Never rendered publicly.',
+        'Sent 8 days before the workshop and again on the day. Never published on the site.',
     }),
   ],
   orderings: [
@@ -206,18 +254,23 @@ export const workshop = defineType({
       name: 'sessionNumberAsc',
       by: [{ field: 'sessionNumber', direction: 'asc' }],
     },
+    {
+      title: 'Starts at',
+      name: 'startsAtAsc',
+      by: [{ field: 'startsAt', direction: 'asc' }],
+    },
   ],
   preview: {
     select: {
       title: 'title',
       sessionNumber: 'sessionNumber',
       registrationStatus: 'registrationStatus',
-      status: 'status',
+      seriesTitle: 'series.title',
     },
-    prepare({ title, sessionNumber, registrationStatus, status }) {
+    prepare({ title, sessionNumber, registrationStatus, seriesTitle }) {
       return {
         title: title || 'Untitled workshop',
-        subtitle: `#${sessionNumber ?? '?'} · ${registrationStatus ?? 'draft'} · ${status ?? 'draft'}`,
+        subtitle: `${seriesTitle ?? 'No series'} · #${sessionNumber ?? '?'} · ${registrationStatus ?? 'draft'}`,
       }
     },
   },

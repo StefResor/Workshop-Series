@@ -4,6 +4,7 @@ import { Resend } from "resend";
 import { client as sanity } from "@/sanity/lib/client";
 import { createRegistration, fanOutSeriesPass, voidRegistrations } from "@/lib/registrations";
 import { renderConfirmation } from "@/lib/email/workshop-confirmation";
+import { workshopIcsPath, workshopPath } from "@/lib/workshop-paths";
 
 export const runtime = "nodejs"; // Stripe signature verification needs Node crypto
 export const dynamic = "force-dynamic";
@@ -18,16 +19,20 @@ const FROM =
 const REPLY_TO = process.env.WORKSHOP_REPLY_TO!;
 
 // zoomLink and zoomPasscode are deliberately NOT selected here. They ship 8 days out.
-const WORKSHOP_BY_SLUG = `*[_type == "workshop" && slug.current == $slug][0]{
+const WORKSHOP_BY_SERIES_AND_SLUG = `*[
+  _type == "workshop" &&
+  slug.current == $slug &&
+  series->slug.current == $series
+][0]{
   _id, sessionNumber, title, startsAt, durationMinutes,
-  "slug": slug.current, "seriesTitle": series->title
+  "slug": slug.current, "seriesSlug": series->slug.current, "seriesTitle": series->title
 }`;
 
 const SERIES_BY_SLUG = `*[_type == "series" && slug.current == $slug][0]{ _id, title }`;
 
 const WORKSHOPS_IN_SERIES = `*[_type == "workshop" && series._ref == $seriesId] | order(sessionNumber asc){
   _id, sessionNumber, title, startsAt, durationMinutes,
-  "slug": slug.current, "seriesTitle": series->title
+  "slug": slug.current, "seriesSlug": series->slug.current, "seriesTitle": series->title
 }`;
 
 type WorkshopDoc = {
@@ -37,6 +42,7 @@ type WorkshopDoc = {
   startsAt: string;
   durationMinutes?: number;
   slug: string;
+  seriesSlug?: string;
   seriesTitle?: string;
 };
 
@@ -47,14 +53,19 @@ async function sendConfirmation(
   amountPaid: string,
   opts: { fromPass: boolean; idempotencyRef: string },
 ) {
+  const seriesSlug = w.seriesSlug;
+  if (!seriesSlug) {
+    throw new Error(`Workshop ${w._id} missing series slug for confirmation URLs`);
+  }
+  const path = workshopPath(seriesSlug, w.slug);
   const { subject, html, text } = renderConfirmation(
     {
       workshopNumber: w.sessionNumber,
       title: w.title,
       startsAt: w.startsAt,
       durationMinutes: w.durationMinutes ?? 90,
-      calendarUrl: `${SITE}/workshops/${w.slug}/event.ics`,
-      detailsUrl: `${SITE}/workshops/${w.slug}`,
+      calendarUrl: `${SITE}${workshopIcsPath(seriesSlug, w.slug)}`,
+      detailsUrl: `${SITE}${path}`,
       amountPaid,
       fromPass: opts.fromPass,
       seriesTitle: w.seriesTitle,
@@ -167,12 +178,13 @@ async function handlePurchase(
     currency: (session.currency ?? "usd").toUpperCase(),
   }).format((session.amount_total ?? 0) / 100);
 
-  // Metadata is set on each Payment Link. Exactly one of these is present.
-  const workshopSlug = session.metadata?.workshop_slug;
-  const seriesSlug = session.metadata?.series_slug;
+  // Metadata is set on each Payment Link.
+  // Pass: series_slug only. Single: workshop_slug + series_slug (both required).
+  const workshopSlug = session.metadata?.workshop_slug?.trim() || "";
+  const seriesSlug = session.metadata?.series_slug?.trim() || "";
 
   /* ---- full-series pass ---- */
-  if (seriesSlug) {
+  if (seriesSlug && !workshopSlug) {
     const series = await sanity.fetch(SERIES_BY_SLUG, { slug: seriesSlug });
     if (!series) {
       throw new Error(`No series in Sanity for slug "${seriesSlug}" (session ${session.id})`);
@@ -206,18 +218,23 @@ async function handlePurchase(
   }
 
   /* ---- single workshop ---- */
-  if (!workshopSlug) {
+  if (!workshopSlug || !seriesSlug) {
     throw new Error(
-      `Session ${session.id} has neither workshop_slug nor series_slug metadata. ` +
+      `Session ${session.id} missing workshop_slug and/or series_slug metadata ` +
+        `(got workshop_slug=${JSON.stringify(workshopSlug || null)}, ` +
+        `series_slug=${JSON.stringify(seriesSlug || null)}). ` +
         `Check the Payment Link configuration.`,
     );
   }
 
-  const workshop: WorkshopDoc | null = await sanity.fetch(WORKSHOP_BY_SLUG, {
-    slug: workshopSlug,
-  });
+  const workshop: WorkshopDoc | null = await sanity.fetch(
+    WORKSHOP_BY_SERIES_AND_SLUG,
+    { slug: workshopSlug, series: seriesSlug },
+  );
   if (!workshop) {
-    throw new Error(`No workshop in Sanity for slug "${workshopSlug}" (session ${session.id})`);
+    throw new Error(
+      `No workshop in Sanity for series "${seriesSlug}" slug "${workshopSlug}" (session ${session.id})`,
+    );
   }
 
   await createRegistration({

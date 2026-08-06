@@ -3,6 +3,7 @@ import Link from "next/link";
 import Stripe from "stripe";
 import { client as sanity } from "@/sanity/lib/client";
 import { CREDENTIALS_LEAD_DAYS } from "@/lib/email/theme";
+import { workshopIcsPath } from "@/lib/workshop-paths";
 
 export const dynamic = "force-dynamic";
 
@@ -14,12 +15,17 @@ export const metadata: Metadata = {
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-const WORKSHOP_QUERY = `*[_type == "workshop" && slug.current == $slug][0]{
-  sessionNumber, title, startsAt, durationMinutes, "slug": slug.current
+const WORKSHOP_QUERY = `*[
+  _type == "workshop" &&
+  slug.current == $slug &&
+  series->slug.current == $series
+][0]{
+  sessionNumber, title, startsAt, durationMinutes,
+  "slug": slug.current, "seriesSlug": series->slug.current
 }`;
 
 type Props = {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ series: string; slug: string }>;
   searchParams: Promise<{ session_id?: string }>;
 };
 
@@ -34,18 +40,25 @@ type Props = {
 type Outcome = "paid" | "processing" | "unknown";
 
 export default async function ThankYou({ params, searchParams }: Props) {
-  const { slug } = await params;
+  const { series, slug } = await params;
   const { session_id } = await searchParams;
 
-  // The slug is trustworthy: it comes from the success_url WE configured on
+  // The path is trustworthy: it comes from the success_url WE configured on
   // the Payment Link, not from anything the visitor controls meaningfully.
   // So workshop identity comes from the route, and Stripe is asked exactly
   // one question — did this person pay. Conflating the two was what created
   // false negatives in the first version.
-  const workshop = await sanity.fetch(WORKSHOP_QUERY, { slug }).catch((err: unknown) => {
-    console.error("[thank-you] Sanity fetch failed for slug:", slug, err);
-    return null;
-  });
+  const workshop = await sanity
+    .fetch(WORKSHOP_QUERY, { series, slug })
+    .catch((err: unknown) => {
+      console.error(
+        "[thank-you] Sanity fetch failed for series/slug:",
+        series,
+        slug,
+        err,
+      );
+      return null;
+    });
 
   let outcome: Outcome = "unknown";
   let firstName: string | undefined;
@@ -206,7 +219,7 @@ export default async function ThankYou({ params, searchParams }: Props) {
 
           <div className="mt-12 flex flex-col gap-3 sm:flex-row">
             <a
-              href={`/workshops/${slug}/event.ics`}
+              href={workshopIcsPath(series, slug)}
               className="inline-block bg-ink px-7 py-4 text-center text-xs font-semibold uppercase tracking-[0.12em] text-bone transition-opacity hover:opacity-85"
             >
               Add to calendar

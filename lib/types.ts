@@ -2,20 +2,26 @@ export type Workshop = {
   _id: string
   title: string
   slug: string
+  seriesSlug?: string
+  seriesTitle?: string
+  seriesActive?: boolean
   sessionNumber: number
   startsAt: string
-  endsAt: string
+  endsAt?: string
+  durationMinutes?: number
   timeZone: string
   price?: number
   hook?: string
   stripePaymentLink?: string
   zoomRegistrationUrl?: string
   capacity?: number
-  registrationStatus?: 'draft' | 'open' | 'sold-out' | 'past'
+  registrationStatus?: 'draft' | 'open' | 'closed' | 'sold-out'
   shortDescription?: string
   body?: string
-  status: 'published' | 'draft'
+  /** @deprecated Prefer Sanity publish state; kept until field removal. */
+  status?: 'published' | 'draft'
   locationLabel?: string
+  isPast?: boolean
 }
 
 export type SiteSettings = {

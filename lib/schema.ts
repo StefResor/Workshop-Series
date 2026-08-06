@@ -16,8 +16,10 @@ type EventInput = Pick<
   Workshop,
   | 'title'
   | 'slug'
+  | 'seriesSlug'
   | 'startsAt'
   | 'endsAt'
+  | 'durationMinutes'
   | 'shortDescription'
   | 'body'
   | 'stripePaymentLink'
@@ -74,9 +76,20 @@ export function workshopEventJsonLd(
   resolvedPrice?: number | null,
 ) {
   const origin = siteOrigin()
-  const url = absoluteUrl(`/workshops/${workshop.slug}`)
+  const path = workshop.seriesSlug
+    ? `/workshops/${workshop.seriesSlug}/${workshop.slug}`
+    : `/workshops/${workshop.slug}`
+  const url = absoluteUrl(path)
   const offerUrl = workshop.stripePaymentLink || url
   const price = resolvedPrice ?? workshop.price ?? null
+  const endDate =
+    workshop.endsAt ||
+    (workshop.durationMinutes != null
+      ? new Date(
+          new Date(workshop.startsAt).getTime() +
+            workshop.durationMinutes * 60_000,
+        ).toISOString()
+      : undefined)
 
   return {
     '@context': 'https://schema.org',
@@ -85,7 +98,7 @@ export function workshopEventJsonLd(
     name: workshop.title,
     description: workshop.shortDescription || workshop.body || undefined,
     startDate: workshop.startsAt,
-    endDate: workshop.endsAt,
+    endDate,
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
     eventStatus: 'https://schema.org/EventScheduled',
     inLanguage: 'en-US',

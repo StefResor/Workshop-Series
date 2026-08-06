@@ -3,6 +3,7 @@ import { Resend } from "resend";
 import { createClient } from "next-sanity";
 import { renderCredentials, renderReminder } from "@/lib/email/workshop-credentials";
 import { CREDENTIALS_LEAD_DAYS } from "@/lib/email/theme";
+import { workshopIcsPath, workshopPath } from "@/lib/workshop-paths";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -45,7 +46,7 @@ const PENDING = `{
     workshop->startsAt < $credsCutoff
   ]{
     _id, email, firstName,
-    "w": workshop->{ _id, sessionNumber, title, startsAt, durationMinutes, zoomLink, zoomPasscode, "slug": slug.current }
+    "w": workshop->{ _id, sessionNumber, title, startsAt, durationMinutes, zoomLink, zoomPasscode, "slug": slug.current, "seriesSlug": series->slug.current }
   },
   "reminders": *[
     _type == "registration" &&
@@ -56,7 +57,7 @@ const PENDING = `{
     workshop->startsAt < $reminderCutoff
   ]{
     _id, email, firstName,
-    "w": workshop->{ _id, sessionNumber, title, startsAt, durationMinutes, zoomLink, zoomPasscode, "slug": slug.current }
+    "w": workshop->{ _id, sessionNumber, title, startsAt, durationMinutes, zoomLink, zoomPasscode, "slug": slug.current, "seriesSlug": series->slug.current }
   }
 }`;
 
@@ -73,6 +74,7 @@ type Row = {
     zoomLink?: string;
     zoomPasscode?: string;
     slug: string;
+    seriesSlug?: string;
   };
 };
 
@@ -111,6 +113,11 @@ async function sendBatch(rows: Row[], kind: "credentials" | "reminder") {
       continue;
     }
 
+    if (!row.w.seriesSlug) {
+      console.error(`[cron] skip ${row._id}: workshop missing seriesSlug`);
+      skipped.push(row.w.slug);
+      continue;
+    }
     const payload = {
       workshopNumber: row.w.sessionNumber,
       title: row.w.title,
@@ -118,8 +125,8 @@ async function sendBatch(rows: Row[], kind: "credentials" | "reminder") {
       durationMinutes: row.w.durationMinutes ?? 90,
       joinUrl: row.w.zoomLink,
       passcode: row.w.zoomPasscode,
-      calendarUrl: `${SITE}/workshops/${row.w.slug}/event.ics`,
-      detailsUrl: `${SITE}/workshops/${row.w.slug}`,
+      calendarUrl: `${SITE}${workshopIcsPath(row.w.seriesSlug, row.w.slug)}`,
+      detailsUrl: `${SITE}${workshopPath(row.w.seriesSlug, row.w.slug)}`,
     };
 
     const { subject, html, text } =

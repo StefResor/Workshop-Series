@@ -7,6 +7,8 @@ export const dynamic = 'force-dynamic'
 type WebhookBody = {
   _type?: string
   slug?: { current?: string } | string
+  /** Series slug projection — required for series-scoped workshop paths. */
+  seriesSlug?: string
   operation?: string
 }
 
@@ -58,10 +60,22 @@ export function targetsForDoc(body: WebhookBody): RevalidateTarget[] {
       const paths = new Set<string>([
         '/',
         '/workshops',
+        '/workshops/series',
         '/events.json',
         '/events.ics',
         '/sitemap.xml',
       ])
+      // Flat slug still revalidated for the 301 redirect page.
+      if (slug) paths.add(`/workshops/${slug}`)
+      if (body.seriesSlug && slug) {
+        paths.add(`/workshops/${body.seriesSlug}/${slug}`)
+      }
+      return [...paths].map((path) => ({ kind: 'path' as const, path }))
+    }
+
+    case 'series': {
+      const paths = new Set<string>(['/', '/workshops', '/workshops/series'])
+      // Future: package page at /workshops/[series]; keep series slug path warm.
       if (slug) paths.add(`/workshops/${slug}`)
       return [...paths].map((path) => ({ kind: 'path' as const, path }))
     }

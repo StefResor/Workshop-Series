@@ -1,10 +1,16 @@
 import { NextResponse } from "next/server";
 import { client as sanity } from "@/sanity/lib/client";
+import { workshopPath } from "@/lib/workshop-paths";
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://stefanie-schumacher.com";
 
-const QUERY = `*[_type == "workshop" && slug.current == $slug][0]{
-  sessionNumber, title, startsAt, durationMinutes, summary, "slug": slug.current
+const QUERY = `*[
+  _type == "workshop" &&
+  slug.current == $slug &&
+  series->slug.current == $series
+][0]{
+  sessionNumber, title, startsAt, durationMinutes, hook, shortDescription,
+  "slug": slug.current, "seriesSlug": series->slug.current
 }`;
 
 const utc = (d: Date) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
@@ -19,21 +25,22 @@ const fold = (line: string) =>
 
 export async function GET(
   _req: Request,
-  { params }: { params: Promise<{ slug: string }> },
+  { params }: { params: Promise<{ series: string; slug: string }> },
 ) {
-  const { slug } = await params;
-  const w = await sanity.fetch(QUERY, { slug });
+  const { series, slug } = await params;
+  const w = await sanity.fetch(QUERY, { series, slug });
   if (!w) return new NextResponse("Not found", { status: 404 });
 
   const start = new Date(w.startsAt);
   const end = new Date(start.getTime() + (w.durationMinutes ?? 90) * 60_000);
   const num = String(w.sessionNumber).padStart(2, "0");
+  const path = workshopPath(w.seriesSlug || series, w.slug || slug);
 
   const description = [
-    w.summary ?? "",
+    w.hook || w.shortDescription || "",
     "",
     "Educational workshop. Not psychotherapy.",
-    `${SITE}/workshops/${slug}`,
+    `${SITE}${path}`,
   ]
     .join("\n")
     .trim();
@@ -45,14 +52,14 @@ export async function GET(
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
     "BEGIN:VEVENT",
-    `UID:workshop-${slug}@stefanie-schumacher.com`,
+    `UID:workshop-${series}-${slug}@stefanie-schumacher.com`,
     `DTSTAMP:${utc(new Date())}`,
     `DTSTART:${utc(start)}`,
     `DTEND:${utc(end)}`,
     fold(`SUMMARY:${esc(`Workshop ${num} — ${w.title}`)}`),
     fold(`DESCRIPTION:${esc(description)}`),
     "LOCATION:Zoom",
-    fold(`URL:${SITE}/workshops/${slug}`),
+    fold(`URL:${SITE}${path}`),
     "BEGIN:VALARM",
     "TRIGGER:-PT15M",
     "ACTION:DISPLAY",
@@ -65,7 +72,7 @@ export async function GET(
   return new NextResponse(lines.join("\r\n"), {
     headers: {
       "Content-Type": "text/calendar; charset=utf-8",
-      "Content-Disposition": `attachment; filename="relational-diplomacy-${slug}.ics"`,
+      "Content-Disposition": `attachment; filename="relational-diplomacy-${series}-${slug}.ics"`,
       "Cache-Control": "public, max-age=3600",
     },
   });

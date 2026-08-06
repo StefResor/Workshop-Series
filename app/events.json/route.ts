@@ -3,6 +3,7 @@ import { getReadClient } from '@/sanity/lib/client'
 import { siteSettingsQuery, workshopsQuery } from '@/sanity/queries'
 import type { SiteSettings, Workshop } from '@/lib/types'
 import { siteOrigin } from '@/lib/site-url'
+import { workshopPath } from '@/lib/workshop-paths'
 import { resolveWorkshopPrice } from '@/lib/workshop-price'
 
 // Cached route — Sanity CDN on miss; /api/revalidate busts on publish.
@@ -19,7 +20,10 @@ export async function GET() {
   const feedUrl = `${origin}/events.json`
 
   const items = (workshops || []).map((w) => {
-    const url = `${origin}/workshops/${w.slug}`
+    const url =
+      w.seriesSlug && w.slug
+        ? `${origin}${workshopPath(w.seriesSlug, w.slug)}`
+        : `${origin}/workshops/${w.slug}`
     return {
       id: url,
       url,

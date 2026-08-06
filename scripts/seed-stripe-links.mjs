@@ -256,10 +256,11 @@ function buildCatalog(workshops) {
       description: `${dateLabel} · 7:00–8:30 PM ET · Zoom`,
       unitAmount: UNIT_AMOUNT,
       metadata: {
-        // workshop = zero-padded session number — kept for catalog dedupe of
-        // products already created. Webhook reads workshop_slug.
+        // workshop / series = legacy catalog keys. Webhook requires
+        // workshop_slug + series_slug as a pair.
         workshop: w.nn,
         workshop_slug: workshopSlug,
+        series_slug: SERIES_SLUG,
         date: w.localDate,
         series: SERIES,
       },

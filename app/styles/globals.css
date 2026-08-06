@@ -1057,6 +1057,54 @@ textarea {
   align-self: center;
 }
 
+.workshop-row--past {
+  opacity: 0.55;
+}
+
+.workshop-row--past .workshop-row-cta {
+  color: var(--muted-2);
+}
+
+.workshop-series-group {
+  margin-bottom: 48px;
+}
+
+.workshop-series-group-title {
+  margin: 0 0 18px;
+  padding: 0 var(--page-pad-x);
+  font-family: var(--font-display);
+  font-size: clamp(22px, 2.4vw, 32px);
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+
+.workshops-empty {
+  grid-column: 1 / -1;
+  padding: 8px 0 28px;
+  max-width: 36rem;
+}
+
+.workshops-empty--index {
+  padding: 8px var(--page-pad-x) 40px;
+}
+
+.workshops-empty-heading {
+  margin: 0 0 12px;
+  font-family: var(--font-display);
+  font-size: clamp(22px, 2.6vw, 32px);
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+
+.workshops-empty-body {
+  margin: 0;
+  font-size: var(--text-body);
+  line-height: 1.55;
+  color: var(--muted);
+}
+
 /* Collapse the void under the series card — section 9vh was reading as a new page. */
 .workshops-index-section {
   padding-bottom: 0;

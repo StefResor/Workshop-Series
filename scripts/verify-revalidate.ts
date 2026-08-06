@@ -3,8 +3,9 @@
  * Usage (secret must match the running Next process):
  *   SANITY_REVALIDATE_SECRET=... npx tsx scripts/verify-revalidate.ts
  *
- * Asserts the individual /workshops/[slug] page is in the revalidate set
+ * Asserts flat /workshops/[slug] (301 target) is in the revalidate set
  * for both native `{ current }` and flattened string slug payloads.
+ * Also checks series-scoped path when seriesSlug is present on the webhook body.
  */
 import { config as loadEnv } from 'dotenv'
 import { createClient } from '@sanity/client'
@@ -78,30 +79,50 @@ async function sitemapOk() {
   }
 }
 
-async function workshopPageHasMarker(slug: string) {
-  const res = await fetch(`${base}/workshops/${slug}`, { cache: 'no-store' })
+async function workshopPageHasMarker(series: string, slug: string) {
+  const res = await fetch(`${base}/workshops/${series}/${slug}`, {
+    cache: 'no-store',
+  })
   const html = await res.text()
   return { status: res.status, hit: html.includes(marker) }
 }
 
-function detailPath(slug: string) {
+function legacyPath(slug: string) {
   return `/workshops/${slug}`
 }
 
-function assertSlugShapes(slug: string) {
+function seriesPath(series: string, slug: string) {
+  return `/workshops/${series}/${slug}`
+}
+
+function assertSlugShapes(slug: string, seriesSlug: string) {
   const asObject = targetsForDoc({
     _type: 'workshop',
     slug: { current: slug },
+    seriesSlug,
   })
-  const asString = targetsForDoc({ _type: 'workshop', slug })
-  const path = detailPath(slug)
-  const objHas = asObject.some((t) => t.kind === 'path' && t.path === path)
-  const strHas = asString.some((t) => t.kind === 'path' && t.path === path)
-  console.log('   slug object → detail path:', objHas)
-  console.log('   slug string → detail path:', strHas)
-  if (!objHas || !strHas) {
+  const asString = targetsForDoc({
+    _type: 'workshop',
+    slug,
+    seriesSlug,
+  })
+  const flat = legacyPath(slug)
+  const scoped = seriesPath(seriesSlug, slug)
+  const objHasFlat = asObject.some((t) => t.kind === 'path' && t.path === flat)
+  const strHasFlat = asString.some((t) => t.kind === 'path' && t.path === flat)
+  const objHasScoped = asObject.some(
+    (t) => t.kind === 'path' && t.path === scoped,
+  )
+  const strHasScoped = asString.some(
+    (t) => t.kind === 'path' && t.path === scoped,
+  )
+  console.log('   slug object → flat path:', objHasFlat)
+  console.log('   slug string → flat path:', strHasFlat)
+  console.log('   slug object → series path:', objHasScoped)
+  console.log('   slug string → series path:', strHasScoped)
+  if (!objHasFlat || !strHasFlat || !objHasScoped || !strHasScoped) {
     throw new Error(
-      'slugValue shape trap: workshop detail path missing for one slug shape',
+      'slugValue shape trap: workshop paths missing for one slug shape',
     )
   }
 }
@@ -110,17 +131,26 @@ async function main() {
   const before = await client.fetch<{
     shortDescription?: string
     slug?: string
+    seriesSlug?: string
   } | null>(
-    `*[_id == $id][0]{ shortDescription, "slug": slug.current }`,
+    `*[_id == $id][0]{
+      shortDescription,
+      "slug": slug.current,
+      "seriesSlug": series->slug.current
+    }`,
     { id: workshopId },
   )
-  if (!before?.slug) throw new Error(`Missing ${workshopId} or slug`)
+  if (!before?.slug || !before.seriesSlug) {
+    throw new Error(`Missing ${workshopId}, slug, or series slug`)
+  }
 
   const slug = before.slug
-  const workshopPath = detailPath(slug)
+  const seriesSlug = before.seriesSlug
+  const flatPath = legacyPath(slug)
+  const scopedPath = seriesPath(seriesSlug, slug)
 
   console.log('0) slugValue shape check…')
-  assertSlugShapes(slug)
+  assertSlugShapes(slug, seriesSlug)
 
   const original = before.shortDescription || ''
   console.log('1) Patching workshop-1 shortDescription with marker…')
@@ -134,17 +164,20 @@ async function main() {
   const reval = await signedPost({
     _type: 'workshop',
     slug: { _type: 'slug', current: slug },
+    seriesSlug,
   })
   console.log('   revalidate:', reval)
   const paths: string[] = reval.json?.paths || []
-  const detailInPaths = paths.includes(workshopPath)
-  console.log('   detail path in response:', detailInPaths, workshopPath)
+  const flatInPaths = paths.includes(flatPath)
+  const scopedInPaths = paths.includes(scopedPath)
+  console.log('   flat path in response:', flatInPaths, flatPath)
+  console.log('   series path in response:', scopedInPaths, scopedPath)
 
   console.log('4) Fetching feeds + workshop page AFTER revalidate…')
   const postFeed = await feedHasMarker()
   const postIcs = await icsHasMarker()
   const postMap = await sitemapOk()
-  const postPage = await workshopPageHasMarker(slug)
+  const postPage = await workshopPageHasMarker(seriesSlug, slug)
   console.log('   events.json marker after:', postFeed)
   console.log('   events.ics marker after:', postIcs)
   console.log('   sitemap:', postMap)
@@ -159,11 +192,13 @@ async function main() {
   await signedPost({
     _type: 'workshop',
     slug: { _type: 'slug', current: slug },
+    seriesSlug,
   })
 
   const ok =
     reval.status === 200 &&
-    detailInPaths &&
+    flatInPaths &&
+    scopedInPaths &&
     postFeed.hit === true &&
     postPage.hit === true &&
     postMap.hasWorkshop1 === true &&

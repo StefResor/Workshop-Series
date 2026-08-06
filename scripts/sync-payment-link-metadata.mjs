@@ -2,7 +2,7 @@
  * Sync Stripe Payment Link metadata from Sanity workshop/series slugs.
  *
  * Matches live links by legacy metadata.workshop ("01"…"10") / kind=series_pass.
- * Adds workshop_slug + series_slug; leaves legacy keys in place.
+ * Adds workshop_slug + series_slug (both required for singles); leaves legacy keys.
  *
  * Usage:
  *   node scripts/sync-payment-link-metadata.mjs           # dry-run
