@@ -90,12 +90,18 @@ export type Service = {
   durationMinutes?: number
 }
 
+export type HeroJoin = 'break' | 'space' | 'none'
+
 export type PageDoc = {
   _id: string
   title: string
   slug: string
   eyebrow?: string
+  /** Non-home pages. Deprecated on home — use heroSolid / heroOutline. */
   headline?: string
+  heroSolid?: string
+  heroOutline?: string
+  heroJoin?: HeroJoin
   summary?: string
   body?: string
   ctaLabel?: string

@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { formatWorkshopDisplay } from '@/lib/datetime'
 import { buildPageMetadata } from '@/lib/seo'
 import { EmailSignupBand } from '@/components/EmailSignupBand'
+import { HomeHeroHeadline } from '@/components/HomeHeroHeadline'
 import { SeriesPackageBand } from '@/components/SeriesPackageBand'
 import type {
   EmailSignup,
@@ -61,24 +62,6 @@ const HOW = [
   'Practice until it shows up in daily life',
 ]
 
-function splitHeadline(headline?: string) {
-  const text = (headline || 'Connect Better.').replace(/\.$/, '')
-  const parts = text.split(/\s+/)
-  if (parts.length < 2) {
-    return { lines: [text], outline: '' }
-  }
-  const outline = parts[parts.length - 1]
-  const rest = parts.slice(0, -1)
-  // Longer headlines: break mid-phrase (e.g. Say the / hard thing / skillfully.)
-  if (rest.length >= 4) {
-    return {
-      lines: [rest.slice(0, 2).join(' '), rest.slice(2).join(' ')],
-      outline,
-    }
-  }
-  return { lines: [rest.join(' ')], outline }
-}
-
 export default async function HomePage() {
   const [home, services, workshops, settings, emailSignup] = await Promise.all([
     sanityFetch<PageDoc | null>(pageBySlugQuery, { slug: 'home' }),
@@ -88,7 +71,6 @@ export default async function HomePage() {
     sanityFetch<EmailSignup | null>(emailSignupQuery),
   ])
 
-  const { lines, outline } = splitHeadline(home?.headline)
   const couples = services?.find((s) => s.slug.includes('couples'))
   const individuals = services?.find((s) => s.slug.includes('individual'))
   const workshopDefault = resolveSessionPrice(settings)
@@ -107,15 +89,11 @@ export default async function HomePage() {
         <span className="kicker">
           {home?.eyebrow || 'The Connection Lab'}
         </span>
-        <h1>
-          {lines.map((line) => (
-            <span key={line}>
-              {line}
-              <br />
-            </span>
-          ))}
-          {outline ? <span className="outline">{outline}.</span> : null}
-        </h1>
+        <HomeHeroHeadline
+          solid={home?.heroSolid}
+          outline={home?.heroOutline}
+          join={home?.heroJoin}
+        />
         <div className="hero-row">
           <p>
             {home?.summary ||
@@ -221,12 +199,7 @@ export default async function HomePage() {
       >
         <div className="expertise-band-inner">
           <h2 id="home-practice-heading" className="expertise-band-title">
-            <span className="expertise-band-title-line">
-              The Practice of Connection
-            </span>
-            <span className="expertise-band-title-display">
-              Notice<span aria-hidden="true">*</span>
-            </span>
+            The Practice
           </h2>
           <div className="expertise-band-list">
             {practice.map((service) => (

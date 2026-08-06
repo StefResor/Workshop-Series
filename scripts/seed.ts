@@ -235,7 +235,10 @@ const pages = [
     title: 'Home',
     slug: 'home',
     eyebrow: 'The Connection Lab',
-    headline: 'Connect Better.',
+    // Home hero is authored as solid + outline (+ join). Do not set headline.
+    heroSolid: 'Notice',
+    heroOutline: '*',
+    heroJoin: 'none' as const,
     summary:
       'Structured, direct relationship work for high-responsibility professionals and leaders. Deliberately small caseload. Private-pay, online, and discreet — all adults welcome.',
     body: `Accountability. Honesty. Repair. Boundaries. Family-of-origin pattern recognition. From reactivity to the Wise Adult.
@@ -595,7 +598,10 @@ async function main() {
       title: p.title,
       slug: { _type: 'slug', current: p.slug },
       eyebrow: p.eyebrow,
-      headline: p.headline,
+      ...('headline' in p && p.headline != null ? { headline: p.headline } : {}),
+      ...('heroSolid' in p ? { heroSolid: p.heroSolid } : {}),
+      ...('heroOutline' in p ? { heroOutline: p.heroOutline } : {}),
+      ...('heroJoin' in p ? { heroJoin: p.heroJoin } : {}),
       summary: p.summary,
       body: p.body,
       ctaLabel: p.ctaLabel,
