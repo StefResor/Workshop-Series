@@ -20,7 +20,8 @@ export const workshop = defineType({
       type: 'reference',
       to: [{ type: 'series' }],
       description:
-        'Workshop series cohort (registration system). Optional until series docs are seeded.',
+        'The cohort this workshop belongs to. Required — determines pass eligibility, listing, and URL.',
+      validation: (rule) => rule.required(),
     }),
     defineField({
       name: 'title',
@@ -40,8 +41,8 @@ export const workshop = defineType({
       title: 'Workshop number',
       type: 'number',
       description:
-        'Position in the series, 1–10. Displays everywhere as "Workshop 01". Field name is legacy — do not rename without a content migration.',
-      validation: (rule) => rule.required().min(1).max(10),
+        'Position in the series. Displays everywhere as "Workshop 01". Field name is legacy — do not rename without a content migration.',
+      validation: (rule) => rule.required().integer().min(1),
     }),
     defineField({
       name: 'startsAt',
