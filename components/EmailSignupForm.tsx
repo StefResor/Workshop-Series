@@ -1,6 +1,7 @@
 'use client'
 
 import { FormEvent, useId, useState } from 'react'
+import Link from 'next/link'
 
 export type EmailSignupFormCopy = {
   nameLabel: string
@@ -18,16 +19,18 @@ type EmailSignupFormProps = EmailSignupFormCopy & {
   /** Band collects first name + optional blog checkbox; footer does not. */
   showName?: boolean
   showBlogCheckbox?: boolean
-  /** Footer: short privacy link instead of full permission paragraph. */
+  /** Footer: privacy policy href inside the visible reassurance line. */
   privacyHref?: string
 }
+
+type FormStatus = 'idle' | 'sending' | 'ok' | 'err'
 
 export function EmailSignupForm({
   source,
   variant,
   showName = false,
   showBlogCheckbox = false,
-  privacyHref = '/contact',
+  privacyHref = '/privacy',
   nameLabel,
   emailLabel,
   buttonLabel,
@@ -36,7 +39,7 @@ export function EmailSignupForm({
   errorMessage,
   checkboxLabel = 'Also send me blog posts and practice updates',
 }: EmailSignupFormProps) {
-  const [status, setStatus] = useState<'idle' | 'sending' | 'ok' | 'err'>('idle')
+  const [status, setStatus] = useState<FormStatus>('idle')
   const statusId = useId()
   const nameId = useId()
   const emailId = useId()
@@ -52,7 +55,7 @@ export function EmailSignupForm({
     const data = new FormData(form)
     const email = String(data.get('email') || '').trim()
 
-    // Client-side: email format only — do not block on first name.
+    // Validate on submit only — button stays enabled.
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       setStatus('err')
       return
@@ -76,6 +79,7 @@ export function EmailSignupForm({
         body: JSON.stringify(payload),
       })
       // Route always returns 200 + { ok }; ignore HTTP status for UX / console noise.
+      // Already-subscribed is also { ok: true } — same success UI (no membership probe).
       const body = (await res.json().catch(() => null)) as { ok?: boolean } | null
       if (!body?.ok) {
         setStatus('err')
@@ -88,10 +92,76 @@ export function EmailSignupForm({
     }
   }
 
+  if (variant === 'footer') {
+    return (
+      <form
+        className="email-signup-form email-signup-form--footer"
+        onSubmit={onSubmit}
+        noValidate
+        aria-describedby={statusId}
+      >
+        <div className="email-signup-footer-field">
+          <label className="email-signup-footer-label" htmlFor={emailId}>
+            {emailLabel}
+          </label>
+          <div className="email-signup-footer-controls">
+            <input
+              id={emailId}
+              name="email"
+              type="email"
+              required
+              autoComplete="email"
+              inputMode="email"
+              aria-required="true"
+              aria-invalid={status === 'err' || undefined}
+              aria-describedby={statusId}
+            />
+            <button
+              className="email-signup-submit email-signup-submit--footer"
+              type="submit"
+            >
+              {status === 'sending' ? 'Subscribing…' : buttonLabel}
+            </button>
+          </div>
+        </div>
+
+        <div className="hp" aria-hidden="true">
+          <label htmlFor={hpId}>Website</label>
+          <input id={hpId} name="website" tabIndex={-1} autoComplete="off" />
+        </div>
+
+        <div
+          className="email-signup-footer-status"
+          id={statusId}
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          {status === 'ok' ? (
+            <p className="email-signup-result email-signup-result--footer">
+              {successMessage}
+            </p>
+          ) : status === 'err' ? (
+            <p className="email-signup-error">{errorMessage}</p>
+          ) : (
+            <p className="email-signup-permission" id={permissionId}>
+              Unsubscribe anytime. Your address is never shared or sold. See
+              the{' '}
+              <Link href={privacyHref} className="email-signup-privacy-link">
+                privacy policy
+              </Link>
+              .
+            </p>
+          )}
+        </div>
+      </form>
+    )
+  }
+
   if (status === 'ok') {
     return (
       <div
-        className={`email-signup-result email-signup-result--${variant}`}
+        className="email-signup-result email-signup-result--band"
         id={statusId}
         role="status"
         aria-live="polite"
@@ -162,31 +232,17 @@ export function EmailSignupForm({
       <button
         className={`email-signup-submit email-signup-submit--${variant}`}
         type="submit"
-        disabled={status === 'sending'}
       >
         {status === 'sending' ? 'Subscribing…' : buttonLabel}
       </button>
 
-      {variant === 'band' ? (
-        <p className="email-signup-permission" id={permissionId}>
-          {permissionLine}
-        </p>
-      ) : (
-        <p
-          className="email-signup-permission email-signup-permission--footer"
-          id={permissionId}
-        >
-          <a href={privacyHref} title={permissionLine}>
-            Privacy note
-          </a>
-        </p>
-      )}
+      <p className="email-signup-permission" id={permissionId}>
+        {permissionLine}
+      </p>
 
       <div id={statusId} role="status" aria-live="polite" aria-atomic="true">
         {status === 'err' ? (
-          <p className="email-signup-error" role="alert">
-            {errorMessage}
-          </p>
+          <p className="email-signup-error">{errorMessage}</p>
         ) : null}
       </div>
     </form>

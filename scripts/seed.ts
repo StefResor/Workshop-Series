@@ -540,13 +540,13 @@ const emailSignupDoc = {
   checkboxLabel: 'Also send me blog posts and practice updates',
   buttonLabel: 'Subscribe',
   permissionLine:
-    "This list isn't a way to reach Stefanie about therapy — use the consultation form for that. Unsubscribe anytime.",
+    'Unsubscribe anytime. Your address is never shared or sold. See the privacy policy.',
   successMessage:
     "You're on the list. Workshop announcements will come to this address.",
   errorMessage:
     "That didn't go through. Check the email address and try again.",
   showInFooter: true,
-  footerHeading: 'Workshop announcements',
+  footerHeading: 'Hear about new workshops',
 }
 
 async function main() {

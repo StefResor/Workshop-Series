@@ -4,12 +4,15 @@ import { usePathname } from 'next/navigation'
 import { EmailSignupForm } from '@/components/EmailSignupForm'
 import type { EmailSignup } from '@/lib/types'
 
-const DEFAULTS = {
-  emailLabel: 'Email',
+/** Design-locked footer band copy — not pulled from CMS labels. */
+const FOOTER_COPY = {
+  heading: 'Hear about new workshops',
+  supporting: 'A short note when a new series opens. Nothing else.',
+  emailLabel: 'Email address',
   buttonLabel: 'Subscribe',
-  footerHeading: 'Workshop announcements',
+  /** Plain text for consent hash + aria; link rendered separately in the form. */
   permissionLine:
-    "This list isn't a way to reach Stefanie about therapy — use the consultation form for that. Unsubscribe anytime.",
+    'Unsubscribe anytime. Your address is never shared or sold. See the privacy policy.',
   successMessage:
     "You're on the list. Workshop announcements will come to this address.",
   errorMessage:
@@ -20,9 +23,14 @@ type EmailSignupFooterProps = {
   copy: EmailSignup | null
 }
 
+function isPolicyPath(pathname: string): boolean {
+  if (pathname === '/terms' || pathname === '/privacy') return true
+  return pathname === '/policies' || pathname.startsWith('/policies/')
+}
+
 /**
- * Compact footer signup. Hidden on home (band owns that page) and on
- * workshop detail pages (registration is the only CTA there).
+ * Footer workshop-announcements band. Hidden on home (band owns that page),
+ * workshop detail pages, and policy routes (marketing capture is off-key there).
  */
 export function EmailSignupFooter({ copy }: EmailSignupFooterProps) {
   const pathname = usePathname() || '/'
@@ -30,28 +38,34 @@ export function EmailSignupFooter({ copy }: EmailSignupFooterProps) {
   if (!copy || copy.enabled === false || copy.showInFooter === false) {
     return null
   }
-  if (!copy.permissionLine) return null
   if (pathname === '/') return null
-  // /workshops/[slug] only — keep the index list.
   if (/^\/workshops\/[^/]+\/?$/.test(pathname)) return null
+  if (isPolicyPath(pathname)) return null
 
   return (
     <div className="email-signup-footer">
-      <p className="email-signup-footer-heading">
-        {copy.footerHeading?.trim() || DEFAULTS.footerHeading}
-      </p>
-      <EmailSignupForm
-        source="footer"
-        variant="footer"
-        nameLabel={copy.nameLabel?.trim() || 'First name'}
-        emailLabel={copy.emailLabel?.trim() || DEFAULTS.emailLabel}
-        buttonLabel={copy.buttonLabel?.trim() || DEFAULTS.buttonLabel}
-        permissionLine={copy.permissionLine.trim() || DEFAULTS.permissionLine}
-        successMessage={
-          copy.successMessage?.trim() || DEFAULTS.successMessage
-        }
-        errorMessage={copy.errorMessage?.trim() || DEFAULTS.errorMessage}
-      />
+      <div className="email-signup-footer-accent" aria-hidden="true" />
+      <div className="email-signup-footer-grid">
+        <div className="email-signup-footer-copy">
+          <h2 className="email-signup-footer-heading">{FOOTER_COPY.heading}</h2>
+          <p className="email-signup-footer-supporting">
+            {FOOTER_COPY.supporting}
+          </p>
+        </div>
+        <EmailSignupForm
+          source="footer"
+          variant="footer"
+          nameLabel="First name"
+          emailLabel={FOOTER_COPY.emailLabel}
+          buttonLabel={FOOTER_COPY.buttonLabel}
+          permissionLine={FOOTER_COPY.permissionLine}
+          successMessage={
+            copy.successMessage?.trim() || FOOTER_COPY.successMessage
+          }
+          errorMessage={copy.errorMessage?.trim() || FOOTER_COPY.errorMessage}
+          privacyHref="/privacy"
+        />
+      </div>
     </div>
   )
 }
