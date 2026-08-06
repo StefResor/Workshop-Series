@@ -6,13 +6,12 @@ import type { EmailSignup } from '@/lib/types'
 
 /** Design-locked footer band copy — not pulled from CMS labels. */
 const FOOTER_COPY = {
-  heading: 'Hear about new workshops',
   supporting: 'A short note when a new series opens. Nothing else.',
   emailLabel: 'Email address',
   buttonLabel: 'Subscribe',
   /** Plain text for consent hash + aria; link rendered separately in the form. */
   permissionLine:
-    'Unsubscribe anytime. Your address is never shared or sold. See the privacy policy.',
+    'Unsubscribe anytime. Your address is never shared or sold. See the Privacy Policy.',
   successMessage:
     "You're on the list. Workshop announcements will come to this address.",
   errorMessage:
@@ -47,7 +46,12 @@ export function EmailSignupFooter({ copy }: EmailSignupFooterProps) {
       <div className="email-signup-footer-accent" aria-hidden="true" />
       <div className="email-signup-footer-grid">
         <div className="email-signup-footer-copy">
-          <h2 className="email-signup-footer-heading">{FOOTER_COPY.heading}</h2>
+          <h2 className="email-signup-footer-heading">
+            {/* Explicit break + nbsp so each line stays atomic (incl. Arial Black fallback). */}
+            Hear&nbsp;about
+            <br />
+            new&nbsp;workshops
+          </h2>
           <p className="email-signup-footer-supporting">
             {FOOTER_COPY.supporting}
           </p>

@@ -624,7 +624,7 @@ textarea {
   letter-spacing: -0.01em;
   text-transform: uppercase;
   color: var(--ink);
-  max-width: 12ch;
+  /* Break is explicit in the component (<br> after “Hear about”). No width clamp. */
 }
 
 .email-signup-footer-supporting {
@@ -751,10 +751,6 @@ textarea {
   .email-signup-footer-grid {
     grid-template-columns: 1fr;
     gap: 32px;
-  }
-
-  .email-signup-footer-heading {
-    max-width: none;
   }
 
   .email-signup-form--footer {

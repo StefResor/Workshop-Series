@@ -145,10 +145,11 @@ export function EmailSignupForm({
             <p className="email-signup-error">{errorMessage}</p>
           ) : (
             <p className="email-signup-permission" id={permissionId}>
-              Unsubscribe anytime. Your address is never shared or sold. See
-              the{' '}
+              Unsubscribe anytime. Your address is never shared or sold.
+              <br />
+              See the{' '}
               <Link href={privacyHref} className="email-signup-privacy-link">
-                privacy policy
+                Privacy Policy
               </Link>
               .
             </p>

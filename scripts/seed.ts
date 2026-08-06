@@ -540,7 +540,7 @@ const emailSignupDoc = {
   checkboxLabel: 'Also send me blog posts and practice updates',
   buttonLabel: 'Subscribe',
   permissionLine:
-    'Unsubscribe anytime. Your address is never shared or sold. See the privacy policy.',
+    'Unsubscribe anytime. Your address is never shared or sold. See the Privacy Policy.',
   successMessage:
     "You're on the list. Workshop announcements will come to this address.",
   errorMessage:
