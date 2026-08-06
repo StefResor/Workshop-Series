@@ -16,8 +16,13 @@ export type EmailSignupFormCopy = {
 type EmailSignupFormProps = EmailSignupFormCopy & {
   source: string
   variant: 'band' | 'footer'
-  /** Band collects first name + optional blog checkbox; footer does not. */
+  /** Band + footer can collect a name; never required for submit. */
   showName?: boolean
+  /**
+   * `firstName` → Resend first name as typed (home band).
+   * `fullName` → sent as `fullName`; API splits for `{{FIRST_NAME}}`.
+   */
+  nameAs?: 'firstName' | 'fullName'
   showBlogCheckbox?: boolean
   /** Footer: privacy policy href inside the visible reassurance line. */
   privacyHref?: string
@@ -29,6 +34,7 @@ export function EmailSignupForm({
   source,
   variant,
   showName = false,
+  nameAs = 'firstName',
   showBlogCheckbox = false,
   privacyHref = '/privacy',
   nameLabel,
@@ -46,6 +52,7 @@ export function EmailSignupForm({
   const checkboxId = useId()
   const permissionId = useId()
   const hpId = useId()
+  const nameField = nameAs === 'fullName' ? 'fullName' : 'firstName'
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -55,7 +62,7 @@ export function EmailSignupForm({
     const data = new FormData(form)
     const email = String(data.get('email') || '').trim()
 
-    // Validate on submit only — button stays enabled.
+    // Validate on submit only — button stays enabled. Name is never required.
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       setStatus('err')
       return
@@ -63,8 +70,10 @@ export function EmailSignupForm({
 
     setStatus('sending')
 
+    const nameValue = showName ? String(data.get(nameField) || '').trim() : ''
     const payload = {
-      firstName: showName ? String(data.get('firstName') || '').trim() : '',
+      firstName: nameAs === 'firstName' ? nameValue : '',
+      fullName: nameAs === 'fullName' ? nameValue : '',
       email,
       blogOptIn: showBlogCheckbox ? data.get('blogOptIn') === 'on' : false,
       source,
@@ -100,28 +109,52 @@ export function EmailSignupForm({
         noValidate
         aria-describedby={statusId}
       >
-        <div className="email-signup-footer-field">
-          <label className="email-signup-footer-label" htmlFor={emailId}>
-            {emailLabel}
-          </label>
-          <div className="email-signup-footer-controls">
-            <input
-              id={emailId}
-              name="email"
-              type="email"
-              required
-              autoComplete="email"
-              inputMode="email"
-              aria-required="true"
-              aria-invalid={status === 'err' || undefined}
-              aria-describedby={statusId}
-            />
-            <button
-              className="email-signup-submit email-signup-submit--footer"
-              type="submit"
-            >
-              {status === 'sending' ? 'Subscribing…' : buttonLabel}
-            </button>
+        <div
+          className={
+            showName
+              ? 'email-signup-footer-fields email-signup-footer-fields--with-name'
+              : 'email-signup-footer-fields'
+          }
+        >
+          {showName ? (
+            <div className="email-signup-footer-field">
+              <label className="email-signup-footer-label" htmlFor={nameId}>
+                {nameLabel}
+              </label>
+              <input
+                id={nameId}
+                className="email-signup-footer-input"
+                name={nameField}
+                type="text"
+                autoComplete="name"
+                aria-describedby={statusId}
+              />
+            </div>
+          ) : null}
+
+          <div className="email-signup-footer-field email-signup-footer-field--email">
+            <label className="email-signup-footer-label" htmlFor={emailId}>
+              {emailLabel}
+            </label>
+            <div className="email-signup-footer-controls">
+              <input
+                id={emailId}
+                name="email"
+                type="email"
+                required
+                autoComplete="email"
+                inputMode="email"
+                aria-required="true"
+                aria-invalid={status === 'err' || undefined}
+                aria-describedby={statusId}
+              />
+              <button
+                className="email-signup-submit email-signup-submit--footer"
+                type="submit"
+              >
+                {status === 'sending' ? 'Subscribing…' : buttonLabel}
+              </button>
+            </div>
           </div>
         </div>
 
@@ -187,9 +220,9 @@ export function EmailSignupForm({
           </label>
           <input
             id={nameId}
-            name="firstName"
+            name={nameField}
             type="text"
-            autoComplete="given-name"
+            autoComplete={nameAs === 'fullName' ? 'name' : 'given-name'}
             placeholder={nameLabel}
           />
         </div>

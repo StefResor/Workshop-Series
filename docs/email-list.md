@@ -22,7 +22,9 @@ A paid Sep–Nov **cohort** segment (reminders, Zoom, recordings) is out of scop
 | Surface | Where | Fields | `source` |
 |---|---|---|---|
 | Band | Home only, after workshops teaser | first name, email, blog checkbox | `home_band` |
-| Footer | Every page except home and `/workshops/[slug]` | email | `footer` |
+| Footer | Every page except home and `/workshops/[slug]` | full name (optional), email | `footer` |
+
+Footer full name is split on the first space into Resend `firstName` / `lastName` so `{{FIRST_NAME}}` stays useful in broadcasts. Name is never required to subscribe.
 
 Gated on Sanity `emailSignup.enabled` (and `showInFooter` for the footer). Band and footer never render on the same page.
 

@@ -58,9 +58,24 @@ function resendFailure(error: {
  * Already-subscribed is treated as success — never reveal membership.
  * Never throws for Resend API errors — returns { ok: false } with loggable detail.
  */
+/** Split a full name for Resend merge tags (`{{FIRST_NAME}}` / last name). */
+export function splitFullName(fullName: string): {
+  firstName?: string
+  lastName?: string
+} {
+  const parts = fullName.trim().split(/\s+/).filter(Boolean)
+  if (parts.length === 0) return {}
+  if (parts.length === 1) return { firstName: parts[0] }
+  return {
+    firstName: parts[0],
+    lastName: parts.slice(1).join(' '),
+  }
+}
+
 export async function createContactInSegments(opts: {
   email: string
   firstName?: string
+  lastName?: string
   segmentIds: string[]
   apiKey: string
 }): Promise<SubscribeResult> {
@@ -79,6 +94,7 @@ export async function createContactInSegments(opts: {
     const { error } = await resend.contacts.create({
       email: opts.email,
       firstName: opts.firstName || undefined,
+      lastName: opts.lastName || undefined,
       unsubscribed: false,
       segments: segmentIds.map((id) => ({ id })),
     })

@@ -4,12 +4,16 @@ import { rateLimit } from '@/lib/rate-limit'
 import {
   createContactInSegments,
   permissionLineVersion,
+  splitFullName,
 } from '@/lib/subscribe'
 
 export const dynamic = 'force-dynamic'
 
 const subscribeSchema = z.object({
   firstName: z.string().trim().max(100).optional(),
+  /** Footer (and future surfaces) may send a full name; split for Resend. */
+  fullName: z.string().trim().max(120).optional(),
+  lastName: z.string().trim().max(100).optional(),
   email: z.string().trim().email('valid email is required').max(254),
   blogOptIn: z.boolean().optional().default(false),
   source: z.string().trim().min(1).max(64),
@@ -111,8 +115,15 @@ export async function POST(req: Request) {
     }
   }
 
+  const fromFull = data.fullName ? splitFullName(data.fullName) : {}
   const firstName =
-    data.firstName && data.firstName.length > 0 ? data.firstName : undefined
+    (data.firstName && data.firstName.length > 0
+      ? data.firstName
+      : fromFull.firstName) || undefined
+  const lastName =
+    (data.lastName && data.lastName.length > 0
+      ? data.lastName
+      : fromFull.lastName) || undefined
   const version = permissionLineVersion(data.permissionLine)
   const userAgent = req.headers.get('user-agent') || ''
 
@@ -122,6 +133,7 @@ export async function POST(req: Request) {
   const result = await createContactInSegments({
     email: data.email,
     firstName,
+    lastName,
     segmentIds,
     apiKey,
   })
@@ -148,6 +160,7 @@ export async function POST(req: Request) {
       at: new Date().toISOString(),
       email: data.email,
       firstName: firstName || null,
+      lastName: lastName || null,
       source: data.source,
       blogOptIn,
       segmentIds: result.segmentIds,

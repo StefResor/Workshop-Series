@@ -7,6 +7,7 @@ import type { EmailSignup } from '@/lib/types'
 /** Design-locked footer band copy — not pulled from CMS labels. */
 const FOOTER_COPY = {
   supporting: 'A short note when a new series opens. Nothing else.',
+  nameLabel: 'Full name',
   emailLabel: 'Email address',
   buttonLabel: 'Subscribe',
   /** Plain text for consent hash + aria; link rendered separately in the form. */
@@ -59,7 +60,9 @@ export function EmailSignupFooter({ copy }: EmailSignupFooterProps) {
         <EmailSignupForm
           source="footer"
           variant="footer"
-          nameLabel="First name"
+          showName
+          nameAs="fullName"
+          nameLabel={FOOTER_COPY.nameLabel}
           emailLabel={FOOTER_COPY.emailLabel}
           buttonLabel={FOOTER_COPY.buttonLabel}
           permissionLine={FOOTER_COPY.permissionLine}

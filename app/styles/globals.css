@@ -640,7 +640,21 @@ textarea {
   flex-direction: column;
   gap: 12px;
   min-width: 0;
-  max-width: 28rem;
+  max-width: 36rem;
+}
+
+.email-signup-footer-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.email-signup-footer-fields--with-name {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.25fr);
+  gap: 16px 20px;
+  align-items: end;
 }
 
 .email-signup-footer-label {
@@ -651,6 +665,20 @@ textarea {
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--muted);
+}
+
+.email-signup-footer-input,
+.email-signup-footer-controls input {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--ink);
+  border-radius: 0;
+  padding: 10px 12px 10px 0;
+  color: var(--ink);
+  font-size: 15px;
+  font-family: inherit;
+  line-height: 1.3;
 }
 
 .email-signup-footer-controls {
@@ -664,21 +692,14 @@ textarea {
   flex: 1 1 auto;
   min-width: 0;
   width: auto;
-  background: transparent;
-  border: 0;
-  border-bottom: 1px solid var(--ink);
-  border-radius: 0;
-  padding: 10px 12px 10px 0;
-  color: var(--ink);
-  font-size: 15px;
-  font-family: inherit;
-  line-height: 1.3;
 }
 
+.email-signup-footer-input:focus,
 .email-signup-footer-controls input:focus {
   outline: none;
 }
 
+.email-signup-footer-input:focus-visible,
 .email-signup-footer-controls input:focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 3px;
@@ -755,6 +776,10 @@ textarea {
 
   .email-signup-form--footer {
     max-width: none;
+  }
+
+  .email-signup-footer-fields--with-name {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -1778,6 +1803,61 @@ textarea {
   margin-bottom: 18px;
   max-width: 640px;
   color: var(--muted);
+}
+
+.ev-cta {
+  margin-top: 38px;
+}
+
+/* Series membership + pass offer — same stack at every breakpoint. */
+.ev-series-band {
+  margin-top: 36px;
+  padding-top: 36px;
+  border-top: 1px solid rgba(20, 17, 14, 0.15);
+}
+
+.ev-series-band-accent {
+  width: 48px;
+  height: 3px;
+  background: var(--vermillion);
+  margin-bottom: 26px;
+}
+
+.ev-series-band-eyebrow {
+  margin: 0 0 14px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--vermillion);
+}
+
+.ev-series-band-body {
+  margin: 0 0 18px;
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--ink);
+  max-width: 52ch;
+}
+
+.ev-series-band-price {
+  font-weight: 600;
+}
+
+.ev-series-band-link {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.ev-series-band-link:hover {
+  color: var(--vermillion);
 }
 
 .ev-note {
