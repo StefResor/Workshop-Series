@@ -53,6 +53,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!policy?.title) {
     return buildPageMetadata({
       title: 'Policy',
+      description:
+        'Practice policies for Stefanie Schumacher’s Relational Diplomacy.',
       path: publicPath(slug),
     })
   }
