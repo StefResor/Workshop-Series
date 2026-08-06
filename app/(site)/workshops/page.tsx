@@ -86,8 +86,9 @@ export default async function WorkshopsPage() {
             </p>
           </div>
         ) : (
-          orderedSeries.map((series) => {
+          orderedSeries.map((series, seriesIndex) => {
             const rows = bySeries.get(series.slug) || []
+            const isLastSeries = seriesIndex === orderedSeries.length - 1
             return (
               <div key={series._id} className="workshop-series-group">
                 <h3 className="workshop-series-group-title">{series.title}</h3>
@@ -129,15 +130,21 @@ export default async function WorkshopsPage() {
                       </Link>
                     )
                   })}
+                  {/* Same list as the sessions — one rule between #10 and the package. */}
+                  {isLastSeries ? (
+                    <SeriesPackageBand settings={settings} embedded />
+                  ) : null}
                 </div>
               </div>
             )
           })
         )}
 
-        <div className="workshop-list">
-          <SeriesPackageBand settings={settings} embedded />
-        </div>
+        {!hasAny ? (
+          <div className="workshop-list">
+            <SeriesPackageBand settings={settings} embedded />
+          </div>
+        ) : null}
       </section>
 
       <section className="section workshops-index-footer">

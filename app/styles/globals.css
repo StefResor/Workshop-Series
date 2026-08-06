@@ -976,7 +976,7 @@ textarea {
   display: grid;
   grid-template-columns: 4.5rem 5.5rem 1fr auto;
   gap: 1.5rem 2.5vw;
-  align-items: baseline;
+  align-items: center;
   padding: 22px 0;
   border-bottom: var(--rule-width) solid var(--rule-internal);
   transition: background 0.2s var(--ease);
@@ -1069,9 +1069,14 @@ textarea {
   margin-bottom: 48px;
 }
 
+.workshop-series-group:last-child {
+  margin-bottom: 0;
+}
+
 .workshop-series-group-title {
   margin: 0 0 18px;
-  padding: 0 var(--page-pad-x);
+  /* Section already applies --page-pad-x; extra padding double-indented the title. */
+  padding: 0;
   font-family: var(--font-display);
   font-size: clamp(22px, 2.4vw, 32px);
   letter-spacing: -0.01em;
