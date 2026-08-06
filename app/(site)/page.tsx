@@ -221,7 +221,12 @@ export default async function HomePage() {
       >
         <div className="expertise-band-inner">
           <h2 id="home-practice-heading" className="expertise-band-title">
-            The Practice
+            <span className="expertise-band-title-line">
+              The Practice of Connection
+            </span>
+            <span className="expertise-band-title-display">
+              Notice<span aria-hidden="true">*</span>
+            </span>
           </h2>
           <div className="expertise-band-list">
             {practice.map((service) => (

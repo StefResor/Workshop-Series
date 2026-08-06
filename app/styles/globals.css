@@ -1562,12 +1562,29 @@ textarea {
 }
 
 .expertise-band-title {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2em;
+  margin: 0 0 48px;
+  color: var(--ink);
+}
+
+.expertise-band-title-line {
+  font-family: var(--font-display);
+  font-size: clamp(14px, 1.5vw, 18px);
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.expertise-band-title-display {
   font-family: var(--font-display);
   font-size: clamp(26px, 3.2vw, 46px);
-  text-transform: uppercase;
+  font-weight: 400;
   letter-spacing: -0.01em;
-  margin-bottom: 48px;
-  color: var(--ink);
+  text-transform: uppercase;
+  line-height: 1.05;
 }
 
 .expertise-band-list {
@@ -1762,6 +1779,17 @@ textarea {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   display: inline-block;
+}
+
+/*
+  Absolute back-link only when the centered 860px column leaves a clear left
+  gutter (~160px+). Below that, stack above the kicker so they never collide.
+*/
+@media (max-width: 1320px) {
+  .ev-back-nav {
+    position: static;
+    margin-bottom: 28px;
+  }
 }
 
 .ev-wrap {
@@ -2041,10 +2069,5 @@ textarea {
 
   .series-package-band {
     padding: 44px var(--page-pad-x);
-  }
-
-  .ev-back-nav {
-    position: static;
-    margin-bottom: 28px;
   }
 }
