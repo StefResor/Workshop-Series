@@ -829,12 +829,12 @@ textarea {
 }
 
 /*
-  Archivo Black puts * near cap height; beside Notice at display size it floats.
-  Deliberate optical drop — tune here (not font-default).
+  Footnote-mark alignment: lift * toward the top of the cap height.
+  Tune translateY here (negative = up).
 */
 .home-hero h1 .home-hero-outline--mark {
   display: inline-block;
-  transform: translateY(0.18em);
+  transform: translateY(-0.22em);
   letter-spacing: 0;
 }
 
