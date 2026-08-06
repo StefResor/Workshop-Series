@@ -43,13 +43,12 @@ export function targetsForDoc(body: WebhookBody): RevalidateTarget[] {
       return [
         { kind: 'layout', path: '/' },
         { kind: 'path', path: '/workshops/series' },
+        { kind: 'path', path: '/workshops' },
       ]
 
     case 'policy': {
-      const paths = new Set<string>(['/'])
+      const paths = new Set<string>(['/', '/workshops', '/workshops/series'])
       if (slug) paths.add(`/${slug}`)
-      // Disclaimer snippets on workshop surfaces + footer link target.
-      paths.add('/workshops/series')
       return [
         { kind: 'layout', path: '/' },
         ...[...paths].map((path) => ({ kind: 'path' as const, path })),
@@ -65,17 +64,17 @@ export function targetsForDoc(body: WebhookBody): RevalidateTarget[] {
         '/events.ics',
         '/sitemap.xml',
       ])
-      // Flat slug still revalidated for the 301 redirect page.
+      // Flat slug: series package or legacy workshop redirect.
       if (slug) paths.add(`/workshops/${slug}`)
-      if (body.seriesSlug && slug) {
-        paths.add(`/workshops/${body.seriesSlug}/${slug}`)
+      if (body.seriesSlug) {
+        paths.add(`/workshops/${body.seriesSlug}`)
+        if (slug) paths.add(`/workshops/${body.seriesSlug}/${slug}`)
       }
       return [...paths].map((path) => ({ kind: 'path' as const, path }))
     }
 
     case 'series': {
       const paths = new Set<string>(['/', '/workshops', '/workshops/series'])
-      // Future: package page at /workshops/[series]; keep series slug path warm.
       if (slug) paths.add(`/workshops/${slug}`)
       return [...paths].map((path) => ({ kind: 'path' as const, path }))
     }

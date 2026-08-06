@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { isUniqueSeriesSlug } from "../lib/isUniqueWorkshopSlug";
 
 /* ------------------------------------------------------------------ */
 /* series — a cohort of workshops sold as a season                     */
@@ -18,7 +19,9 @@ export const series = defineType({
     defineField({
       name: "slug",
       type: "slug",
-      options: { source: "title" },
+      options: { source: "title", isUnique: isUniqueSeriesSlug },
+      description:
+        "Must not match any workshop slug — /workshops/[x] serves the series package first.",
       validation: (r) => r.required(),
     }),
     defineField({

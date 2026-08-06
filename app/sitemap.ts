@@ -2,18 +2,20 @@ import type { MetadataRoute } from 'next'
 import { absoluteUrl } from '@/lib/site-url'
 import { sanityFetch } from '@/sanity/lib/fetch'
 import {
+  activeSeriesSlugQuery,
   footerPoliciesQuery,
   siteSettingsQuery,
   workshopsQuery,
 } from '@/sanity/queries'
 import type { Policy, SiteSettings, Workshop } from '@/lib/types'
-import { workshopPath } from '@/lib/workshop-paths'
+import { seriesPackagePath, workshopPath } from '@/lib/workshop-paths'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [workshops, settings, footerPolicies] = await Promise.all([
+  const [workshops, settings, footerPolicies, activeSeries] = await Promise.all([
     sanityFetch<Workshop[]>(workshopsQuery).catch(() => []),
     sanityFetch<SiteSettings | null>(siteSettingsQuery).catch(() => null),
     sanityFetch<Pick<Policy, 'slug'>[]>(footerPoliciesQuery).catch(() => []),
+    sanityFetch<{ slug: string } | null>(activeSeriesSlugQuery).catch(() => null),
   ])
 
   const staticRoutes: MetadataRoute.Sitemap = [
@@ -42,10 +44,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   if (
     settings?.seriesPrice != null &&
-    settings?.seriesDisplayLine?.trim()
+    settings?.seriesDisplayLine?.trim() &&
+    activeSeries?.slug
   ) {
     staticRoutes.push({
-      url: absoluteUrl('/workshops/series'),
+      url: absoluteUrl(seriesPackagePath(activeSeries.slug)),
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.85,

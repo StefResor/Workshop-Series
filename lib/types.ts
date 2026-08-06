@@ -7,7 +7,6 @@ export type Workshop = {
   seriesActive?: boolean
   sessionNumber: number
   startsAt: string
-  endsAt?: string
   durationMinutes?: number
   timeZone: string
   price?: number
@@ -18,10 +17,17 @@ export type Workshop = {
   registrationStatus?: 'draft' | 'open' | 'closed' | 'sold-out'
   shortDescription?: string
   body?: string
-  /** @deprecated Prefer Sanity publish state; kept until field removal. */
-  status?: 'published' | 'draft'
   locationLabel?: string
   isPast?: boolean
+}
+
+export type Series = {
+  _id: string
+  title: string
+  slug: string
+  active?: boolean
+  passPrice?: number
+  passPaymentLink?: string
 }
 
 export type SiteSettings = {

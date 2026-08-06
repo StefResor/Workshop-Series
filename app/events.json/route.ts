@@ -37,7 +37,7 @@ export async function GET() {
       tags: ['workshop', 'relational-diplomacy'],
       _stef: {
         sessionNumber: w.sessionNumber,
-        endsAt: w.endsAt,
+        durationMinutes: w.durationMinutes ?? 90,
         price: resolveWorkshopPrice(w, settings),
         locationLabel: w.locationLabel || 'Zoom',
         stripePaymentLink: w.stripePaymentLink || null,

@@ -39,7 +39,8 @@ export const workshop = defineType({
         maxLength: 96,
         isUnique: isUniqueWorkshopSlug,
       },
-      description: 'Unique within its series. Same title may reuse this slug in another series.',
+      description:
+        'Unique within its series. Must not match any series slug (/workshops/[x] collision).',
       validation: (rule) => rule.required(),
     }),
     defineField({
@@ -58,16 +59,6 @@ export const workshop = defineType({
       group: 'content',
       description: 'One-line summary for cards, ICS, and social captions.',
       validation: (rule) => rule.max(90),
-    }),
-    // PENDING DELETE (§2) — empty on all 10; awaiting go-ahead before removal.
-    defineField({
-      name: 'summary',
-      title: 'One-line hook (registration pack)',
-      type: 'text',
-      rows: 2,
-      group: 'content',
-      hidden: true,
-      description: 'Deprecated — use Hook. Pending removal after migration approval.',
     }),
     defineField({
       name: 'shortDescription',
@@ -107,21 +98,14 @@ export const workshop = defineType({
       description: 'Store UTC from docs/workshop-schedule.md. Do not enter local wall time here.',
       validation: (rule) => rule.required(),
     }),
-    // PENDING DELETE (§5) — emails/ICS use startsAt + durationMinutes.
-    defineField({
-      name: 'endsAt',
-      title: 'Ends at (UTC)',
-      type: 'datetime',
-      group: 'schedule',
-      description: 'Deprecated — derive from startsAt + durationMinutes. Pending removal.',
-    }),
     defineField({
       name: 'durationMinutes',
       title: 'Duration (minutes)',
       type: 'number',
       group: 'schedule',
       initialValue: 90,
-      validation: (rule) => rule.integer().min(1),
+      description: 'End time is derived from Starts at + Duration.',
+      validation: (rule) => rule.required().integer().min(1),
     }),
     defineField({
       name: 'timeZone',
@@ -158,15 +142,6 @@ export const workshop = defineType({
       group: 'commerce',
       description: 'External Stripe Payment Link for this session.',
     }),
-    // PENDING DELETE (§2) — empty on all 10.
-    defineField({
-      name: 'paymentLink',
-      title: 'Stripe Payment Link (registration pack)',
-      type: 'url',
-      group: 'commerce',
-      hidden: true,
-      description: 'Deprecated — use Stripe Payment Link. Pending removal.',
-    }),
     defineField({
       name: 'registrationStatus',
       title: 'Registration status',
@@ -186,15 +161,6 @@ export const workshop = defineType({
         'Can buyers purchase this session. Past/upcoming is derived from Starts at — not set here.',
       validation: (rule) => rule.required(),
     }),
-    // PENDING DELETE (§2/§3) — null on all 10; register button ignores it today.
-    defineField({
-      name: 'registrationOpen',
-      title: 'Registration open',
-      type: 'boolean',
-      group: 'commerce',
-      hidden: true,
-      description: 'Deprecated — use Registration status. Pending removal.',
-    }),
     defineField({
       name: 'capacity',
       title: 'Capacity',
@@ -202,24 +168,6 @@ export const workshop = defineType({
       group: 'commerce',
       description: 'Leave empty for unlimited.',
       validation: (rule) => rule.min(1).integer(),
-    }),
-    // PENDING DELETE (§3) — replaced by Sanity native publish. Hidden until field removal.
-    defineField({
-      name: 'status',
-      title: 'Publish status',
-      type: 'string',
-      group: 'commerce',
-      hidden: true,
-      options: {
-        list: [
-          { title: 'Published', value: 'published' },
-          { title: 'Draft', value: 'draft' },
-        ],
-        layout: 'radio',
-      },
-      initialValue: 'draft',
-      description:
-        'Deprecated — use Sanity Publish. Pending removal after migration approval.',
     }),
 
     defineField({

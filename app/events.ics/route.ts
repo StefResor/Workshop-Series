@@ -20,11 +20,9 @@ export async function GET() {
       w.seriesSlug && w.slug
         ? `${origin}${workshopPath(w.seriesSlug, w.slug)}`
         : `${origin}/workshops/${w.slug}`
-    const endsAt =
-      w.endsAt ||
-      new Date(
-        new Date(w.startsAt).getTime() + (w.durationMinutes ?? 90) * 60_000,
-      ).toISOString()
+    const endsAt = new Date(
+      new Date(w.startsAt).getTime() + (w.durationMinutes ?? 90) * 60_000,
+    ).toISOString()
     return {
       uid: `${w._id}@stefanie-schumacher.com`,
       dtStamp: nowStamp,

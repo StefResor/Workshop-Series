@@ -17,6 +17,7 @@
     "fix-typos": "tsx scripts/fix-typos.ts",
     "backfill:workshop-fields": "tsx scripts/backfill-workshop-fields.ts",
     "migrate:workshop-fields": "tsx scripts/migrate-workshop-fields.ts",
+    "migrate:workshop-lifecycle": "tsx scripts/migrate-workshop-lifecycle.ts",
     "migrate:default-workshop-price": "tsx scripts/migrate-default-workshop-price.ts",
     "migrate:series-package": "tsx scripts/migrate-series-package.ts",
     "migrate:practice-services": "tsx scripts/migrate-practice-services.ts",

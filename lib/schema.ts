@@ -18,7 +18,6 @@ type EventInput = Pick<
   | 'slug'
   | 'seriesSlug'
   | 'startsAt'
-  | 'endsAt'
   | 'durationMinutes'
   | 'shortDescription'
   | 'body'
@@ -82,14 +81,10 @@ export function workshopEventJsonLd(
   const url = absoluteUrl(path)
   const offerUrl = workshop.stripePaymentLink || url
   const price = resolvedPrice ?? workshop.price ?? null
-  const endDate =
-    workshop.endsAt ||
-    (workshop.durationMinutes != null
-      ? new Date(
-          new Date(workshop.startsAt).getTime() +
-            workshop.durationMinutes * 60_000,
-        ).toISOString()
-      : undefined)
+  const endDate = new Date(
+    new Date(workshop.startsAt).getTime() +
+      (workshop.durationMinutes ?? 90) * 60_000,
+  ).toISOString()
 
   return {
     '@context': 'https://schema.org',

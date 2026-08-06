@@ -9,7 +9,6 @@ const workshopProjection = `{
   "seriesActive": series->active,
   sessionNumber,
   startsAt,
-  endsAt,
   durationMinutes,
   timeZone,
   price,
@@ -20,7 +19,6 @@ const workshopProjection = `{
   registrationStatus,
   shortDescription,
   body,
-  status,
   locationLabel,
   "isPast": startsAt <= now()
 }`
@@ -53,6 +51,32 @@ export const workshopBySeriesAndSlugQuery = `*[
 
 /** Flat slug lookup for 301 redirects from legacy /workshops/[slug]. */
 export const workshopBySlugQuery = `*[_type == "workshop" && slug.current == $slug][0] ${workshopProjection}`
+
+export const seriesBySlugQuery = `*[_type == "series" && slug.current == $slug][0]{
+  _id,
+  title,
+  "slug": slug.current,
+  active,
+  passPrice,
+  passPaymentLink
+}`
+
+/** Active series for package CTA / legacy /workshops/series redirect. */
+export const activeSeriesSlugQuery = `*[_type == "series" && active == true && defined(slug.current)] | order(title desc) [0]{
+  "slug": slug.current,
+  title
+}`
+
+export const workshopsBySeriesSlugQuery = `*[
+  _type == "workshop" &&
+  series->slug.current == $series
+] | order(startsAt asc) ${workshopProjection}`
+
+/** Single-segment /workshops/[slug] static params: series + workshop slugs. */
+export const workshopIndexSlugsQuery = `{
+  "series": *[_type == "series" && defined(slug.current)].slug.current,
+  "workshops": *[_type == "workshop" && defined(slug.current)].slug.current
+}`
 
 export const siteSettingsQuery = `*[_type == "siteSettings"][0] {
   _id,

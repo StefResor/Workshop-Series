@@ -563,12 +563,14 @@ async function main() {
       slug: { _type: 'slug', current: slugify(w.title) },
       sessionNumber: w.sessionNumber,
       startsAt: w.startsAt,
-      endsAt: w.endsAt,
+      durationMinutes: Math.round(
+        (new Date(w.endsAt).getTime() - new Date(w.startsAt).getTime()) /
+          60_000,
+      ),
       timeZone: 'America/New_York',
       registrationStatus: 'draft',
       shortDescription: w.shortDescription,
       body: w.body,
-      status: 'published',
       locationLabel: 'Zoom',
     })
   }

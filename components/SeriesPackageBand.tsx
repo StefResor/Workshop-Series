@@ -1,7 +1,8 @@
 import Link from 'next/link'
 import type { SiteSettings } from '@/lib/types'
-
-export const SERIES_DETAILS_PATH = '/workshops/series'
+import { seriesPackagePath } from '@/lib/workshop-paths'
+import { sanityFetch } from '@/sanity/lib/fetch'
+import { activeSeriesSlugQuery } from '@/sanity/queries'
 
 type SeriesPackageBandProps = {
   settings: SiteSettings | null | undefined
@@ -9,7 +10,7 @@ type SeriesPackageBandProps = {
   embedded?: boolean
 }
 
-export function SeriesPackageBand({
+export async function SeriesPackageBand({
   settings,
   embedded = false,
 }: SeriesPackageBandProps) {
@@ -18,6 +19,12 @@ export function SeriesPackageBand({
   // Offer band needs a price and a display line — never invent either.
   if (seriesPrice == null || !displayLine) return null
 
+  const active = await sanityFetch<{ slug: string } | null>(
+    activeSeriesSlugQuery,
+  ).catch(() => null)
+  if (!active?.slug) return null
+
+  const detailsPath = seriesPackagePath(active.slug)
   const eyebrow = settings?.seriesEyebrow?.trim()
   const supporting = settings?.seriesSupportingLine?.trim()
   const offerPhrase = settings?.seriesOfferLine?.trim()
@@ -53,7 +60,7 @@ export function SeriesPackageBand({
       ) : null}
       <Link
         className="btn series-package-cta"
-        href={SERIES_DETAILS_PATH}
+        href={detailsPath}
         aria-label={`${ctaLabel}: ${displayLine}`}
       >
         {ctaLabel} <span aria-hidden="true">→</span>

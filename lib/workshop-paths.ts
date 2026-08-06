@@ -1,5 +1,9 @@
 /** Canonical public paths for workshop surfaces (series-scoped). */
 
+export function seriesPackagePath(seriesSlug: string) {
+  return `/workshops/${seriesSlug}`
+}
+
 export function workshopPath(seriesSlug: string, workshopSlug: string) {
   return `/workshops/${seriesSlug}/${workshopSlug}`
 }
