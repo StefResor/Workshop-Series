@@ -10,6 +10,7 @@ next-env.d.ts
 .env
 .env.local
 .env*.local
+.env.stripe.live
 
 # misc
 .DS_Store
