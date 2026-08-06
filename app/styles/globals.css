@@ -810,6 +810,15 @@ textarea {
   margin-bottom: calc(var(--text-display) * (1 - 0.92));
 }
 
+/*
+  Single-line Notice* with a raised mark needs more air under the kicker —
+  the tight CONNECT→BETTER gap was for two h1 lines, not a footnote lift.
+  Extra room also clears the outline stroke, which paints outside the glyph box.
+*/
+.home-hero:has(.home-hero-outline--mark) .kicker {
+  margin-bottom: calc(var(--text-display) * 0.32);
+}
+
 .home-hero h1 {
   font-family: var(--font-display);
   font-size: var(--text-display);
@@ -829,12 +838,12 @@ textarea {
 }
 
 /*
-  Footnote-mark alignment: lift * toward the top of the cap height.
-  Tune translateY here (negative = up).
+  Mild footnote lift — keep * near the top of the cap without invading the kicker.
+  Tune translateY here (negative = up). Prefer kicker margin over a large lift.
 */
 .home-hero h1 .home-hero-outline--mark {
   display: inline-block;
-  transform: translateY(-0.22em);
+  transform: translateY(-0.04em);
   letter-spacing: 0;
 }
 
