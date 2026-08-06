@@ -23,12 +23,12 @@ const workshopProjection = `{
   "isPast": startsAt <= now()
 }`
 
-/** Homepage: next 4 upcoming across active series. */
+/** Homepage: all upcoming workshops across active series. */
 export const homeUpcomingWorkshopsQuery = `*[
   _type == "workshop" &&
   startsAt > now() &&
   series->active == true
-] | order(startsAt asc) [0...4] ${workshopProjection}`
+] | order(startsAt asc) ${workshopProjection}`
 
 /** Archive list — all workshops; UI groups by series. */
 export const workshopsQuery = `*[_type == "workshop"] | order(startsAt asc) ${workshopProjection}`

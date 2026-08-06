@@ -13,13 +13,16 @@ import {
   workshopsBySeriesSlugQuery,
 } from '@/sanity/queries'
 
-type Props = { params: Promise<{ slug: string }> }
+type Props = { params: Promise<{ series: string }> }
 
 /**
  * Single-segment /workshops/[x]:
  * 1. series slug → package page
  * 2. workshop slug → 301 to /workshops/[series]/[slug]
  * 3. else 404
+ *
+ * Param is named `series` to match the nested /workshops/[series]/[slug]
+ * routes — Next.js requires the same dynamic name at this path depth.
  *
  * Static sibling /workshops/series wins for the literal path "series".
  */
@@ -29,12 +32,14 @@ export async function generateStaticParams() {
     workshops: string[]
   }>(workshopIndexSlugsQuery).catch(() => ({ series: [], workshops: [] }))
   const slugs = new Set([...(rows.series || []), ...(rows.workshops || [])])
-  return [...slugs].map((slug) => ({ slug }))
+  return [...slugs].map((series) => ({ series }))
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params
-  const series = await sanityFetch<Series | null>(seriesBySlugQuery, { slug })
+  const { series: segment } = await params
+  const series = await sanityFetch<Series | null>(seriesBySlugQuery, {
+    slug: segment,
+  })
   if (series) {
     const settings = await sanityFetch<SiteSettings | null>(siteSettingsQuery)
     const title =
@@ -47,16 +52,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description:
         settings?.seriesSupportingLine?.trim() ||
         'All ten Relational Diplomacy workshop sessions — live online.',
-      path: seriesPackagePath(slug),
+      path: seriesPackagePath(segment),
     })
   }
   return { title: 'Workshop' }
 }
 
-export default async function WorkshopsSlugPage({ params }: Props) {
-  const { slug } = await params
+export default async function WorkshopsSeriesSegmentPage({ params }: Props) {
+  const { series: segment } = await params
 
-  const series = await sanityFetch<Series | null>(seriesBySlugQuery, { slug })
+  const series = await sanityFetch<Series | null>(seriesBySlugQuery, {
+    slug: segment,
+  })
   if (series) {
     const [settings, workshops] = await Promise.all([
       sanityFetch<SiteSettings | null>(siteSettingsQuery),
@@ -81,7 +88,7 @@ export default async function WorkshopsSlugPage({ params }: Props) {
   }
 
   const workshop = await sanityFetch<Workshop | null>(workshopBySlugQuery, {
-    slug,
+    slug: segment,
   })
   if (workshop?.seriesSlug && workshop.slug) {
     permanentRedirect(workshopPath(workshop.seriesSlug, workshop.slug))
