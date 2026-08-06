@@ -5,6 +5,9 @@ export type Workshop = {
   seriesSlug?: string
   seriesTitle?: string
   seriesActive?: boolean
+  seriesPassPrice?: number
+  seriesPassPaymentLink?: string
+  seriesWorkshopCount?: number
   sessionNumber: number
   startsAt: string
   durationMinutes?: number
