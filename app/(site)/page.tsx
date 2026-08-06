@@ -119,7 +119,7 @@ export default async function HomePage() {
         aria-labelledby="home-workshops-heading"
       >
         <h2 id="home-workshops-heading" className="section-title">
-          Workshop Series
+          The Notice* Workshop Series.
         </h2>
         <p className="section-sub">
           {`Relational Diplomacy · Live · Wednesdays 7:00–8:30 PM ET · Zoom${priceClause} · Join any session, in any order · 18+`}
