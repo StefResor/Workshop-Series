@@ -13,8 +13,12 @@ type HowChangeSectionProps = {
 export function HowChangeSection({ headingId }: HowChangeSectionProps) {
   return (
     <section className="how" aria-labelledby={headingId}>
-      <h2 id={headingId} className="section-heading">
-        How change <span>actually</span> happens
+      <h2 id={headingId} className="section-heading how-heading">
+        How change
+        <br />
+        <span>actually</span>
+        <br />
+        happens
       </h2>
       <ol className="how-list">
         {HOW.map((item, i) => (

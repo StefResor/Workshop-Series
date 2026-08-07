@@ -333,7 +333,7 @@ textarea {
 
 .site-footer {
   padding: 0;
-  border-top: var(--rule-width) solid var(--rule-structural);
+  border-top: var(--rule-width) solid var(--rule-internal);
   color: var(--muted-2);
 }
 
@@ -422,10 +422,10 @@ textarea {
 }
 
 /* ——— Email list signup ——— */
-/* Same ground as workshops — coda to the series, not a separate band. */
 .email-signup-band {
-  background: var(--bone);
-  color: var(--ink);
+  --email-band-ground: #2a2724;
+  background: var(--email-band-ground);
+  color: var(--white);
   padding: 90px var(--page-pad-x) 8vh;
   width: 100%;
 }
@@ -452,13 +452,13 @@ textarea {
   margin: 0 0 18px;
   max-width: 14ch;
   text-wrap: balance;
-  color: var(--ink);
+  color: var(--white);
 }
 
 .email-signup-band-body {
   font-size: var(--text-body);
   line-height: 1.55;
-  color: var(--muted);
+  color: color-mix(in srgb, var(--white) 78%, transparent);
   margin: 0;
   max-width: 36em;
 }
@@ -470,75 +470,74 @@ textarea {
   max-width: 28rem;
 }
 
-.email-signup-field input {
+.email-signup-band .email-signup-field input {
   width: 100%;
   background: transparent;
   border: 0;
-  border-bottom: 1px solid var(--ink);
+  border-bottom: 1px solid color-mix(in srgb, var(--white) 55%, transparent);
   border-radius: 0;
   padding: 12px 0;
-  color: var(--ink);
+  color: var(--white);
   font-size: var(--text-body);
   font-family: inherit;
 }
 
-.email-signup-field input::placeholder {
-  color: var(--muted-2);
+.email-signup-band .email-signup-field input::placeholder {
+  color: color-mix(in srgb, var(--white) 45%, transparent);
 }
 
-.email-signup-field input:focus {
+.email-signup-band .email-signup-field input:focus {
   outline: none;
   border-bottom-width: 2px;
   border-bottom-color: var(--vermillion);
 }
 
-.email-signup-field input:focus-visible {
-  outline: 2px solid var(--ink);
+.email-signup-band .email-signup-field input:focus-visible {
+  outline: 2px solid var(--white);
   outline-offset: 3px;
 }
 
-.email-signup-check {
+.email-signup-band .email-signup-check {
   display: flex;
   align-items: flex-start;
   gap: 12px;
 }
 
-.email-signup-check-input {
+.email-signup-band .email-signup-check-input {
   appearance: none;
   -webkit-appearance: none;
   width: 16px;
   height: 16px;
   margin: 3px 0 0;
   flex-shrink: 0;
-  border: 1px solid var(--ink);
+  border: 1px solid var(--white);
   border-radius: 0;
   background: transparent;
   cursor: pointer;
 }
 
-.email-signup-check-input:checked {
-  /* Vermillion fill only; ink border + ink check for contrast. */
+.email-signup-band .email-signup-check-input:checked {
   background-color: var(--vermillion);
-  border-color: var(--ink);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%2314110e' stroke-width='2' d='M3 8.5l3.2 3.2L13 4'/%3E%3C/svg%3E");
+  border-color: var(--white);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23ffffff' stroke-width='2' d='M3 8.5l3.2 3.2L13 4'/%3E%3C/svg%3E");
   background-size: 12px 12px;
   background-position: center;
   background-repeat: no-repeat;
 }
 
-.email-signup-check-input:focus {
+.email-signup-band .email-signup-check-input:focus {
   outline: none;
 }
 
-.email-signup-check-input:focus-visible {
-  outline: 2px solid var(--ink);
+.email-signup-band .email-signup-check-input:focus-visible {
+  outline: 2px solid var(--white);
   outline-offset: 2px;
 }
 
-.email-signup-check-label {
+.email-signup-band .email-signup-check-label {
   font-size: var(--text-body-sm);
   line-height: 1.45;
-  color: var(--muted);
+  color: color-mix(in srgb, var(--white) 78%, transparent);
   cursor: pointer;
 }
 
@@ -554,27 +553,29 @@ textarea {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: background 0.2s var(--ease);
+  transition:
+    background 0.2s var(--ease),
+    color 0.2s var(--ease);
 }
 
 .email-signup-submit--band:hover:not(:disabled) {
-  background: var(--ink);
-  color: var(--bone);
+  background: var(--white);
+  color: var(--email-band-ground, #2a2724);
 }
 
-.email-signup-permission {
+.email-signup-band .email-signup-permission {
   margin: 0;
   font-size: 12.5px;
   line-height: 1.5;
-  color: var(--muted-2);
+  color: color-mix(in srgb, var(--white) 55%, transparent);
   max-width: 36em;
 }
 
-.email-signup-error {
+.email-signup-band .email-signup-error {
   margin: 0;
   font-size: 13px;
   line-height: 1.45;
-  color: var(--ink);
+  color: var(--white);
 }
 
 .email-signup-result {
@@ -583,7 +584,7 @@ textarea {
 }
 
 .email-signup-result--band {
-  color: var(--ink);
+  color: var(--white);
   max-width: 28rem;
 }
 
@@ -971,17 +972,12 @@ textarea {
   background: linear-gradient(to bottom, var(--white) 0%, var(--bone) 100%);
 }
 
-/*
- * Size from .section-heading.
- * max-width between “ACTUALLY HAPPENS” (~17ch) and “HOW CHANGE ACTUALLY” (~21ch)
- * so the break is HOW CHANGE / ACTUALLY HAPPENS — not an orphaned HAPPENS.
- */
-.how .section-heading {
-  text-wrap: balance;
-  max-width: 18ch;
+/* Size from .section-heading. Line breaks are explicit in HowChangeSection. */
+.how-heading {
+  max-width: none;
 }
 
-.how h2 span {
+.how-heading span {
   color: var(--vermillion);
 }
 
@@ -1287,6 +1283,11 @@ textarea {
   transition: background 0.25s var(--ease);
 }
 
+/* Homepage LED grid: bottom rule always — hover fill terminates on it */
+.workshop-led-grid > .series-package-cell {
+  border-bottom: var(--rule-width) solid var(--rule-internal);
+}
+
 /* Same white fill as .workshop-led / .workshop-row on hover. */
 .series-package-cell:hover,
 .series-package-cell:has(.cta:focus-visible) {
@@ -1509,7 +1510,13 @@ textarea {
 
 /* ——— Workshop LED (homepage) ——— */
 .workshops-led-section {
-  padding-bottom: 0;
+  /* Air after the grid, then a full-bleed closer (section is already edge-to-edge) */
+  padding-bottom: 100px;
+  border-bottom: var(--rule-width) solid var(--rule-internal);
+  /* First elevation in the system — felt as a boundary, not a device */
+  box-shadow: 0 12px 24px -12px rgba(20, 17, 14, 0.1);
+  position: relative;
+  z-index: 1;
 }
 
 .workshop-led-grid {
@@ -1520,10 +1527,21 @@ textarea {
    * Exhibitions-index pattern: a scannable ruled list, not a table.
    * With all four sides present it reads as a box and competes with
    * The Practice band, which is the page’s only genuinely bounded region.
-   * Top/bottom match interior row dividers; no left/right outer edges.
+   * Top matches interior row dividers; no left/right outer edges.
+   * Bottom closer lives on the last cell (series) so hover fill meets the rule.
    */
   border-top: var(--rule-width) solid var(--rule-internal);
+  border-bottom: 0;
+}
+
+/* No series cell: grid draws the closer (last cards drop their own bottoms). */
+.workshop-led-grid:not(:has(.series-package-cell)) {
   border-bottom: var(--rule-width) solid var(--rule-internal);
+}
+
+/* One closer only — Practice must not stack a second top rule */
+.workshops-led-section + .practice {
+  border-top: 0;
 }
 
 .workshop-led {
@@ -1770,9 +1788,9 @@ textarea {
 .fees-strip {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  /* Top matches .how bottom — workshop-grid subdued, not ink structural */
+  /* Same subdued dividers as the fee column grid */
   border-top: var(--rule-width) solid var(--rule-internal);
-  border-bottom: var(--rule-width) solid var(--rule-structural);
+  border-bottom: var(--rule-width) solid var(--rule-internal);
 }
 
 .fees-strip--3 {
