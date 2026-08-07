@@ -1,6 +1,5 @@
 /**
- * Collapse home Practice services to Couples + Individuals, with new copy.
- * Deletes the old Couples-at-a-Crossroads service (and its draft, if any).
+ * Practice services: structured lede + body paragraphs (replaces shortDescription).
  *
  * Usage:
  *   npx tsx scripts/migrate-practice-services.ts --dry-run
@@ -8,6 +7,7 @@
  */
 import { config as loadEnv } from 'dotenv'
 import { createClient } from '@sanity/client'
+import { randomUUID } from 'node:crypto'
 
 loadEnv({ path: '.env.local' })
 loadEnv()
@@ -30,13 +30,24 @@ const client = createClient({
   useCdn: false,
 })
 
+function paragraphs(...texts: string[]) {
+  return texts.map((text) => ({
+    _type: 'paragraph' as const,
+    _key: randomUUID().replace(/-/g, '').slice(0, 12),
+    text,
+  }))
+}
+
 const COUPLES = {
   _id: 'service-couples-same-fight',
   title: 'Couples',
   slug: 'couples',
   order: 2,
-  shortDescription:
-    'The argument that repeats on schedule, and the decision underneath it that neither of you will say out loud. Most couples arrive naming the wrong problem — the money, the dishes, the tone. We work the pattern that generates it. If the honest answer turns out to be separation, that happens deliberately and with structure, rather than by exhaustion.',
+  lede: 'The argument that repeats on schedule — and the decision underneath it that neither of you will say out loud.',
+  body: paragraphs(
+    'Most couples arrive naming the wrong problem: the money, the dishes, the tone. We work the pattern that generates it.',
+    'If the honest answer turns out to be separation, that happens deliberately and with structure, rather than by exhaustion.',
+  ),
 }
 
 const INDIVIDUALS = {
@@ -44,8 +55,11 @@ const INDIVIDUALS = {
   title: 'Individuals',
   slug: 'individuals',
   order: 1,
-  shortDescription:
-    "For people who are precise, effective, and well-regarded at work and cannot reproduce any of it at home. Defensiveness, shame, the reflex to win, the retreat that reads as calm. These patterns were learned early, they predate the relationship you're in, and they outlast it unless something interrupts them.",
+  lede: 'For people who are precise, effective, and well-regarded at work — and cannot reproduce any of it at home.',
+  body: paragraphs(
+    'Defensiveness, shame, the reflex to win, the retreat that reads as calm.',
+    "These patterns were learned early. They predate the relationship you're in, and they outlast it unless something interrupts them.",
+  ),
 }
 
 const DELETE_IDS = [
@@ -64,7 +78,7 @@ async function main() {
       continue
     }
     console.log(
-      `${dryRun ? 'would patch' : 'patch'}: ${doc._id} → ${doc.title}`,
+      `${dryRun ? 'would patch' : 'patch'}: ${doc._id} → lede + ${doc.body.length} body paragraphs`,
     )
     if (!dryRun) {
       await client
@@ -73,8 +87,10 @@ async function main() {
           title: doc.title,
           slug: { _type: 'slug', current: doc.slug },
           order: doc.order,
-          shortDescription: doc.shortDescription,
+          lede: doc.lede,
+          body: doc.body,
         })
+        .unset(['shortDescription'])
         .commit()
     }
   }

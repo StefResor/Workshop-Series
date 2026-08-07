@@ -223,9 +223,14 @@ export default async function HomePage() {
               <div key={service._id} className="expertise-band-item">
                 <span className="rule" aria-hidden="true" />
                 <h3>{service.title}</h3>
-                {service.shortDescription ? (
-                  <p>{service.shortDescription}</p>
+                {service.lede ? (
+                  <p className="expertise-band-lede">{service.lede}</p>
                 ) : null}
+                {(service.body || []).map((para) => (
+                  <p key={para} className="expertise-band-body">
+                    {para}
+                  </p>
+                ))}
                 <Link
                   className="expertise-band-cta"
                   href="/contact"

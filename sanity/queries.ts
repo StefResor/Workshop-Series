@@ -139,8 +139,8 @@ export const servicesQuery = `*[_type == "service"] | order(order asc) {
   title,
   "slug": slug.current,
   order,
-  shortDescription,
-  body,
+  lede,
+  "body": body[].text,
   priceUSD,
   durationMinutes
 }`

@@ -84,8 +84,8 @@ export type Service = {
   title: string
   slug: string
   order: number
-  shortDescription?: string
-  body?: string
+  lede?: string
+  body?: string[]
   priceUSD?: number
   durationMinutes?: number
 }

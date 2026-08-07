@@ -209,8 +209,12 @@ const services = [
     _id: 'service-individual-relational',
     order: 1,
     title: 'Individuals',
-    shortDescription:
-      "For people who are precise, effective, and well-regarded at work and cannot reproduce any of it at home. Defensiveness, shame, the reflex to win, the retreat that reads as calm. These patterns were learned early, they predate the relationship you're in, and they outlast it unless something interrupts them.",
+    // CONFIRM WITH STEF — light punctuation edits from agency for Practice readability
+    lede: 'For people who are precise, effective, and well-regarded at work — and cannot reproduce any of it at home.',
+    body: [
+      'Defensiveness, shame, the reflex to win, the retreat that reads as calm.',
+      "These patterns were learned early. They predate the relationship you're in, and they outlast it unless something interrupts them.",
+    ],
     priceUSD: 150, // CONFIRM WITH STEF
     durationMinutes: 50, // CONFIRM WITH STEF
   },
@@ -218,8 +222,12 @@ const services = [
     _id: 'service-couples-same-fight',
     order: 2,
     title: 'Couples',
-    shortDescription:
-      'The argument that repeats on schedule, and the decision underneath it that neither of you will say out loud. Most couples arrive naming the wrong problem — the money, the dishes, the tone. We work the pattern that generates it. If the honest answer turns out to be separation, that happens deliberately and with structure, rather than by exhaustion.',
+    // CONFIRM WITH STEF — light punctuation edits from agency for Practice readability
+    lede: 'The argument that repeats on schedule — and the decision underneath it that neither of you will say out loud.',
+    body: [
+      'Most couples arrive naming the wrong problem: the money, the dishes, the tone. We work the pattern that generates it.',
+      'If the honest answer turns out to be separation, that happens deliberately and with structure, rather than by exhaustion.',
+    ],
     priceUSD: 300, // CONFIRM WITH STEF
     durationMinutes: 75, // CONFIRM WITH STEF
   },
@@ -590,7 +598,12 @@ async function main() {
       title: s.title,
       slug: { _type: 'slug', current: slugify(s.title) },
       order: s.order,
-      shortDescription: s.shortDescription,
+      lede: s.lede,
+      body: s.body.map((text, i) => ({
+        _type: 'paragraph',
+        _key: `${s._id}-p${i + 1}`,
+        text,
+      })),
       priceUSD: s.priceUSD,
       durationMinutes: s.durationMinutes,
     })

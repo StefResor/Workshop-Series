@@ -1,4 +1,4 @@
-import { defineType, defineField } from 'sanity'
+import { defineType, defineField, defineArrayMember } from 'sanity'
 
 export const service = defineType({
   name: 'service',
@@ -25,16 +25,39 @@ export const service = defineType({
       validation: (rule) => rule.required().min(1),
     }),
     defineField({
-      name: 'shortDescription',
-      title: 'Short description',
+      name: 'lede',
+      title: 'Lede',
       type: 'text',
-      rows: 4,
+      rows: 3,
+      description:
+        'Opening recognition line for The Practice — shown larger and in full ink.',
+      validation: (rule) => rule.required(),
     }),
     defineField({
       name: 'body',
-      title: 'Body',
-      type: 'text',
-      rows: 10,
+      title: 'Body paragraphs',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'paragraph',
+          title: 'Paragraph',
+          fields: [
+            defineField({
+              name: 'text',
+              title: 'Text',
+              type: 'text',
+              rows: 3,
+              validation: (rule) => rule.required(),
+            }),
+          ],
+          preview: {
+            select: { title: 'text' },
+          },
+        }),
+      ],
+      description: 'Supporting paragraphs under the lede. One item = one paragraph.',
+      validation: (rule) => rule.min(1).max(4),
     }),
     defineField({
       name: 'priceUSD',

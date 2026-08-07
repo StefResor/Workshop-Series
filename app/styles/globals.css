@@ -1724,7 +1724,7 @@ textarea {
 .expertise-band-list {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 5rem;
+  gap: 72px;
 }
 
 .expertise-band-item {
@@ -1750,17 +1750,30 @@ textarea {
   color: var(--ink);
 }
 
-.expertise-band-item p {
-  font-size: var(--text-body-sm);
+.expertise-band-lede {
+  margin: 0 0 18px;
+  font-size: 19px;
+  line-height: 1.45;
+  color: var(--ink);
+  max-width: 32ch;
+}
+
+.expertise-band-body {
+  margin: 0;
+  font-size: 15px;
   line-height: 1.65;
   color: var(--muted);
-  max-width: 36em;
+  max-width: 38ch;
+}
+
+.expertise-band-body + .expertise-band-body {
+  margin-top: 14px;
 }
 
 /* Same mono CTA recipe as .workshop-led .cta; 14px for contrast. */
 .expertise-band-cta {
   display: inline-block;
-  margin-top: 18px;
+  margin-top: 22px;
   font-family: var(--font-mono);
   font-size: 14px;
   font-weight: 500;
@@ -1773,6 +1786,16 @@ textarea {
 
 .expertise-band-cta:hover {
   opacity: 0.72;
+}
+
+@media (max-width: 900px) {
+  .expertise-band-list {
+    grid-template-columns: 1fr;
+  }
+
+  .expertise-band-lede {
+    font-size: 18px;
+  }
 }
 
 .expertise-band-cta:focus {
@@ -2149,7 +2172,6 @@ textarea {
   .fees-strip--3,
   .sched-grid,
   .workshop-led-grid,
-  .expertise-band-list,
   .about-grid,
   .field-row,
   .email-signup-band-inner {
