@@ -849,14 +849,15 @@ textarea {
 
 /* Attached to the display headline — only rendered when authored. */
 .home-hero-footnote {
-  margin: 20px 0 0;
+  margin: 16px 0 0;
   max-width: 36rem;
   font-family: var(--font-sans);
   font-size: 15px;
   font-style: normal;
   font-weight: 400;
   line-height: 1.45;
-  color: color-mix(in srgb, var(--ink) 60%, transparent);
+  /* ~70% ink over bone ≈ 4.9:1 — clears AA without matching full-ink summary. */
+  color: color-mix(in srgb, var(--ink) 70%, transparent);
 }
 
 .hero-row {
@@ -869,7 +870,7 @@ textarea {
 }
 
 .home-hero:has(.home-hero-footnote) .hero-row {
-  margin-top: 32px;
+  margin-top: 40px;
 }
 
 .hero-row p {
