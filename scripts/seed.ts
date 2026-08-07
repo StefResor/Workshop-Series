@@ -531,7 +531,7 @@ const siteSettingsDoc = {
     'From the fight that never ends through listening, acceptance, and repair — the full Relational Diplomacy arc.',
   seriesOfferLine: 'ten sessions, one free',
   seriesScheduleLine: 'Wednesdays · 7:00–8:30 PM ET · Zoom',
-  seriesCtaLabel: 'Register for the series',
+  seriesCtaLabel: 'Register',
   // seriesPaymentLink: paste Stripe Payment Link in Studio
 }
 

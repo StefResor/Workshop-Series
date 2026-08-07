@@ -1,17 +1,14 @@
 :root {
-  /* Canonical palette — docs/design-decision.md (Practice revision) */
+  /* Canonical palette — docs/design-decision.md */
   --bone: #f3efe7;
   --ink: #14110e;
   --vermillion: #ff4a17;
-  --amber: #ffb76b;
   --muted: #44403a;
   --muted-2: #6b6459;
   --white: #ffffff;
 
   /* The Practice section */
-  --practice-ground: var(--amber); /* client trial; alts #ffa652 / #ffcd90 */
-  --practice-body: #4a3a32; /* softened ink for body copy */
-  --practice-label: #b23410; /* vermillion darkened 30% — small text only */
+  --practice-ground: #ffffff;
   --practice-grain: 0; /* grain overlay opacity, 0–0.04. Ship at 0. */
 
   --font-sans: var(--font-archivo), 'Archivo', sans-serif;
@@ -32,6 +29,8 @@
   --text-body-sm: 14.5px;
   --text-display: clamp(44px, 8.2vw, 128px);
   --text-h2: clamp(30px, 4vw, 58px);
+  /* Peer homepage/section h2s — same hierarchy, one size (prior .section-title). */
+  --text-section-heading: clamp(26px, 3.2vw, 46px);
 }
 
 @keyframes marquee-slide {

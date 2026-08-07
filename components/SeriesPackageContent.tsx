@@ -31,7 +31,7 @@ export function SeriesPackageContent({
   const inclusions = (settings.seriesInclusions || [])
     .map((line) => line?.trim())
     .filter(Boolean)
-  const ctaLabel = settings.seriesCtaLabel?.trim() || 'Register for the series'
+  const ctaLabel = settings.seriesCtaLabel?.trim() || 'Register'
   const ctaHref = settings.seriesPaymentLink?.trim()
   const policyNote =
     settings.workshopDisclaimer?.trim() || DEFAULT_WORKSHOP_DISCLAIMER

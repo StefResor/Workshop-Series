@@ -299,10 +299,17 @@ textarea {
   padding: 9vh var(--page-pad-x);
 }
 
+/* Peer section h2s — workshops / Practice / How (and section-title pages). */
+.section-heading,
 .section-title {
   font-family: var(--font-display);
-  font-size: clamp(26px, 3.2vw, 46px);
+  font-size: var(--text-section-heading);
   text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 0.95;
+}
+
+.section-title {
   margin-bottom: 8px;
 }
 
@@ -793,7 +800,7 @@ textarea {
   Hero eyebrow size = section eyebrow/heading ratio × hero display.
   Section pair: .kicker (12px / --text-kicker) over .page-hero h1 min (36px)
   → ratio 12/36. Applied to --text-display clamp(44px, 8.2vw, 128px).
-  Max ≈ 42.67px, below .section-title max (46px) — no further clamp needed.
+  Max ≈ 42.67px, below --text-section-heading max (46px) — no further clamp needed.
 */
 .home-hero .kicker {
   font-family: var(--font-display);
@@ -961,14 +968,6 @@ textarea {
   gap: 6vw;
   padding: 10vh var(--page-pad-x);
   border-bottom: var(--rule-width) solid var(--rule-structural);
-}
-
-.how h2 {
-  font-family: var(--font-display);
-  font-size: var(--text-h2);
-  text-transform: uppercase;
-  line-height: 0.95;
-  letter-spacing: -0.01em;
 }
 
 .how h2 span {
@@ -1139,7 +1138,7 @@ textarea {
   align-items: center;
   padding-top: 28px;
   padding-bottom: 28px;
-  border-top: 2px solid var(--ink);
+  border-top: 2px solid var(--rule-internal);
 }
 
 .workshop-row--series:hover,
@@ -1653,7 +1652,7 @@ textarea {
 }
 
 /* ——— The Practice ——— */
-/* Flat warm tint; no gradient / polygon texture. See docs/design-decision.md. */
+/* Flat white band; no gradient / polygon texture. See docs/design-decision.md. */
 .practice {
   position: relative;
   color: var(--ink);
@@ -1678,10 +1677,6 @@ textarea {
 }
 
 .expertise-band-title {
-  font-family: var(--font-display);
-  font-size: clamp(26px, 3.2vw, 46px);
-  text-transform: uppercase;
-  letter-spacing: -0.01em;
   margin-bottom: 48px;
   color: var(--ink);
 }
@@ -1718,8 +1713,37 @@ textarea {
 .expertise-band-item p {
   font-size: var(--text-body-sm);
   line-height: 1.65;
-  color: var(--practice-body);
+  color: var(--muted);
   max-width: 36em;
+}
+
+/* Same mono CTA recipe as .workshop-led .cta; 14px + underline for contrast. */
+.expertise-band-cta {
+  display: inline-block;
+  margin-top: 18px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--vermillion);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 1.5px;
+  transition: opacity 0.2s var(--ease);
+}
+
+.expertise-band-cta:hover {
+  opacity: 0.72;
+}
+
+.expertise-band-cta:focus {
+  outline: none;
+}
+
+.expertise-band-cta:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
 }
 
 /* ——— Fees ——— */

@@ -40,61 +40,61 @@ Same tokens/chrome. About uses B/W portrait + orange band (prototype C treatment
 
 # The Practice — section ground revision
 
-**Status:** decided · supersedes the dark textured treatment
-**Client note:** "The Practice session even with the gradient looks too heavy and industrial. Maybe a lighter orange section instead."
+**Status:** decided · white band (supersedes warm tint / amber trial)
+**Client note:** "The Practice session even with the gradient looks too heavy and industrial."
 
 ## Decision
 
-The Practice section moves from a dark charcoal ground with a faceted polygon texture to a **flat, full-bleed warm tint** derived from the existing vermillion accent. Type inverts from knockout bone to ink.
+The Practice section is a **flat, full-bleed white** band (`#FFFFFF` / `--practice-ground`). No amber, no warm tint, no knockout type. Headings and body use the site ink / muted system; consultation CTAs use `--vermillion` like other site CTAs.
 
-No new hue enters the palette. `#F4E2D6` is `#FF4A17` mixed into the bone ground `#F3EFE7` at 8%, so the section stays inside the bone / ink / vermillion system.
+Removed tokens: `--amber`, `--practice-label`, `--practice-body` (body copy uses `--muted`).
 
 ## Tokens
 
 ```css
 :root {
-  /* existing */
   --bone:      #F3EFE7;
   --ink:       #14110E;
   --vermillion:#FF4A17;
+  --muted:     #44403A;
+  --white:     #FFFFFF;
 
   /* The Practice section */
-  --practice-ground: #F4E2D6; /* vermillion @ 8% into bone */
-  --practice-body:   #4A3A32; /* softened ink for body copy */
-  --practice-label:  #B23410; /* vermillion darkened 30% — for small text only */
-  --practice-grain:  0;       /* grain overlay opacity, 0–0.04. Ship at 0. */
+  --practice-ground: #FFFFFF;
+  --practice-grain:  0; /* grain overlay opacity, 0–0.04. Ship at 0. */
 }
 ```
 
 ## Rules
 
-**Ground** — `--practice-ground`, flat. Full-bleed, edge to edge, not inset in a container.
+**Ground** — `--practice-ground` white, flat. Full-bleed, edge to edge.
+
+**Keep:**
+- 2px vermillion top border (section marker)
+- 48px, 2px vermillion rules above Individuals / Couples
+- optional grain `::before` (ships at opacity 0)
+
+**Type**
+- `THE PRACTICE` — Archivo Black, `--ink`, shared `--text-section-heading`
+- `INDIVIDUALS` / `COUPLES` — Archivo Black, `--ink`
+- body copy — Archivo, `--muted`
+- consultation links — mono, `--vermillion`, 14px, persistent underline; hover matches site CTA opacity
 
 **Remove entirely:**
-- the gradient
-- the faceted / low-poly polygon texture
+- gradient / faceted polygon texture
+- section-scoped link color (`--practice-label`) and hover-to-ink patches
 
-**Type** — all text is ink on the tint. No knockout anywhere in this section.
-- `THE PRACTICE` — Archivo Black, `--ink`
-- `INDIVIDUALS` / `COUPLES` — Archivo Black, `--ink`
-- body copy — Archivo, `--practice-body`
+**Separation comes from whitespace and the vermillion top rule**, not from a tinted surface.
 
-**Vermillion** — full strength `--vermillion`, decorative only:
-- 2px hairline across the **top edge** of the band, full-bleed. This is the section marker and is load-bearing — at 8% tint the ground alone does not read as a distinct zone.
-- the existing 48px, 2px rules above `INDIVIDUALS` and `COUPLES`
+## Contrast — accepted tradeoff
 
-**Never** set text in `--vermillion` on this ground — 2.7:1, fails AA. Use `--practice-label` if a small vermillion-family label is ever needed.
-
-**Separation comes from whitespace, not surface.** If the band reads as insufficiently distinct once it's in the page, increase vertical padding. Do not reintroduce texture to solve it.
-
-## Contrast
+Vermillion links at text size compute roughly **~2.9:1 on bone** and **~3.4:1 on white**, below the **4.5:1** AA target for normal text. This is a deliberate decision to preserve the palette. Mitigation: larger type (14px) and persistent underlines on Practice CTAs. Decorative vermillion (top border, item rules) is not text.
 
 | Pair | Ratio | |
 |---|---|---|
-| `--ink` on `--practice-ground` | 15.1:1 | AAA |
-| `--practice-body` on `--practice-ground` | 8.6:1 | AAA |
-| `--practice-label` on `--practice-ground` | 4.9:1 | AA |
-| `--vermillion` on `--practice-ground` | 2.7:1 | **decorative only** |
+| `--ink` on white | ~18.8:1 | AAA |
+| `--muted` on white | ~9.7:1 | AAA |
+| `--vermillion` on white | ~3.4:1 | below AA text; accepted |
 
 ## Optional grain
 
@@ -121,4 +121,4 @@ The faceted texture, not the darkness, is what read as industrial — a polygon 
 
 It also contradicts a decision already on the record: textured backgrounds are listed in the design rationale under what the rebuild deliberately avoids, since replacing the current site's marble is one of the things the rebuild is correcting. Substituting polygons for marble is the same move in a different accent.
 
-The reference sites (Mendes Wood DM, Petzel, martinesy.ms) are flat fields throughout. Their rhythm comes from space and rule weight, not from surface.
+The reference sites (Mendes Wood DM, Petzel, martinesy.ms) are flat fields throughout. Their rhythm comes from space and rule weight, not from surface. White keeps The Practice in that system without introducing a fourth ground hue.

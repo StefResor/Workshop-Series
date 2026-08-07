@@ -1,9 +1,11 @@
+import Link from 'next/link'
 import {
   formatWorkshopDisplay,
   DISPLAY_TIME_ZONE,
 } from '@/lib/datetime'
 import { seriesPassIndexOfferLine, numberWord } from '@/lib/series-pass-copy'
 import type { SiteSettings, Workshop } from '@/lib/types'
+import { seriesPackagePath } from '@/lib/workshop-paths'
 import { resolveSessionPrice } from '@/lib/workshop-price'
 
 type SeriesIndexRowProps = {
@@ -45,8 +47,8 @@ export function SeriesIndexRow({
   workshops,
   settings,
 }: SeriesIndexRowProps) {
-  const link = passPaymentLink.trim()
-  if (!(passPrice > 0) || !link) return null
+  const paymentLink = passPaymentLink.trim()
+  if (!(passPrice > 0) || !paymentLink || !seriesSlug) return null
 
   const displayLine = settings?.seriesDisplayLine?.trim()
   if (!displayLine) return null
@@ -54,12 +56,13 @@ export function SeriesIndexRow({
   const count = workshops.length
   if (count < 1) return null
 
+  const detailsPath = seriesPackagePath(seriesSlug)
   const eyebrow =
     settings?.seriesEyebrow?.trim() || 'The full series'
   const supporting = settings?.seriesSupportingLine?.trim()
   const scheduleLine = settings?.seriesScheduleLine?.trim()
   const ctaLabel =
-    settings?.seriesCtaLabel?.trim() || 'Register for the series'
+    settings?.seriesCtaLabel?.trim() || 'Register'
   const sessionPrice = resolveSessionPrice(settings)
   const offerLine = seriesPassIndexOfferLine(passPrice, sessionPrice, count)
   const monthSpan = seriesMonthSpan(workshops)
@@ -94,15 +97,15 @@ export function SeriesIndexRow({
           {scheduleLine ? <p>{scheduleLine}</p> : null}
         </div>
       </div>
-      <a
+      <Link
         className="btn workshop-row-series-cta"
-        href={link}
+        href={detailsPath}
         aria-label={`${ctaLabel}: ${displayLine}${
           countWord ? ` — all ${countWord} sessions` : ''
         }${seriesTitle ? ` (${seriesTitle})` : ''}`}
       >
         {ctaLabel} <span aria-hidden="true">→</span>
-      </a>
+      </Link>
     </div>
   )
 }

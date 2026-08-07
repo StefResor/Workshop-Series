@@ -44,7 +44,7 @@ const SERIES_FIELDS = {
     'From the fight that never ends through listening, acceptance, and repair — the full Relational Diplomacy arc.',
   seriesOfferLine: 'ten sessions, one free',
   seriesScheduleLine: 'Wednesdays · 7:00–8:30 PM ET · Zoom',
-  seriesCtaLabel: 'Register for the series',
+  seriesCtaLabel: 'Register',
 } as const
 
 async function main() {

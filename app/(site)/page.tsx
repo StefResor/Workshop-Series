@@ -141,7 +141,7 @@ export default async function HomePage() {
         id="workshops"
         aria-labelledby="home-workshops-heading"
       >
-        <h2 id="home-workshops-heading" className="section-title">
+        <h2 id="home-workshops-heading" className="section-heading section-title">
           {workshopsHeading}
         </h2>
         {workshopsSpecLine ? (
@@ -220,7 +220,10 @@ export default async function HomePage() {
         aria-labelledby="home-practice-heading"
       >
         <div className="expertise-band-inner">
-          <h2 id="home-practice-heading" className="expertise-band-title">
+          <h2
+            id="home-practice-heading"
+            className="section-heading expertise-band-title"
+          >
             The Practice
           </h2>
           <div className="expertise-band-list">
@@ -231,6 +234,14 @@ export default async function HomePage() {
                 {service.shortDescription ? (
                   <p>{service.shortDescription}</p>
                 ) : null}
+                <Link
+                  className="expertise-band-cta"
+                  href="/contact"
+                  aria-label={`Request a consultation — ${service.title}`}
+                >
+                  Request a consultation{' '}
+                  <span aria-hidden="true">→</span>
+                </Link>
               </div>
             ))}
           </div>
@@ -238,7 +249,7 @@ export default async function HomePage() {
       </section>
 
       <section className="how" aria-labelledby="home-how-heading">
-        <h2 id="home-how-heading">
+        <h2 id="home-how-heading" className="section-heading">
           How change <span>actually</span> happens
         </h2>
         <ol className="how-list">

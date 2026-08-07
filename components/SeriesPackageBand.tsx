@@ -29,8 +29,8 @@ export async function SeriesPackageBand({
   const supporting = settings?.seriesSupportingLine?.trim()
   const offerPhrase = settings?.seriesOfferLine?.trim()
   const scheduleLine = settings?.seriesScheduleLine?.trim()
-  const ctaLabel =
-    settings?.seriesCtaLabel?.trim() || 'Register for the series'
+  // Homepage band links to the series page — "Details", not Register.
+  const ctaLabel = 'Details'
 
   const priceMeta = offerPhrase
     ? `$${seriesPrice} · ${offerPhrase}`
