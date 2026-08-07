@@ -4,6 +4,7 @@ import { formatWorkshopDisplay } from '@/lib/datetime'
 import { buildPageMetadata } from '@/lib/seo'
 import { EmailSignupBand } from '@/components/EmailSignupBand'
 import { HomeHeroHeadline } from '@/components/HomeHeroHeadline'
+import { HowChangeSection } from '@/components/HowChangeSection'
 import { SeriesPackageBand } from '@/components/SeriesPackageBand'
 import type {
   EmailSignup,
@@ -54,13 +55,6 @@ const METHOD = [
   'Boundaries',
   'Pattern Recognition',
   'The Wise Adult',
-]
-
-const HOW = [
-  'Clarify the problem, precisely',
-  'Understand its origins, with compassion',
-  'Build new skills, deliberately',
-  'Practice until it shows up in daily life',
 ]
 
 export default async function HomePage() {
@@ -248,21 +242,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="how" aria-labelledby="home-how-heading">
-        <h2 id="home-how-heading" className="section-heading">
-          How change <span>actually</span> happens
-        </h2>
-        <ol className="how-list">
-          {HOW.map((item, i) => (
-            <li key={item}>
-              <span className="n" aria-hidden="true">
-                {String(i + 1).padStart(2, '0')}
-              </span>
-              {item}
-            </li>
-          ))}
-        </ol>
-      </section>
+      <HowChangeSection headingId="home-how-heading" />
 
       <section className="fees-strip fees-strip--3" aria-label="Fees">
         <div className="fee">

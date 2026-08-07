@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { HowChangeSection } from '@/components/HowChangeSection'
 import { buildPageMetadata } from '@/lib/seo'
 import type { PageDoc } from '@/lib/types'
 import { sanityFetch } from '@/sanity/lib/fetch'
@@ -16,13 +17,6 @@ export async function generateMetadata(): Promise<Metadata> {
     path: '/approach',
   })
 }
-
-const HOW = [
-  'Clarify the problem, precisely',
-  'Understand its origins, with compassion',
-  'Build new skills, deliberately',
-  'Practice until it shows up in daily life',
-]
 
 const METHOD = [
   'Accountability',
@@ -70,21 +64,7 @@ export default async function ApproachPage() {
         </p>
       </header>
 
-      <section className="how" aria-labelledby="how-heading">
-        <h2 id="how-heading">
-          How change <span>actually</span> happens
-        </h2>
-        <ol className="how-list">
-          {HOW.map((item, i) => (
-            <li key={item}>
-              <span className="n" aria-hidden="true">
-                {String(i + 1).padStart(2, '0')}
-              </span>
-              {item}
-            </li>
-          ))}
-        </ol>
-      </section>
+      <HowChangeSection headingId="how-heading" />
 
       <section className="section" aria-labelledby="method-heading">
         <h2 id="method-heading" className="section-title">

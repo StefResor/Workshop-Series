@@ -28,9 +28,10 @@
   --text-body: clamp(15px, 1.3vw, 18px);
   --text-body-sm: 14.5px;
   --text-display: clamp(44px, 8.2vw, 128px);
-  --text-h2: clamp(30px, 4vw, 58px);
-  /* Peer homepage/section h2s — same hierarchy, one size (prior .section-title). */
+  /* Site section h2 — one size everywhere (How, Practice, workshops, titles). */
   --text-section-heading: clamp(26px, 3.2vw, 46px);
+  /* Alias — prefer --text-section-heading in new code. */
+  --text-h2: var(--text-section-heading);
 }
 
 @keyframes marquee-slide {

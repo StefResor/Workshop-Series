@@ -39,7 +39,12 @@ export function EmailSignupBand({ copy }: EmailSignupBandProps) {
           {eyebrow ? (
             <p className="email-signup-band-eyebrow">{eyebrow}</p>
           ) : null}
-          <h2 id="email-signup-band-heading">{heading}</h2>
+          <h2
+            id="email-signup-band-heading"
+            className="section-heading"
+          >
+            {heading}
+          </h2>
           {body ? <p className="email-signup-band-body">{body}</p> : null}
         </div>
         <div className="email-signup-band-form">

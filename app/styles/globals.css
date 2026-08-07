@@ -448,15 +448,11 @@ textarea {
 }
 
 .email-signup-band-copy h2 {
-  font-family: var(--font-display);
-  font-size: clamp(28px, 3.6vw, 48px);
-  text-transform: uppercase;
-  letter-spacing: 0.01em;
-  line-height: 1.05;
-  color: var(--ink);
+  /* Size/family from .section-heading — keep band-specific layout only. */
   margin: 0 0 18px;
   max-width: 14ch;
   text-wrap: balance;
+  color: var(--ink);
 }
 
 .email-signup-band-body {
@@ -893,8 +889,8 @@ textarea {
   color: var(--bone);
   overflow: hidden;
   padding: 13px 0;
-  border-top: var(--rule-width) solid var(--rule-structural);
-  border-bottom: var(--rule-width) solid var(--rule-structural);
+  border-top: var(--rule-width) solid var(--white);
+  border-bottom: var(--rule-width) solid var(--white);
 }
 
 .marquee-inner {
@@ -967,9 +963,15 @@ textarea {
   grid-template-columns: 1fr 1.2fr;
   gap: 6vw;
   padding: 10vh var(--page-pad-x);
-  border-bottom: var(--rule-width) solid var(--rule-structural);
+  border-bottom: var(--rule-width) solid var(--rule-internal);
 }
 
+/* Homepage only: continues Practice white, settles into page bone */
+.practice + .how {
+  background: linear-gradient(to bottom, var(--white) 0%, var(--bone) 100%);
+}
+
+/* Size comes from .section-heading on the h2. */
 .how h2 span {
   color: var(--vermillion);
 }
@@ -1657,8 +1659,11 @@ textarea {
   position: relative;
   color: var(--ink);
   background-color: var(--practice-ground);
-  border-top: 2px solid var(--vermillion);
-  border-bottom: var(--rule-width) solid var(--rule-structural);
+  /* Same subdued divider as .workshop-list / .workshop-led-grid */
+  border-top: var(--rule-width) solid var(--rule-internal);
+  border-bottom: var(--rule-width) solid var(--rule-internal);
+  /* Soft falloff just under the top rule onto the white ground */
+  box-shadow: inset 0 3px 6px -3px rgba(20, 17, 14, 0.1);
 }
 
 .practice::before {
@@ -1717,7 +1722,7 @@ textarea {
   max-width: 36em;
 }
 
-/* Same mono CTA recipe as .workshop-led .cta; 14px + underline for contrast. */
+/* Same mono CTA recipe as .workshop-led .cta; 14px for contrast. */
 .expertise-band-cta {
   display: inline-block;
   margin-top: 18px;
@@ -1727,9 +1732,7 @@ textarea {
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--vermillion);
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
-  text-decoration-thickness: 1.5px;
+  text-decoration: none;
   transition: opacity 0.2s var(--ease);
 }
 
@@ -1750,7 +1753,8 @@ textarea {
 .fees-strip {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  border-top: var(--rule-width) solid var(--rule-structural);
+  /* Top matches .how bottom — workshop-grid subdued, not ink structural */
+  border-top: var(--rule-width) solid var(--rule-internal);
   border-bottom: var(--rule-width) solid var(--rule-structural);
 }
 

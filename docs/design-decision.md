@@ -78,7 +78,7 @@ Removed tokens: `--amber`, `--practice-label`, `--practice-body` (body copy uses
 - `THE PRACTICE` — Archivo Black, `--ink`, shared `--text-section-heading`
 - `INDIVIDUALS` / `COUPLES` — Archivo Black, `--ink`
 - body copy — Archivo, `--muted`
-- consultation links — mono, `--vermillion`, 14px, persistent underline; hover matches site CTA opacity
+- consultation links — mono, `--vermillion`, 14px; hover matches site CTA opacity
 
 **Remove entirely:**
 - gradient / faceted polygon texture
@@ -88,7 +88,7 @@ Removed tokens: `--amber`, `--practice-label`, `--practice-body` (body copy uses
 
 ## Contrast — accepted tradeoff
 
-Vermillion links at text size compute roughly **~2.9:1 on bone** and **~3.4:1 on white**, below the **4.5:1** AA target for normal text. This is a deliberate decision to preserve the palette. Mitigation: larger type (14px) and persistent underlines on Practice CTAs. Decorative vermillion (top border, item rules) is not text.
+Vermillion links at text size compute roughly **~2.9:1 on bone** and **~3.4:1 on white**, below the **4.5:1** AA target for normal text. This is a deliberate decision to preserve the palette. Mitigation: larger type (14px) on Practice CTAs. Decorative vermillion (item rules) is not text.
 
 | Pair | Ratio | |
 |---|---|---|
