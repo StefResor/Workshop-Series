@@ -99,34 +99,41 @@ export default async function HomePage() {
 
   return (
     <>
-      <section className="home-hero">
-        <span className="kicker">
-          {home?.eyebrow || 'The Connection Lab'}
+      <div className="home-hero-stage">
+        <span className="home-hero-asterisk" aria-hidden="true">
+          *
         </span>
-        <HomeHeroHeadline
-          solid={home?.heroSolid}
-          outline={home?.heroOutline}
-          join={home?.heroJoin}
-        />
-        {heroFootnote ? (
-          <p className="home-hero-footnote">{heroFootnote}</p>
-        ) : null}
-        <div className="hero-row">
-          <p>
-            {home?.summary ||
-              'Structured, direct relationship work for high-responsibility professionals and leaders. Deliberately small caseload. Private-pay, online, and discreet — all adults welcome.'}
-          </p>
-          <Link className="btn" href="/contact">
-            {home?.ctaLabel || 'Request a Consultation'}
-          </Link>
-        </div>
-      </section>
+        <section className="home-hero">
+          <div className="home-hero-lockup">
+            <span className="kicker">
+              {home?.eyebrow || 'The Connection Lab'}
+            </span>
+            <HomeHeroHeadline
+              solid={home?.heroSolid}
+              outline={home?.heroOutline}
+              join={home?.heroJoin}
+            />
+            {heroFootnote ? (
+              <p className="home-hero-footnote">{heroFootnote}</p>
+            ) : null}
+            <div className="hero-row">
+              <p>
+                {home?.summary ||
+                  'Structured, direct relationship work for high-responsibility professionals and leaders. Deliberately small caseload. Private-pay, online, and discreet — all adults welcome.'}
+              </p>
+              <Link className="btn" href="/contact">
+                {home?.ctaLabel || 'Request a Consultation'}
+              </Link>
+            </div>
+          </div>
+        </section>
 
-      <div className="bigband" aria-hidden="true">
-        <div className="marquee-inner">
-          {[...METHOD, ...METHOD].map((item, i) => (
-            <span key={`${item}-${i}`}>{item}</span>
-          ))}
+        <div className="bigband" aria-hidden="true">
+          <div className="marquee-inner">
+            {[...METHOD, ...METHOD].map((item, i) => (
+              <span key={`${item}-${i}`}>{item}</span>
+            ))}
+          </div>
         </div>
       </div>
 

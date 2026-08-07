@@ -352,8 +352,9 @@ textarea {
 /* Hairline above legal row when the subscribe band is present.
    Spec asked for #DBD3C4 — using --rule-internal (no new colors). */
 .site-footer:has(.email-signup-footer) .site-footer-meta {
-  border-top: 1px solid var(--rule-internal);
-  margin-top: 44px;
+  /* Dark signup band owns its own bottom pad; meta stays on the light ground. */
+  border-top: 0;
+  margin-top: 0;
   padding-top: 20px;
   padding-bottom: 40px;
 }
@@ -590,7 +591,7 @@ textarea {
 
 .email-signup-result--footer {
   margin: 0;
-  color: var(--muted);
+  color: color-mix(in srgb, var(--white) 78%, transparent);
   font-size: 13px;
   line-height: 1.45;
   text-transform: none;
@@ -598,10 +599,13 @@ textarea {
 }
 
 /* ——— Footer subscribe band ——— */
+/* Same inverted ground as homepage Workshop Updates / email-signup-band. */
 .email-signup-footer {
-  /* Spec 56px 48px 40px — horizontal uses page pad token (4vw ≈ 48px near 1200). */
-  padding: 56px var(--page-pad-x) 0;
-  color: var(--ink);
+  --email-band-ground: #2a2724;
+  background: var(--email-band-ground);
+  color: var(--white);
+  /* Spec 56px 48px — horizontal uses page pad token (4vw ≈ 48px near 1200). */
+  padding: 56px var(--page-pad-x) 48px;
 }
 
 .email-signup-footer-accent {
@@ -627,7 +631,7 @@ textarea {
   line-height: 1.1;
   letter-spacing: -0.01em;
   text-transform: uppercase;
-  color: var(--ink);
+  color: var(--white);
   /* Break is explicit in the component (<br> after “Hear about”). No width clamp. */
 }
 
@@ -635,7 +639,7 @@ textarea {
   margin: 0;
   font-size: 15px;
   line-height: 1.45;
-  color: var(--muted);
+  color: color-mix(in srgb, var(--white) 78%, transparent);
   max-width: 34ch;
 }
 
@@ -668,7 +672,7 @@ textarea {
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: color-mix(in srgb, var(--white) 55%, transparent);
 }
 
 .email-signup-footer-input,
@@ -676,13 +680,18 @@ textarea {
   width: 100%;
   background: transparent;
   border: 0;
-  border-bottom: 1px solid var(--ink);
+  border-bottom: 1px solid color-mix(in srgb, var(--white) 55%, transparent);
   border-radius: 0;
   padding: 10px 12px 10px 0;
-  color: var(--ink);
+  color: var(--white);
   font-size: 15px;
   font-family: inherit;
   line-height: 1.3;
+}
+
+.email-signup-footer-input::placeholder,
+.email-signup-footer-controls input::placeholder {
+  color: color-mix(in srgb, var(--white) 45%, transparent);
 }
 
 .email-signup-footer-controls {
@@ -701,17 +710,19 @@ textarea {
 .email-signup-footer-input:focus,
 .email-signup-footer-controls input:focus {
   outline: none;
+  border-bottom-width: 2px;
+  border-bottom-color: var(--vermillion);
 }
 
 .email-signup-footer-input:focus-visible,
 .email-signup-footer-controls input:focus-visible {
-  outline: 2px solid var(--ink);
+  outline: 2px solid var(--white);
   outline-offset: 3px;
 }
 
 .email-signup-submit--footer {
   flex: 0 0 auto;
-  background: var(--ink);
+  background: var(--vermillion);
   color: var(--bone);
   border: 0;
   border-radius: 0;
@@ -721,12 +732,14 @@ textarea {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: background 0.2s var(--ease), color 0.2s var(--ease);
+  transition:
+    background 0.2s var(--ease),
+    color 0.2s var(--ease);
 }
 
 .email-signup-submit--footer:hover {
-  background: var(--vermillion);
-  color: var(--bone);
+  background: var(--white);
+  color: var(--email-band-ground, #2a2724);
 }
 
 .email-signup-submit--footer:focus {
@@ -734,7 +747,7 @@ textarea {
 }
 
 .email-signup-submit--footer:focus-visible {
-  outline: 2px solid var(--ink);
+  outline: 2px solid var(--white);
   outline-offset: 3px;
 }
 
@@ -745,7 +758,7 @@ textarea {
 .email-signup-form--footer .email-signup-permission {
   font-size: 13px;
   line-height: 1.45;
-  color: var(--muted);
+  color: color-mix(in srgb, var(--white) 55%, transparent);
   max-width: none;
 }
 
@@ -756,13 +769,14 @@ textarea {
 }
 
 .email-signup-privacy-link:hover {
-  color: var(--ink);
+  color: var(--white);
 }
 
 .email-signup-form--footer .email-signup-error {
   font-size: 13px;
-  color: var(--muted);
+  color: var(--white);
 }
+
 
 @media (prefers-reduced-motion: reduce) {
   .email-signup-submit--band,
@@ -788,9 +802,67 @@ textarea {
 }
 
 /* ——— Home: hero ——— */
+/*
+  Stage = hero + marquee. Clips the asterisk on top/right and lets it run
+  under the vermillion band so the bottom edge is a crop, not a float.
+*/
+.home-hero-stage {
+  position: relative;
+  overflow: hidden;
+}
+
 .home-hero {
+  position: relative;
+  z-index: 1;
   padding: 10vh var(--page-pad-x) 8vh;
   animation: rise-in 0.75s var(--ease) both;
+}
+
+/*
+  Decorative crop — Archivo Black asterisk, solid ink at 8%.
+  Sits in the mid/right of the hero (top + right crops); bottom under .bigband.
+  Ultrawide: ease inward so the glyph stays near the lockup.
+  Uses rgb()/opacity (not color-mix) for Firefox reliability at this size.
+*/
+.home-hero-asterisk {
+  position: absolute;
+  top: 42%;
+  z-index: 0;
+  transform: translateY(-50%);
+  right: calc(-0.22em + max(0px, 0.22 * (100vw - 1440px)));
+  font-family: var(--font-display);
+  font-size: clamp(900px, 72vw, 1400px);
+  font-weight: 400;
+  line-height: 1;
+  color: var(--ink);
+  -webkit-text-fill-color: var(--ink);
+  -webkit-text-stroke: 0;
+  opacity: 0.08;
+  pointer-events: none;
+  user-select: none;
+}
+
+@media (max-width: 899px) {
+  .home-hero-asterisk {
+    display: none;
+  }
+}
+
+.home-hero-stage .bigband {
+  position: relative;
+  z-index: 2;
+}
+
+/*
+  Lockup width = display headline’s longest line (not the viewport).
+  Do not use container-type:inline-size here — size containment makes
+  fit-content resolve to 0 when width depends on children.
+*/
+.home-hero-lockup {
+  position: relative;
+  z-index: 1;
+  width: fit-content;
+  max-width: 100%;
 }
 
 /*
@@ -829,6 +901,8 @@ textarea {
   line-height: 0.92;
   letter-spacing: -0.02em;
   text-transform: uppercase;
+  width: max-content;
+  max-width: 100%;
 }
 
 /* Transparent fill + stroke alone is uneven on Archivo Black (S/K double-line).
@@ -864,13 +938,18 @@ textarea {
   color: color-mix(in srgb, var(--ink) 70%, transparent);
 }
 
+/*
+  Stack by default: current display (“PRACTICE” ≈ 705–764px) is narrower
+  than summary + CTA (~520 + 274), so space-between cannot align the button
+  to the headline’s right edge without overflowing. Left-align under summary.
+*/
 .hero-row {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 6vw;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 28px;
+  width: 100%;
   margin-top: 44px;
-  flex-wrap: wrap;
 }
 
 .home-hero:has(.home-hero-footnote) .hero-row {
