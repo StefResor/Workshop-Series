@@ -847,6 +847,18 @@ textarea {
   letter-spacing: 0;
 }
 
+/* Attached to the display headline — only rendered when authored. */
+.home-hero-footnote {
+  margin: 20px 0 0;
+  max-width: 36rem;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.45;
+  color: color-mix(in srgb, var(--ink) 60%, transparent);
+}
+
 .hero-row {
   display: flex;
   justify-content: space-between;
@@ -854,6 +866,10 @@ textarea {
   gap: 6vw;
   margin-top: 44px;
   flex-wrap: wrap;
+}
+
+.home-hero:has(.home-hero-footnote) .hero-row {
+  margin-top: 32px;
 }
 
 .hero-row p {

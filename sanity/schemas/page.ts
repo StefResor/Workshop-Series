@@ -81,6 +81,15 @@ export const page = defineType({
       hidden: ({ document }) => !isHomePage(document),
     }),
     defineField({
+      name: 'heroFootnote',
+      title: 'Hero footnote',
+      type: 'string',
+      description:
+        'Optional line under the display headline. Include the leading asterisk in the string if wanted — e.g. *Easier said than done. Empty = not shown.',
+      hidden: ({ document }) => !isHomePage(document),
+      validation: (rule) => rule.max(120),
+    }),
+    defineField({
       name: 'workshopsHeading',
       title: 'Workshops section heading',
       type: 'string',

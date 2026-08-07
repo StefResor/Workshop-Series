@@ -94,6 +94,7 @@ export default async function HomePage() {
   const workshopsHeading =
     home?.workshopsHeading?.trim() || 'The Notice* Workshop Series.'
   const workshopsNote = home?.workshopsNote?.trim()
+  const heroFootnote = home?.heroFootnote?.trim()
   const practice = (services || [])
     .filter((s) => {
       const slug = s.slug || ''
@@ -113,6 +114,9 @@ export default async function HomePage() {
           outline={home?.heroOutline}
           join={home?.heroJoin}
         />
+        {heroFootnote ? (
+          <p className="home-hero-footnote">{heroFootnote}</p>
+        ) : null}
         <div className="hero-row">
           <p>
             {home?.summary ||
