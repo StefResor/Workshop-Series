@@ -247,7 +247,6 @@ const pages = [
     heroSolid: 'Notice',
     heroOutline: '*',
     heroJoin: 'none' as const,
-    heroFootnote: '*Easier said than done.',
     workshopsHeading: 'The Notice* Workshop Series.',
     workshopsSpecTail: 'Join any session, in any order · 18+',
     workshopsNote:

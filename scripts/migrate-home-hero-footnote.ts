@@ -1,5 +1,5 @@
 /**
- * Set homepage heroFootnote.
+ * Clear homepage heroFootnote (removes the line under the display headline).
  *
  * Usage:
  *   npx tsx scripts/migrate-home-hero-footnote.ts --dry-run
@@ -29,10 +29,6 @@ const client = createClient({
   useCdn: false,
 })
 
-const PATCH = {
-  heroFootnote: '*Easier said than done.',
-}
-
 async function main() {
   const doc = await client.fetch<{ _id: string; heroFootnote?: string } | null>(
     `*[_type == "page" && slug.current == "home"][0]{ _id, heroFootnote }`,
@@ -40,10 +36,14 @@ async function main() {
   if (!doc?._id) throw new Error('Home page document not found')
 
   console.log('Current:', doc)
-  console.log(dryRun ? 'Would set:' : 'Setting:', PATCH)
+  if (!doc.heroFootnote) {
+    console.log('Already empty — nothing to do.')
+    return
+  }
+  console.log(dryRun ? 'Would unset heroFootnote' : 'Unsetting heroFootnote')
   if (dryRun) return
 
-  await client.patch(doc._id).set(PATCH).commit()
+  await client.patch(doc._id).unset(['heroFootnote']).commit()
   console.log('Done.')
 }
 
