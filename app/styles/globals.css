@@ -971,7 +971,16 @@ textarea {
   background: linear-gradient(to bottom, var(--white) 0%, var(--bone) 100%);
 }
 
-/* Size comes from .section-heading on the h2. */
+/*
+ * Size from .section-heading.
+ * max-width between “ACTUALLY HAPPENS” (~17ch) and “HOW CHANGE ACTUALLY” (~21ch)
+ * so the break is HOW CHANGE / ACTUALLY HAPPENS — not an orphaned HAPPENS.
+ */
+.how .section-heading {
+  text-wrap: balance;
+  max-width: 18ch;
+}
+
 .how h2 span {
   color: var(--vermillion);
 }
@@ -1280,7 +1289,7 @@ textarea {
 
 /* Same white fill as .workshop-led / .workshop-row on hover. */
 .series-package-cell:hover,
-.series-package-cell:has(.series-package-cta:focus-visible) {
+.series-package-cell:has(.cta:focus-visible) {
   background: var(--white);
 }
 
@@ -1337,7 +1346,7 @@ textarea {
 }
 
 .series-package-cell:hover .series-package-num,
-.series-package-cell:has(.series-package-cta:focus-visible) .series-package-num {
+.series-package-cell:has(.cta:focus-visible) .series-package-num {
   color: var(--vermillion);
   -webkit-text-stroke-color: var(--vermillion);
 }
@@ -1383,21 +1392,29 @@ textarea {
   margin: 0 0 2px;
 }
 
-/* CTA keeps its own vermillion → ink swap; row hover is the white fill above. */
-.series-package-cta.btn {
+/* Same vermillion text-link as .workshop-led .cta (homepage cards). */
+.series-package-cell .cta {
   margin-top: 20px;
-  padding: 12px 22px;
+  font-family: var(--font-mono);
   font-size: 12px;
-  letter-spacing: 0.1em;
-  background: var(--vermillion);
-  color: var(--bone);
-  transition: background 0.2s var(--ease);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--vermillion);
+  transition: opacity 0.2s var(--ease);
 }
 
-.series-package-cta.btn:hover {
-  background: var(--ink);
-  color: var(--bone);
-  opacity: 1;
+.series-package-cell .cta:hover {
+  opacity: 0.72;
+}
+
+.series-package-cell .cta:focus {
+  outline: none;
+}
+
+.series-package-cell .cta:focus-visible {
+  outline: 3px solid var(--vermillion);
+  outline-offset: 3px;
 }
 
 /* ——— Series package detail (/workshops/series) ——— */

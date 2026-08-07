@@ -59,7 +59,7 @@ export async function SeriesPackageBand({
         <p className="series-package-meta">{scheduleLine}</p>
       ) : null}
       <Link
-        className="btn series-package-cta"
+        className="cta"
         href={detailsPath}
         aria-label={`${ctaLabel}: ${displayLine}`}
       >

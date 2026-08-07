@@ -207,8 +207,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {emailSignup ? <EmailSignupBand copy={emailSignup} /> : null}
-
       <section
         className="practice expertise-band"
         aria-labelledby="home-practice-heading"
@@ -291,6 +289,8 @@ export default async function HomePage() {
           <p>Private pay · online · discreet</p>
         </div>
       </section>
+
+      {emailSignup ? <EmailSignupBand copy={emailSignup} /> : null}
     </>
   )
 }
