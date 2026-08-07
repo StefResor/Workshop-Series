@@ -61,6 +61,41 @@ export function seriesPassSavingsClause(
   return `the price of ${paidWord}, with ${freeWord} sessions free`
 }
 
+/**
+ * Index-row price meta: "$423 · ten sessions, one free".
+ * Drops the ", one free" clause when passPrice ÷ sessionPrice is not clean.
+ * Uppercasing is CSS (`text-transform`) — return lowercase words.
+ */
+export function seriesPassIndexOfferLine(
+  passPrice: number,
+  sessionPrice: number | null,
+  seriesCount: number,
+): string {
+  if (!(passPrice > 0) || !(seriesCount > 0)) return ''
+
+  const countWord = numberWord(seriesCount)
+  const sessionsPart = countWord
+    ? `${countWord} sessions`
+    : `${seriesCount} sessions`
+
+  if (sessionPrice == null || !(sessionPrice > 0)) {
+    return `$${passPrice} · ${sessionsPart}`
+  }
+
+  const ratio = passPrice / sessionPrice
+  const paid = Math.round(ratio)
+  if (Math.abs(ratio - paid) > 1e-9) {
+    return `$${passPrice} · ${sessionsPart}`
+  }
+  const free = seriesCount - paid
+  if (free < 1) return `$${passPrice} · ${sessionsPart}`
+  if (free === 1) return `$${passPrice} · ${sessionsPart}, one free`
+
+  const freeWord = numberWord(free)
+  if (!freeWord) return `$${passPrice} · ${sessionsPart}`
+  return `$${passPrice} · ${sessionsPart}, ${freeWord} free`
+}
+
 /** Upcoming workshop: series membership + pass offer. */
 export function seriesContextBodyUpcoming(opts: {
   seriesCount: number

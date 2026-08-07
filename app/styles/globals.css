@@ -1035,10 +1035,11 @@ textarea {
 
 .workshop-row {
   display: grid;
-  grid-template-columns: 4.5rem 5.5rem 1fr auto;
+  /* Wide enough for series “01–10” / “SEP–NOV” — same tracks for every row. */
+  grid-template-columns: 5.75rem 6.5rem 1fr auto;
   gap: 1.5rem 2.5vw;
   align-items: center;
-  padding: 22px 0;
+  padding: 22px 16px;
   border-bottom: var(--rule-width) solid var(--rule-internal);
   transition: background 0.2s var(--ease);
 }
@@ -1126,6 +1127,85 @@ textarea {
   color: var(--muted-2);
 }
 
+/*
+ * Series pass as an index row — same grid, deliberate CTA break.
+ * 2px ink top replaces the hairline between #10 and the pass.
+ */
+.workshop-row:has(+ .workshop-row--series) {
+  border-bottom: 0;
+}
+
+.workshop-row--series {
+  align-items: center;
+  padding-top: 28px;
+  padding-bottom: 28px;
+  border-top: 2px solid var(--ink);
+}
+
+.workshop-row--series:hover,
+.workshop-row--series:focus-within {
+  background: var(--white);
+}
+
+.workshop-row--series:hover .num,
+.workshop-row--series:focus-within .num {
+  color: var(--vermillion);
+  -webkit-text-stroke: 1.25px var(--vermillion);
+}
+
+.workshop-row-series-eyebrow {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--vermillion);
+  margin: 0 0 4px;
+}
+
+.workshop-row--series .workshop-row-title {
+  margin: 0;
+}
+
+.workshop-row--series .workshop-row-hook {
+  margin: 0;
+}
+
+.workshop-row-series-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 8px;
+}
+
+.workshop-row-series-meta p {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--vermillion);
+  margin: 0;
+}
+
+.workshop-row-series-cta.btn {
+  justify-self: end;
+  align-self: center;
+  padding: 12px 22px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  background: var(--vermillion);
+  color: var(--bone);
+  white-space: nowrap;
+  transition: background 0.2s var(--ease);
+}
+
+.workshop-row-series-cta.btn:hover {
+  background: var(--ink);
+  color: var(--bone);
+  opacity: 1;
+}
+
 .workshop-series-group {
   margin-bottom: 48px;
 }
@@ -1208,7 +1288,7 @@ textarea {
  * Top rule = previous row’s border-bottom; this cell closes with its own bottom.
  */
 .workshop-list > .series-package-cell {
-  padding: 48px 0 36px;
+  padding: 48px 16px 36px;
   border-bottom: var(--rule-width) solid var(--rule-internal);
   transition: background 0.2s var(--ease);
 }
@@ -2052,9 +2132,9 @@ textarea {
   }
 
   .workshop-row {
-    grid-template-columns: 3.25rem 1fr;
+    grid-template-columns: 3.75rem 1fr;
     gap: 10px 16px;
-    padding: 20px 0;
+    padding: 20px 16px;
   }
 
   .workshop-row .d {
@@ -2084,6 +2164,25 @@ textarea {
     grid-row: 3;
     justify-self: start;
     margin-top: 4px;
+  }
+
+  .workshop-row--series .num {
+    grid-row: 1 / span 2;
+    font-size: 20px;
+  }
+
+  .workshop-row--series .workshop-row-copy {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .workshop-row-series-cta.btn {
+    grid-column: 2;
+    grid-row: 3;
+    justify-self: start;
+    margin-top: 10px;
+    white-space: normal;
+    text-align: center;
   }
 
   .series-package-band {

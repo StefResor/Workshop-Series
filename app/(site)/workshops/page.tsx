@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { SeriesPackageBand } from '@/components/SeriesPackageBand'
+import { SeriesIndexRow } from '@/components/SeriesIndexRow'
 import { WorkshopDateLabel } from '@/components/WorkshopWhen'
 import { formatWorkshopDisplay } from '@/lib/datetime'
 import { buildPageMetadata } from '@/lib/seo'
@@ -19,6 +19,8 @@ type SeriesRow = {
   title: string
   slug: string
   active?: boolean
+  passPrice?: number
+  passPaymentLink?: string
 }
 
 export function generateMetadata(): Metadata {
@@ -35,6 +37,11 @@ function sortWithinSeries(a: Workshop, b: Workshop) {
   const bPast = Boolean(b.isPast)
   if (aPast !== bPast) return aPast ? 1 : -1
   return a.startsAt.localeCompare(b.startsAt)
+}
+
+function canShowSeriesPass(series: SeriesRow): boolean {
+  const link = series.passPaymentLink?.trim()
+  return series.passPrice != null && series.passPrice > 0 && Boolean(link)
 }
 
 export default async function WorkshopsPage() {
@@ -86,9 +93,9 @@ export default async function WorkshopsPage() {
             </p>
           </div>
         ) : (
-          orderedSeries.map((series, seriesIndex) => {
+          orderedSeries.map((series) => {
             const rows = bySeries.get(series.slug) || []
-            const isLastSeries = seriesIndex === orderedSeries.length - 1
+            const showPass = canShowSeriesPass(series)
             return (
               <div key={series._id} className="workshop-series-group">
                 <h3 className="workshop-series-group-title">{series.title}</h3>
@@ -130,21 +137,21 @@ export default async function WorkshopsPage() {
                       </Link>
                     )
                   })}
-                  {/* Same list as the sessions — one rule between #10 and the package. */}
-                  {isLastSeries ? (
-                    <SeriesPackageBand settings={settings} embedded />
+                  {showPass ? (
+                    <SeriesIndexRow
+                      seriesSlug={series.slug}
+                      seriesTitle={series.title}
+                      passPrice={series.passPrice!}
+                      passPaymentLink={series.passPaymentLink!}
+                      workshops={rows}
+                      settings={settings}
+                    />
                   ) : null}
                 </div>
               </div>
             )
           })
         )}
-
-        {!hasAny ? (
-          <div className="workshop-list">
-            <SeriesPackageBand settings={settings} embedded />
-          </div>
-        ) : null}
       </section>
 
       <section className="section workshops-index-footer">
