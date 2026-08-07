@@ -13,12 +13,13 @@ import type {
   Workshop,
 } from '@/lib/types'
 import {
+  composeWorkshopSeriesSpecLine,
   resolveSessionPrice,
-  workshopSeriesPriceClause,
 } from '@/lib/workshop-price'
 import { sanityFetch } from '@/sanity/lib/fetch'
 import { workshopPath } from '@/lib/workshop-paths'
 import {
+  activeSeriesQuery,
   emailSignupQuery,
   homeUpcomingWorkshopsQuery,
   pageBySlugQuery,
@@ -63,18 +64,36 @@ const HOW = [
 ]
 
 export default async function HomePage() {
-  const [home, services, workshops, settings, emailSignup] = await Promise.all([
-    sanityFetch<PageDoc | null>(pageBySlugQuery, { slug: 'home' }),
-    sanityFetch<Service[]>(servicesQuery),
-    sanityFetch<Workshop[]>(homeUpcomingWorkshopsQuery),
-    sanityFetch<SiteSettings | null>(siteSettingsQuery),
-    sanityFetch<EmailSignup | null>(emailSignupQuery),
-  ])
+  const [home, services, workshops, settings, emailSignup, activeSeries] =
+    await Promise.all([
+      sanityFetch<PageDoc | null>(pageBySlugQuery, { slug: 'home' }),
+      sanityFetch<Service[]>(servicesQuery),
+      sanityFetch<Workshop[]>(homeUpcomingWorkshopsQuery),
+      sanityFetch<SiteSettings | null>(siteSettingsQuery),
+      sanityFetch<EmailSignup | null>(emailSignupQuery),
+      sanityFetch<{
+        slug: string
+        title?: string
+        passPrice?: number
+      } | null>(activeSeriesQuery).catch(() => null),
+    ])
 
   const couples = services?.find((s) => s.slug.includes('couples'))
   const individuals = services?.find((s) => s.slug.includes('individual'))
   const workshopDefault = resolveSessionPrice(settings)
-  const priceClause = workshopSeriesPriceClause(settings)
+  const passPrice =
+    activeSeries?.passPrice != null
+      ? activeSeries.passPrice
+      : (settings?.seriesPrice ?? null)
+  const workshopsSpecLine = composeWorkshopSeriesSpecLine({
+    sessionPrice: workshopDefault,
+    passPrice,
+    scheduleLine: settings?.seriesScheduleLine,
+    editorialTail: home?.workshopsSpecTail,
+  })
+  const workshopsHeading =
+    home?.workshopsHeading?.trim() || 'The Notice* Workshop Series.'
+  const workshopsNote = home?.workshopsNote?.trim()
   const practice = (services || [])
     .filter((s) => {
       const slug = s.slug || ''
@@ -119,15 +138,14 @@ export default async function HomePage() {
         aria-labelledby="home-workshops-heading"
       >
         <h2 id="home-workshops-heading" className="section-title">
-          The Notice* Workshop Series.
+          {workshopsHeading}
         </h2>
-        <p className="section-sub">
-          {`Relational Diplomacy · Live · Wednesdays 7:00–8:30 PM ET · Zoom${priceClause} · Join any session, in any order · 18+`}
-        </p>
-        <p className="section-note">
-          Separate from the series, I see a small number of couples and individuals
-          privately.
-        </p>
+        {workshopsSpecLine ? (
+          <p className="section-sub">{workshopsSpecLine}</p>
+        ) : null}
+        {workshopsNote ? (
+          <p className="section-note">{workshopsNote}</p>
+        ) : null}
         <div className="workshop-led-grid">
           {(workshops || []).length === 0 ? (
             <div className="workshops-empty">

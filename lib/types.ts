@@ -102,6 +102,11 @@ export type PageDoc = {
   heroSolid?: string
   heroOutline?: string
   heroJoin?: HeroJoin
+  /** Homepage workshops section — seasonal / series naming. */
+  workshopsHeading?: string
+  /** Editorial tail after composed schedule + prices (no dollar amounts). */
+  workshopsSpecTail?: string
+  workshopsNote?: string
   summary?: string
   body?: string
   ctaLabel?: string

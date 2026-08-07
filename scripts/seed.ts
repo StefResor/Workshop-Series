@@ -239,6 +239,10 @@ const pages = [
     heroSolid: 'Notice',
     heroOutline: '*',
     heroJoin: 'none' as const,
+    workshopsHeading: 'The Notice* Workshop Series.',
+    workshopsSpecTail: 'Join any session, in any order · 18+',
+    workshopsNote:
+      'Separate from the series, I see a small number of couples and individuals privately.',
     summary:
       'Structured, direct relationship work for high-responsibility professionals and leaders. Deliberately small caseload. Private-pay, online, and discreet — all adults welcome.',
     body: `Accountability. Honesty. Repair. Boundaries. Family-of-origin pattern recognition. From reactivity to the Wise Adult.
@@ -602,6 +606,13 @@ async function main() {
       ...('heroSolid' in p ? { heroSolid: p.heroSolid } : {}),
       ...('heroOutline' in p ? { heroOutline: p.heroOutline } : {}),
       ...('heroJoin' in p ? { heroJoin: p.heroJoin } : {}),
+      ...('workshopsHeading' in p
+        ? { workshopsHeading: p.workshopsHeading }
+        : {}),
+      ...('workshopsSpecTail' in p
+        ? { workshopsSpecTail: p.workshopsSpecTail }
+        : {}),
+      ...('workshopsNote' in p ? { workshopsNote: p.workshopsNote } : {}),
       summary: p.summary,
       body: p.body,
       ctaLabel: p.ctaLabel,

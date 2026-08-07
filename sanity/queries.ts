@@ -70,6 +70,14 @@ export const activeSeriesSlugQuery = `*[_type == "series" && active == true && d
   title
 }`
 
+/** Active series with pass display fields for homepage spec composition. */
+export const activeSeriesQuery = `*[_type == "series" && active == true && defined(slug.current)] | order(title desc) [0]{
+  "slug": slug.current,
+  title,
+  passPrice,
+  passPaymentLink
+}`
+
 export const workshopsBySeriesSlugQuery = `*[
   _type == "workshop" &&
   series->slug.current == $series
@@ -146,6 +154,9 @@ export const pageBySlugQuery = `*[_type == "page" && slug.current == $slug][0] {
   heroSolid,
   heroOutline,
   heroJoin,
+  workshopsHeading,
+  workshopsSpecTail,
+  workshopsNote,
   summary,
   body,
   ctaLabel,
