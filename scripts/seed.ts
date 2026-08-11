@@ -248,7 +248,8 @@ const pages = [
     heroOutline: '*',
     heroJoin: 'none' as const,
     workshopsHeading: 'The Notice* Workshop Series.',
-    workshopsSpecTail: 'Join any session, in any order · 18+',
+    workshopsSpec:
+      'Relational Diplomacy · Live · Wednesdays · 7:00–8:30 PM ET · Zoom · $47 per session, or $423 for the full series · Join any session, in any order · 18+',
     workshopsNote:
       'Separate from the series, I see a small number of couples and individuals privately.',
     summary:
@@ -623,6 +624,7 @@ async function main() {
       ...('workshopsHeading' in p
         ? { workshopsHeading: p.workshopsHeading }
         : {}),
+      ...('workshopsSpec' in p ? { workshopsSpec: p.workshopsSpec } : {}),
       ...('workshopsSpecTail' in p
         ? { workshopsSpecTail: p.workshopsSpecTail }
         : {}),

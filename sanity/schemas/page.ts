@@ -99,12 +99,22 @@ export const page = defineType({
       group: 'workshopsIntro',
     }),
     defineField({
+      name: 'workshopsSpec',
+      title: 'Workshops section subhead',
+      type: 'text',
+      rows: 3,
+      description:
+        'Full line under the workshops heading (schedule, pricing, join rules, age). Edit freely — shown as authored.',
+      hidden: ({ document }) => !isHomePage(document),
+      group: 'workshopsIntro',
+    }),
+    defineField({
       name: 'workshopsSpecTail',
-      title: 'Workshops spec — editorial tail',
+      title: 'Workshops spec — editorial tail (legacy)',
       type: 'string',
       description:
-        'Appended after the composed schedule and prices. Do not put dollar amounts here — those come from Session price / series pass price. e.g. Join any session, in any order · 18+',
-      hidden: ({ document }) => !isHomePage(document),
+        'Deprecated — use Workshops section subhead. Kept only until that field is populated.',
+      hidden: true,
       group: 'workshopsIntro',
     }),
     defineField({
@@ -113,7 +123,7 @@ export const page = defineType({
       type: 'text',
       rows: 2,
       description:
-        'Line under the spec — e.g. Separate from the series, I see a small number of couples and individuals privately.',
+        'Line under the subhead — e.g. Separate from the series, I see a small number of couples and individuals privately.',
       hidden: ({ document }) => !isHomePage(document),
       group: 'workshopsIntro',
     }),

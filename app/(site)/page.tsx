@@ -79,12 +79,15 @@ export default async function HomePage() {
     activeSeries?.passPrice != null
       ? activeSeries.passPrice
       : (settings?.seriesPrice ?? null)
-  const workshopsSpecLine = composeWorkshopSeriesSpecLine({
-    sessionPrice: workshopDefault,
-    passPrice,
-    scheduleLine: settings?.seriesScheduleLine,
-    editorialTail: home?.workshopsSpecTail,
-  })
+  // Prefer authored subhead; fall back to composed line until Studio is populated.
+  const workshopsSpecLine =
+    home?.workshopsSpec?.trim() ||
+    composeWorkshopSeriesSpecLine({
+      sessionPrice: workshopDefault,
+      passPrice,
+      scheduleLine: settings?.seriesScheduleLine,
+      editorialTail: home?.workshopsSpecTail,
+    })
   const workshopsHeading =
     home?.workshopsHeading?.trim() || 'The Notice* Workshop Series.'
   const workshopsNote = home?.workshopsNote?.trim()

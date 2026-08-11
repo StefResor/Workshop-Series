@@ -156,6 +156,7 @@ export const pageBySlugQuery = `*[_type == "page" && slug.current == $slug][0] {
   heroJoin,
   heroFootnote,
   workshopsHeading,
+  workshopsSpec,
   workshopsSpecTail,
   workshopsNote,
   summary,

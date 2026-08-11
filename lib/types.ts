@@ -106,7 +106,9 @@ export type PageDoc = {
   heroFootnote?: string
   /** Homepage workshops section — seasonal / series naming. */
   workshopsHeading?: string
-  /** Editorial tail after composed schedule + prices (no dollar amounts). */
+  /** Full line under the workshops heading (schedule, prices, join rules). */
+  workshopsSpec?: string
+  /** @deprecated Use workshopsSpec. Kept for fallback until migrated. */
   workshopsSpecTail?: string
   workshopsNote?: string
   summary?: string
