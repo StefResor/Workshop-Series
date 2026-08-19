@@ -11,7 +11,7 @@ Site settings and SEO must use the **correct** column only. The **wrong** column
 | Practice line | Relational Diplomacy for Individuals and Couples |
 | Domain | https://stefanie-schumacher.com |
 | Contact email (public / form destination) | stef8.schumacher@gmail.com *(CONFIRM WITH STEF if a practice domain address exists)* |
-| Transactional from-address | `noreply@send.stefanie-schumacher.com` (Resend-verified subdomain — later) |
+| Transactional from-address | `noreply@mail.stefanie-schumacher.com` (Resend-verified subdomain — later) |
 | Practice geography | Online practice · Ohio-based *(do not invent a city)* |
 | Default meta title | Stefanie Schumacher — Relational Diplomacy |
 | Default meta description | Structured, direct relationship work for high-responsibility professionals and leaders. Private-pay, online, and discreet. |

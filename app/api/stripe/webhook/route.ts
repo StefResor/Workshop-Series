@@ -16,7 +16,11 @@ const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://stefanie-schumacher.co
 const FROM =
   process.env.WORKSHOP_FROM_EMAIL?.trim() ||
   "Stefanie Schumacher <workshops@mail.stefanie-schumacher.com>";
-const REPLY_TO = process.env.WORKSHOP_REPLY_TO!;
+/** Prefer workshop reply-to; fall back so a missing env does not kill confirmations. */
+const REPLY_TO =
+  process.env.WORKSHOP_REPLY_TO?.trim() ||
+  process.env.CONTACT_TO_EMAIL?.trim() ||
+  undefined;
 
 // zoomLink and zoomPasscode are deliberately NOT selected here. They ship 8 days out.
 const WORKSHOP_BY_SERIES_AND_SLUG = `*[
@@ -76,7 +80,7 @@ async function sendConfirmation(
   await resend.emails.send({
     from: FROM,
     to: email,
-    replyTo: REPLY_TO,
+    ...(REPLY_TO ? { replyTo: REPLY_TO } : {}),
     subject,
     html,
     text,
