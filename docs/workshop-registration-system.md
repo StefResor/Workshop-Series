@@ -235,8 +235,28 @@ Stripe test mode is a separate universe — products, prices, Payment Links,
 webhooks and customers do not cross over. Recreate at least one workshop link
 and one pass link in test mode.
 
+**Do not put `sk_test_` on Production env vars** if that deployment might take
+live payments. Use a **Preview** deployment instead:
+
+1. Vercel → Project → Settings → Environment Variables: set `STRIPE_SECRET_KEY`
+   (`sk_test_…`) and `STRIPE_WEBHOOK_SECRET` scoped to **Preview** only.
+   Leave Production on `sk_live_…` / live `whsec_`.
+2. Stripe Dashboard → Developers → Webhooks → **Test mode** → endpoint at the
+   preview URL: `https://<preview>.vercel.app/api/stripe/webhook`
+   (event: `checkout.session.completed`, plus refunds if you want that path).
+3. Create a test Payment Link with `workshop_slug` + `series_slug` metadata and
+   a success URL on that same preview host. Paste the test URL into Sanity for
+   the workshop under test; restore the live `buy.stripe.com` link afterward.
+4. Buy with a test card on the preview site.
+
+The webhook resolves workshops by Payment Link **metadata**
+(`workshop_slug` / `series_slug`), not by `stripeProductId`. A separate test
+product is fine — no need to paste the test product ID into Sanity.
+
 Cards: `4242…4242` succeeds, `4000…0002` declines, `4000 0025 0000 3155`
 forces 3D Secure. Run the 3DS one — corporate and European cards will hit it.
+
+Local alternative (optional):
 
 ```bash
 stripe listen --forward-to localhost:3000/api/stripe/webhook
@@ -257,6 +277,7 @@ days out and run it.
 - [ ] Workshop with no `zoomLink` → skipped, not marked, appears in `missingZoomLink`
 - [ ] Thank-you page with a bogus `session_id` → does not claim registration failed
 - [ ] Confirmation renders in Gmail, Apple Mail, and Outlook (Arial Black fallback)
+- [ ] Thank-you success state shows name + email when served with matching Stripe mode keys
 
 ---
 
