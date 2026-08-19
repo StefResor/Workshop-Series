@@ -23,7 +23,10 @@ const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://stefanie-schumacher.co
 const FROM =
   process.env.WORKSHOP_FROM_EMAIL?.trim() ||
   "Stefanie Schumacher <workshops@mail.stefanie-schumacher.com>";
-const REPLY_TO = process.env.WORKSHOP_REPLY_TO!;
+const REPLY_TO =
+  process.env.WORKSHOP_REPLY_TO?.trim() ||
+  process.env.CONTACT_TO_EMAIL?.trim() ||
+  undefined;
 
 const DAY = 86_400_000;
 
@@ -138,7 +141,7 @@ async function sendBatch(rows: Row[], kind: "credentials" | "reminder") {
       await resend.emails.send({
         from: FROM,
         to: row.email,
-        replyTo: REPLY_TO,
+        ...(REPLY_TO ? { replyTo: REPLY_TO } : {}),
         subject,
         html,
         text,
