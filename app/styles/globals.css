@@ -1,18 +1,5 @@
 @import './tokens.css';
 
-/* Tailwind utilities for registration thank-you page — theme only, no preflight
-   (site styles remain in this file / tokens.css). */
-@layer theme, utilities;
-@import 'tailwindcss/theme.css' layer(theme);
-@import 'tailwindcss/utilities.css' layer(utilities);
-
-@theme {
-  --color-bone: #f3efe7;
-  --color-ink: #14110e;
-  --color-vermillion: #ff4a17;
-  --font-display: var(--font-archivo-black), 'Archivo Black', sans-serif;
-}
-
 *,
 *::before,
 *::after {
@@ -251,6 +238,17 @@ textarea {
 .btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--ink);
+  border: var(--rule-width) solid var(--ink);
+}
+
+.btn-outline:hover {
+  background: var(--ink);
+  color: var(--bone);
 }
 
 .kicker {
@@ -2352,4 +2350,151 @@ textarea {
   .series-package-band {
     padding: 44px var(--page-pad-x);
   }
+}
+
+/* ——— Workshop registration thank-you ———
+   Uses site tokens / plain CSS (not Tailwind utilities). The prior Tailwind
+   utility markup left Add to calendar as an ink box with invisible label when
+   text-bone failed to emit, and collapsed section spacing. */
+.thank-you {
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: clamp(4.5rem, 12vh, 8rem) var(--page-pad-x) clamp(4rem, 10vh, 7rem);
+}
+
+.thank-you-rule {
+  display: block;
+  width: 3rem;
+  height: 3px;
+  background: var(--vermillion);
+}
+
+.thank-you-headline {
+  margin-top: 1.5rem;
+  font-family: var(--font-display);
+  font-size: clamp(2.75rem, 7vw, 3.75rem);
+  line-height: 0.94;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--ink);
+  white-space: pre-line;
+}
+
+.thank-you-standfirst {
+  margin-top: 1.5rem;
+  max-width: 36rem;
+  font-size: clamp(1.05rem, 1.4vw, 1.15rem);
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+.thank-you-email {
+  color: var(--ink);
+}
+
+.thank-you-details {
+  margin-top: 4rem;
+  padding-top: 2.5rem;
+  border-top: var(--rule-width) solid var(--rule-internal);
+}
+
+.thank-you-kicker {
+  margin-bottom: 0.5rem;
+}
+
+.thank-you-title {
+  margin-top: 0.35rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 2.4vw, 1.65rem);
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+.thank-you-meta {
+  display: grid;
+  gap: 2rem;
+  margin-top: 2.5rem;
+}
+
+@media (min-width: 640px) {
+  .thank-you-meta {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.thank-you-meta dt {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+}
+
+.thank-you-meta dd {
+  margin-top: 0.4rem;
+  font-size: 1.125rem;
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+.thank-you-meta-note {
+  font-size: 0.875rem;
+  color: var(--muted-2);
+}
+
+.thank-you-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 3rem;
+}
+
+@media (min-width: 640px) {
+  .thank-you-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+.thank-you-actions--solo {
+  margin-top: 4rem;
+  padding-top: 2.5rem;
+  border-top: var(--rule-width) solid var(--rule-internal);
+}
+
+.thank-you-actions .btn,
+.thank-you-actions .btn-outline {
+  text-align: center;
+  padding: 1rem 1.75rem;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+}
+
+.thank-you-zoom {
+  margin-top: 4rem;
+  padding-left: 1.5rem;
+  border-left: 3px solid var(--vermillion);
+}
+
+.thank-you-zoom > p:last-child {
+  margin-top: 0.5rem;
+  max-width: 36rem;
+  font-size: clamp(1.05rem, 1.4vw, 1.15rem);
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+.thank-you-disclaimer {
+  margin-top: 5rem;
+  padding-top: 2rem;
+  border-top: var(--rule-width) solid var(--rule-internal);
+  max-width: 40rem;
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: var(--muted-2);
+}
+
+.thank-you-disclaimer strong {
+  color: var(--ink);
+  font-weight: 600;
 }
