@@ -27,7 +27,7 @@ export function generateMetadata(): Metadata {
   return buildPageMetadata({
     title: 'Workshops',
     description:
-      'Relational Diplomacy workshop series — live online Wednesdays, 7:00–8:30 PM ET. Join any session, in any order.',
+      'The Connection Workshop — live online Wednesdays, 7:00–8:30 PM ET. Join any session, in any order.',
     path: '/workshops',
   })
 }
@@ -67,10 +67,10 @@ export default async function WorkshopsPage() {
   return (
     <>
       <header className="page-hero">
-        <span className="kicker">Relational Diplomacy</span>
+        <span className="kicker">The Connection Workshop</span>
         <h1>Workshop Series</h1>
         <p className="lede">
-          {`Relational Diplomacy · Live · Wednesdays 7:00–8:30 PM ET · Zoom${priceClause} · Join any session, in any order · 18+. Educational in nature — not psychotherapy.`}
+          {`The Connection Workshop · Live · Wednesdays 7:00–8:30 PM ET · Zoom${priceClause} · Join any session, in any order · 18+. Educational in nature — not psychotherapy.`}
         </p>
       </header>
 

@@ -814,6 +814,8 @@ textarea {
   z-index: 1;
   padding: 10vh var(--page-pad-x) 8vh;
   animation: rise-in 0.75s var(--ease) both;
+  /* Match .page-hero h1 so home and interior heroes share one display scale. */
+  --home-hero-display: clamp(36px, 6vw, 88px);
 }
 
 /*
@@ -866,22 +868,22 @@ textarea {
 /*
   Hero eyebrow size = section eyebrow/heading ratio × hero display.
   Section pair: .kicker (12px / --text-kicker) over .page-hero h1 min (36px)
-  → ratio 12/36. Applied to --text-display clamp(44px, 8.2vw, 128px).
-  Max ≈ 42.67px, below --text-section-heading max (46px) — no further clamp needed.
+  → ratio 12/36. Applied to the shared page-hero clamp(36px, 6vw, 88px).
+  Max ≈ 29.3px — stays below --text-section-heading max (46px).
 */
 .home-hero .kicker {
   font-family: var(--font-display);
   font-weight: 400;
   font-size: clamp(
-    calc(44px * 12 / 36),
-    calc(8.2vw * 12 / 36),
-    calc(128px * 12 / 36)
+    calc(36px * 12 / 36),
+    calc(6vw * 12 / 36),
+    calc(88px * 12 / 36)
   );
   letter-spacing: 0.06em;
   color: var(--ink);
   /* Match CONNECT→BETTER optical gap: h1 line-height 0.92 packs lines by
      (1 − 0.92) of display. Margin (not line-height) keeps em-derived size. */
-  margin-bottom: calc(var(--text-display) * (1 - 0.92));
+  margin-bottom: calc(var(--home-hero-display) * (1 - 0.92));
 }
 
 /*
@@ -890,12 +892,12 @@ textarea {
   Extra room also clears the outline stroke, which paints outside the glyph box.
 */
 .home-hero:has(.home-hero-outline--mark) .kicker {
-  margin-bottom: calc(var(--text-display) * 0.32);
+  margin-bottom: calc(var(--home-hero-display) * 0.32);
 }
 
 .home-hero h1 {
   font-family: var(--font-display);
-  font-size: var(--text-display);
+  font-size: var(--home-hero-display);
   line-height: 0.92;
   letter-spacing: -0.02em;
   text-transform: uppercase;
@@ -904,11 +906,12 @@ textarea {
 }
 
 /* Transparent fill + stroke alone is uneven on Archivo Black (S/K double-line).
-   Fill with page bone on top of stroke so every letter shares one outer rim. */
+   Fill with page bone on top of stroke so every letter shares one outer rim.
+   Stroke scaled down with the page-hero display size (was 3.5px at 128px max). */
 .home-hero h1 .outline {
   color: var(--bone);
   -webkit-text-fill-color: var(--bone);
-  -webkit-text-stroke: 3.5px var(--ink);
+  -webkit-text-stroke: 2.75px var(--ink);
   paint-order: stroke fill;
   letter-spacing: 0.04em;
 }
@@ -937,9 +940,9 @@ textarea {
 }
 
 /*
-  Stack by default: current display (“PRACTICE” ≈ 705–764px) is narrower
-  than summary + CTA (~520 + 274), so space-between cannot align the button
-  to the headline’s right edge without overflowing. Left-align under summary.
+  Stack by default: page-hero display scale is narrower than summary + CTA,
+  so space-between cannot align the button to the headline’s right edge
+  without overflowing. Left-align under summary.
 */
 .hero-row {
   display: flex;

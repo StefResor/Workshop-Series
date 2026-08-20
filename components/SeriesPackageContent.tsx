@@ -61,7 +61,7 @@ export function SeriesPackageContent({
         </nav>
         <article className="ev-wrap">
           <span className="kicker">
-            {eyebrow || 'Relational Diplomacy Workshop Series'}
+            {eyebrow || 'The Connection Workshop'}
           </span>
           <h1>{displayLine}</h1>
           <div className="ev-meta">

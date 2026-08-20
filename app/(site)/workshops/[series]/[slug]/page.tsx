@@ -146,7 +146,7 @@ export default async function WorkshopDetailPage({ params }: Props) {
           </Link>
         </nav>
         <article className="ev-wrap">
-          <span className="kicker">Relational Diplomacy Workshop</span>
+          <span className="kicker">The Connection Workshop</span>
           <h1>{workshop.title}</h1>
           <div className="ev-meta">
             <div>
