@@ -124,7 +124,7 @@ export default async function HomePage() {
                 {home?.summary ||
                   'Structured, direct relationship work for high-responsibility professionals and leaders. Deliberately small caseload. Private-pay, online, and discreet — all adults welcome.'}
               </p>
-              <Link className="btn" href="/contact">
+              <Link className="btn" href={home?.ctaHref || '/contact'}>
                 {home?.ctaLabel || 'Request a Consultation'}
               </Link>
             </div>
