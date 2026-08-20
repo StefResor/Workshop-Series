@@ -98,7 +98,7 @@ export default async function FeesPage() {
           Workshops
         </h2>
         <p className="section-sub">
-          Relational Diplomacy Workshop Series
+          The Connection Workshop
           {workshopDefault != null
             ? ` — $${workshopDefault} per participant`
             : ''}{' '}

@@ -315,7 +315,7 @@ The promise is noticeable change in how you relate every day — not endless ins
 
 Individuals — $150 / 50-minute session · private pay · online
 
-Relational Diplomacy Workshop Series — $47 per participant · live on Zoom · 90 minutes
+The Connection Workshop — $47 per participant · live on Zoom · 90 minutes
 
 Workshop registrations are non-refundable. Workshops are educational and are not psychotherapy.`,
   },
