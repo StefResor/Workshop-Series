@@ -67,7 +67,7 @@ export function renderCredentials(w: CredentialsData, firstName?: string) {
   const times = timeRange(w.startsAt, w.durationMinutes);
 
   const subject = `Your Zoom link · Workshop ${num} · ${weekdayShort}, ${dateShort} · ${w.title}`;
-  const preheader = `Relational Diplomacy Workshops. ${times}. Link and passcode inside — save this email.`;
+  const preheader = `The Connection Workshops. ${times}. Link and passcode inside — save this email.`;
 
   const html = emailShell({
     subject,
@@ -107,7 +107,7 @@ export function renderCredentials(w: CredentialsData, firstName?: string) {
             "Nothing to prepare and nothing to read. Come with a situation you're actually stuck in, if you have one — that's what makes the question and answer half useful.",
           ) +
           para(
-            "Your camera can stay off. Questions can be asked out loud or typed in the chat, whichever you prefer.",
+            "Please join with your camera on. Registration is per person, and seeing everyone is how we keep the room to the people who signed up. You're welcome to stay muted — questions can be asked out loud or typed in the chat, whichever you prefer.",
           ),
         "48px 48px 0",
       ),
@@ -123,7 +123,7 @@ export function renderCredentials(w: CredentialsData, firstName?: string) {
     `${firstName ? firstName + ", we" : "We"} meet on ${weekday}, ${dateLong} at ${times}.`,
     `Save this email — it's how you get in.`,
     ``,
-    `RELATIONAL DIPLOMACY — WORKSHOP ${num}`,
+    `THE CONNECTION WORKSHOPS — WORKSHOP ${num}`,
     w.title,
     `${weekday}, ${dateLong}`,
     `${times} (${w.durationMinutes} minutes, live)`,
@@ -138,14 +138,21 @@ export function renderCredentials(w: CredentialsData, firstName?: string) {
     ``,
     `BEFORE WE MEET`,
     `Nothing to prepare and nothing to read. Come with a situation you're actually`,
-    `stuck in, if you have one. Your camera can stay off.`,
+    `stuck in, if you have one.`,
+    `Please join with your camera on. Registration is per person, and seeing everyone`,
+    `is how we keep the room to the people who signed up. You're welcome to stay muted`,
+    `— questions can be asked out loud or typed in the chat, whichever you prefer.`,
     ``,
     `This is education, not therapy. These workshops are educational and do not`,
     `constitute psychotherapy or create a therapist-client relationship.`,
+    `Registration is non-refundable and is per participant.`,
+    `Sessions aren't recorded. There's no replay, so plan to join live.`,
+    `Cameras stay on. Registration is per participant. Please join with video enabled; you can stay muted throughout.`,
     ``,
     `Questions? Reply to this email.`,
     `Workshop details: ${w.detailsUrl}`,
-    `Stefanie Schumacher · Relational Diplomacy Workshops`,
+    `Stefanie Schumacher · The Connection Workshops`,
+    `You're receiving this because you registered for a Connection Workshop. This is workshop correspondence, not a marketing message.`,
   ]
     .filter((l) => l !== "")
     .join("\n");
@@ -165,7 +172,7 @@ export function renderReminder(w: CredentialsData, firstName?: string) {
   const weekdayShort = inTZ(w.startsAt, { weekday: "short" });
 
   const subject = `Tonight at ${clock} · Workshop ${num} · ${w.title}`;
-  const preheader = `Relational Diplomacy Workshops. ${times}. Your link and passcode, one more time.`;
+  const preheader = `The Connection Workshops. ${times}. Your link and passcode, one more time.`;
 
   // Deliberately short. Nobody reads a long email an hour before a meeting.
   const html = emailShell({
@@ -212,7 +219,8 @@ export function renderReminder(w: CredentialsData, firstName?: string) {
     ``,
     `Doors open a few minutes early. If you can't get in, reply here and we'll help.`,
     ``,
-    `Stefanie Schumacher · Relational Diplomacy Workshops`,
+    `Stefanie Schumacher · The Connection Workshops`,
+    `You're receiving this because you registered for a Connection Workshop. This is workshop correspondence, not a marketing message.`,
   ]
     .filter((l) => l !== "")
     .join("\n");

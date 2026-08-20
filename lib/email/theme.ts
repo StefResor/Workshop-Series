@@ -37,17 +37,21 @@ export const inTZ = (iso: string | Date, opts: Intl.DateTimeFormatOptions) =>
 
 export const pad2 = (n: number) => String(n).padStart(2, "0");
 
-/** "7:00 – 8:30 PM EDT" — the label follows the real offset, so workshops 9 */
-/** and 10 correctly read EST after the DST boundary. */
+/** "7:00 – 8:30 PM ET" — always ET; sessions 9–10 fall after DST ends. */
 export function timeRange(startsAt: string, durationMinutes: number) {
   const start = new Date(startsAt);
   const end = new Date(start.getTime() + durationMinutes * 60_000);
   const clock = (d: Date) => inTZ(d, { hour: "numeric", minute: "2-digit" });
-  const tz =
-    new Intl.DateTimeFormat("en-US", { timeZone: TZ, timeZoneName: "short" })
-      .formatToParts(start)
-      .find((p) => p.type === "timeZoneName")?.value ?? "ET";
-  return `${clock(start)} – ${clock(end)} ${tz}`;
+  return `${clock(start)} – ${clock(end)} ET`;
+}
+
+/** Bare address from WORKSHOP_FROM_EMAIL (not Reply-To). */
+export function workshopFromAddress(): string {
+  const raw =
+    process.env.WORKSHOP_FROM_EMAIL?.trim() ||
+    "Stefanie Schumacher <workshops@mail.stefanie-schumacher.com>";
+  const angle = raw.match(/<([^>]+)>/);
+  return (angle?.[1] ?? raw).trim();
 }
 
 /* ------------------------------------------------------------------ */
@@ -112,13 +116,15 @@ export const aside = (html: string) =>
 export const policies = `
   ${hairline}
   <p style="margin:24px 0 12px;font-family:${BODY};font-size:13px;line-height:1.6;color:${MUTED};"><strong style="color:${INK};font-weight:600;">This is education, not therapy.</strong> These workshops are educational and do not constitute psychotherapy or create a therapist&ndash;client relationship.</p>
-  <p style="margin:0;font-family:${BODY};font-size:13px;line-height:1.6;color:${MUTED};"><strong style="color:${INK};font-weight:600;">Registration is non-refundable.</strong> Registration is per participant &mdash; partners attending together register separately.</p>`;
+  <p style="margin:0 0 12px;font-family:${BODY};font-size:13px;line-height:1.6;color:${MUTED};"><strong style="color:${INK};font-weight:600;">Registration is non-refundable.</strong> Registration is per participant &mdash; partners attending together register separately.</p>
+  <p style="margin:0 0 12px;font-family:${BODY};font-size:13px;line-height:1.6;color:${MUTED};"><strong style="color:${INK};font-weight:600;">Sessions aren&rsquo;t recorded.</strong> There&rsquo;s no replay, so plan to join live.</p>
+  <p style="margin:0;font-family:${BODY};font-size:13px;line-height:1.6;color:${MUTED};"><strong style="color:${INK};font-weight:600;">Cameras stay on.</strong> Registration is per participant. Please join with video enabled; you can stay muted throughout.</p>`;
 
 export const footer = (detailsUrl: string) => `
   ${hairline}
-  <p style="margin:24px 0 0;font-family:${BODY};font-size:13px;line-height:1.6;color:${MUTED};">Questions about this workshop? Reply to this email.<br />Workshop details: <a href="${detailsUrl}" style="color:${INK};text-decoration:underline;">${detailsUrl.replace(/^https?:\/\//, "")}</a></p>
-  <p style="margin:20px 0 0;font-family:${BODY};font-size:11px;line-height:1.5;letter-spacing:0.08em;text-transform:uppercase;color:${MUTED};">Stefanie Schumacher &middot; Relational Diplomacy Workshops</p>
-  <p style="margin:8px 0 0;font-family:${BODY};font-size:11px;line-height:1.5;color:${MUTED};">You&rsquo;re receiving this because you registered for a Relational Diplomacy workshop. This is workshop correspondence, not a marketing message.</p>`;
+  <p style="margin:24px 0 0;font-family:${BODY};font-size:13px;line-height:1.6;color:${MUTED};">Questions about this workshop? Reply to this email.<br />Workshop details: <a href="${detailsUrl}" style="color:${INK};text-decoration:underline;">View workshop details &rarr;</a></p>
+  <p style="margin:20px 0 0;font-family:${BODY};font-size:11px;line-height:1.5;letter-spacing:0.08em;text-transform:uppercase;color:${MUTED};">Stefanie Schumacher &middot; The Connection Workshops</p>
+  <p style="margin:8px 0 0;font-family:${BODY};font-size:11px;line-height:1.5;color:${MUTED};">You&rsquo;re receiving this because you registered for a Connection Workshop. This is workshop correspondence, not a marketing message.</p>`;
 
 /* ------------------------------------------------------------------ */
 /* Document shell                                                      */
@@ -165,7 +171,7 @@ export function emailShell({
 
   <tr><td class="pad" style="padding:40px 48px 0;">
     <p style="margin:0;font-family:${DISPLAY};font-size:15px;line-height:1.2;letter-spacing:0.04em;text-transform:uppercase;color:${INK};">Stefanie Schumacher</p>
-    <p style="margin:4px 0 0;font-family:${BODY};font-size:11px;line-height:1.2;letter-spacing:0.18em;text-transform:uppercase;color:${MUTED};">Relational Diplomacy</p>
+    <p style="margin:4px 0 0;font-family:${BODY};font-size:11px;line-height:1.2;letter-spacing:0.18em;text-transform:uppercase;color:${MUTED};">The Connection Workshops</p>
   </td></tr>
   <tr><td class="pad" style="padding:36px 48px 0;">${hairline}</td></tr>
 
