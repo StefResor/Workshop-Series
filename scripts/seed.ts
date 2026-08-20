@@ -327,7 +327,7 @@ const policies = [
     title: 'Workshop disclaimer',
     slug: 'workshop-disclaimer',
     showInFooter: false,
-    body: `Relational Diplomacy Workshops are educational in nature and are not psychotherapy, mental health treatment, or crisis services. Participation does not establish a therapist–client relationship. Registration is per participant; workshop registrations are non-refundable. Adults 18+.`,
+    body: `The Connection Workshop is educational in nature and is not psychotherapy, mental health treatment, or crisis services. Participation does not establish a therapist–client relationship. Registration is per participant; workshop registrations are non-refundable. Adults 18+.`,
   },
   {
     _id: 'policy-consult-form-notice',

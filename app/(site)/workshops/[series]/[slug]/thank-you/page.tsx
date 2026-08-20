@@ -175,7 +175,7 @@ export default async function ThankYou({ params, searchParams }: Props) {
         ) : (
           <>A confirmation is on its way to your inbox.</>
         )}{' '}
-        It has everything below, so you can keep it.
+        It has everything below, so you can refer back to it.
       </>
     )
 
