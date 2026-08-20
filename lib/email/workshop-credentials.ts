@@ -66,8 +66,8 @@ export function renderCredentials(w: CredentialsData, firstName?: string) {
   const dateShort = inTZ(w.startsAt, { month: "short", day: "numeric" });
   const times = timeRange(w.startsAt, w.durationMinutes);
 
-  const subject = `Your Zoom link · Workshop ${num} · ${weekdayShort}, ${dateShort} · ${w.title}`;
-  const preheader = `The Connection Workshops. ${times}. Link and passcode inside — save this email.`;
+  const subject = `Your Zoom link · Session ${num} · ${weekdayShort}, ${dateShort} · ${w.title}`;
+  const preheader = `The Connection Workshop. ${times}. Link and passcode inside — save this email.`;
 
   const html = emailShell({
     subject,
@@ -82,7 +82,7 @@ export function renderCredentials(w: CredentialsData, firstName?: string) {
 
       block(
         marker +
-          `<p style="margin:16px 0 4px;font-family:${BODY};font-size:11px;line-height:1.2;letter-spacing:0.14em;text-transform:uppercase;color:${VERMILLION};">Workshop ${num}</p>` +
+          `<p style="margin:16px 0 4px;font-family:${BODY};font-size:11px;line-height:1.2;letter-spacing:0.14em;text-transform:uppercase;color:${VERMILLION};">Session ${num}</p>` +
           `<p style="margin:0 0 32px;font-family:${DISPLAY};font-size:26px;line-height:1.15;letter-spacing:-0.01em;color:${INK};">${w.title}</p>` +
           `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
             ${dataRow("Date", `${weekday}, ${dateLong}`)}
@@ -123,7 +123,7 @@ export function renderCredentials(w: CredentialsData, firstName?: string) {
     `${firstName ? firstName + ", we" : "We"} meet on ${weekday}, ${dateLong} at ${times}.`,
     `Save this email — it's how you get in.`,
     ``,
-    `THE CONNECTION WORKSHOPS — WORKSHOP ${num}`,
+    `THE CONNECTION WORKSHOP — SESSION ${num}`,
     w.title,
     `${weekday}, ${dateLong}`,
     `${times} (${w.durationMinutes} minutes, live)`,
@@ -150,9 +150,9 @@ export function renderCredentials(w: CredentialsData, firstName?: string) {
     `Cameras stay on. Registration is per participant. Please join with video enabled; you can stay muted throughout.`,
     ``,
     `Questions? Reply to this email.`,
-    `Workshop details: ${w.detailsUrl}`,
-    `Stefanie Schumacher · The Connection Workshops`,
-    `You're receiving this because you registered for a Connection Workshop. This is workshop correspondence, not a marketing message.`,
+    `Session details: ${w.detailsUrl}`,
+    `Stefanie Schumacher · The Connection Workshop`,
+    `You're receiving this because you registered for a session of The Connection Workshop. This is workshop correspondence, not a marketing message.`,
   ]
     .filter((l) => l !== "")
     .join("\n");
@@ -171,8 +171,8 @@ export function renderReminder(w: CredentialsData, firstName?: string) {
   const dateShort = inTZ(w.startsAt, { month: "short", day: "numeric" });
   const weekdayShort = inTZ(w.startsAt, { weekday: "short" });
 
-  const subject = `Tonight at ${clock} · Workshop ${num} · ${w.title}`;
-  const preheader = `The Connection Workshops. ${times}. Your link and passcode, one more time.`;
+  const subject = `Tonight at ${clock} · Session ${num} · ${w.title}`;
+  const preheader = `The Connection Workshop. ${times}. Your link and passcode, one more time.`;
 
   // Deliberately short. Nobody reads a long email an hour before a meeting.
   const html = emailShell({
@@ -188,7 +188,7 @@ export function renderReminder(w: CredentialsData, firstName?: string) {
 
       block(
         marker +
-          `<p style="margin:16px 0 4px;font-family:${BODY};font-size:11px;line-height:1.2;letter-spacing:0.14em;text-transform:uppercase;color:${VERMILLION};">Workshop ${num} · ${weekdayShort}, ${dateShort}</p>` +
+          `<p style="margin:16px 0 4px;font-family:${BODY};font-size:11px;line-height:1.2;letter-spacing:0.14em;text-transform:uppercase;color:${VERMILLION};">Session ${num} · ${weekdayShort}, ${dateShort}</p>` +
           `<p style="margin:0 0 28px;font-family:${DISPLAY};font-size:26px;line-height:1.15;letter-spacing:-0.01em;color:${INK};">${w.title}</p>` +
           solidButton(w.joinUrl, "Join on Zoom") +
           (w.passcode ? passcodeBlock(w.passcode) : ""),
@@ -211,7 +211,7 @@ export function renderReminder(w: CredentialsData, firstName?: string) {
     ``,
     `${firstName ? firstName + ", we're" : "We're"} on in a few hours.`,
     ``,
-    `WORKSHOP ${num} — ${w.title}`,
+    `SESSION ${num} — ${w.title}`,
     `${times}`,
     ``,
     `Join on Zoom: ${w.joinUrl}`,
@@ -219,8 +219,8 @@ export function renderReminder(w: CredentialsData, firstName?: string) {
     ``,
     `Doors open a few minutes early. If you can't get in, reply here and we'll help.`,
     ``,
-    `Stefanie Schumacher · The Connection Workshops`,
-    `You're receiving this because you registered for a Connection Workshop. This is workshop correspondence, not a marketing message.`,
+    `Stefanie Schumacher · The Connection Workshop`,
+    `You're receiving this because you registered for a session of The Connection Workshop. This is workshop correspondence, not a marketing message.`,
   ]
     .filter((l) => l !== "")
     .join("\n");

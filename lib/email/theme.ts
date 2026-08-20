@@ -122,9 +122,9 @@ export const policies = `
 
 export const footer = (detailsUrl: string) => `
   ${hairline}
-  <p style="margin:24px 0 0;font-family:${BODY};font-size:13px;line-height:1.6;color:${MUTED};">Questions about this workshop? Reply to this email.<br />Workshop details: <a href="${detailsUrl}" style="color:${INK};text-decoration:underline;">View workshop details &rarr;</a></p>
-  <p style="margin:20px 0 0;font-family:${BODY};font-size:11px;line-height:1.5;letter-spacing:0.08em;text-transform:uppercase;color:${MUTED};">Stefanie Schumacher &middot; The Connection Workshops</p>
-  <p style="margin:8px 0 0;font-family:${BODY};font-size:11px;line-height:1.5;color:${MUTED};">You&rsquo;re receiving this because you registered for a Connection Workshop. This is workshop correspondence, not a marketing message.</p>`;
+  <p style="margin:24px 0 0;font-family:${BODY};font-size:13px;line-height:1.6;color:${MUTED};">Questions about this session? Reply to this email.<br />Session details: <a href="${detailsUrl}" style="color:${INK};text-decoration:underline;">View session details &rarr;</a></p>
+  <p style="margin:20px 0 0;font-family:${BODY};font-size:11px;line-height:1.5;letter-spacing:0.08em;text-transform:uppercase;color:${MUTED};">Stefanie Schumacher &middot; The Connection Workshop</p>
+  <p style="margin:8px 0 0;font-family:${BODY};font-size:11px;line-height:1.5;color:${MUTED};">You&rsquo;re receiving this because you registered for a session of The Connection Workshop. This is workshop correspondence, not a marketing message.</p>`;
 
 /* ------------------------------------------------------------------ */
 /* Document shell                                                      */
@@ -171,7 +171,7 @@ export function emailShell({
 
   <tr><td class="pad" style="padding:40px 48px 0;">
     <p style="margin:0;font-family:${DISPLAY};font-size:15px;line-height:1.2;letter-spacing:0.04em;text-transform:uppercase;color:${INK};">Stefanie Schumacher</p>
-    <p style="margin:4px 0 0;font-family:${BODY};font-size:11px;line-height:1.2;letter-spacing:0.18em;text-transform:uppercase;color:${MUTED};">The Connection Workshops</p>
+    <p style="margin:4px 0 0;font-family:${BODY};font-size:11px;line-height:1.2;letter-spacing:0.18em;text-transform:uppercase;color:${MUTED};">The Connection Workshop</p>
   </td></tr>
   <tr><td class="pad" style="padding:36px 48px 0;">${hairline}</td></tr>
 

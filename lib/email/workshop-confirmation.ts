@@ -87,8 +87,8 @@ export function renderConfirmation(w: ConfirmationData, firstName?: string) {
   );
   const fromAddress = workshopFromAddress();
 
-  const subject = `Workshop ${num} · ${weekdayShort}, ${dateShort} · ${w.title}`;
-  const preheader = `Registration confirmed — The Connection Workshops. ${times} on Zoom. Your Zoom link and passcode arrive ${credsDate}, about a week before we meet.`;
+  const subject = `Session ${num} · ${weekdayShort}, ${dateShort} · ${w.title}`;
+  const preheader = `Registration confirmed — The Connection Workshop. ${times} on Zoom. Your Zoom link and passcode arrive ${credsDate}, about a week before we meet.`;
 
   const greeting = firstName ? `${firstName}, you're<br />registered.` : "You're<br />registered.";
 
@@ -109,7 +109,7 @@ export function renderConfirmation(w: ConfirmationData, firstName?: string) {
         "A separate email ahead of every session with the meeting link and passcode.",
       ) +
       step(
-        "Each workshop day",
+        "Each session day",
         "A short reminder",
         "The link and passcode again, so you don't have to go looking on the day.",
       )
@@ -125,7 +125,7 @@ export function renderConfirmation(w: ConfirmationData, firstName?: string) {
         `A separate email with the Zoom meeting link and the passcode you'll need to get in. If it hasn't arrived by ${credsDateShort}, check your spam folder, then reach out for assistance.`,
       ) +
       step(
-        `${dateShort} · Workshop day`,
+        `${dateShort} · Session day`,
         "A short reminder",
         "The link and passcode again, so you don't have to go looking on the day.",
       );
@@ -138,14 +138,14 @@ export function renderConfirmation(w: ConfirmationData, firstName?: string) {
         hero(greeting) +
           lede(
             w.fromPass
-              ? `Your ${w.seriesTitle ?? "series"} pass covers this workshop. Here are the details, and when to expect your Zoom link.`
+              ? `Your ${w.seriesTitle ?? "series"} pass covers this session. Here are the details, and when to expect your Zoom link.`
               : `Thank you for signing up. Here's what you booked, and when to expect your Zoom link.`,
           ),
       ),
 
       block(
         marker +
-          `<p style="margin:16px 0 4px;font-family:${BODY};font-size:11px;line-height:1.2;letter-spacing:0.14em;text-transform:uppercase;color:${VERMILLION};">Workshop ${num}</p>` +
+          `<p style="margin:16px 0 4px;font-family:${BODY};font-size:11px;line-height:1.2;letter-spacing:0.14em;text-transform:uppercase;color:${VERMILLION};">Session ${num}</p>` +
           `<p style="margin:0 0 32px;font-family:${DISPLAY};font-size:26px;line-height:1.15;letter-spacing:-0.01em;color:${INK};">${w.title}</p>` +
           `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
             ${dataRow("Date", `${weekday}, ${dateLong}`)}
@@ -168,16 +168,16 @@ export function renderConfirmation(w: ConfirmationData, firstName?: string) {
 
       block(
         aside(
-          `To find this email later, search your inbox for <strong style="color:${INK};font-weight:600;">The Connection Workshops</strong>. Adding ${fromAddress} to your contacts also helps make sure your Zoom link lands in your inbox rather than your spam folder.`,
+          `To find this email later, search your inbox for <strong style="color:${INK};font-weight:600;">The Connection Workshop</strong>. Adding ${fromAddress} to your contacts also helps make sure your Zoom link lands in your inbox rather than your spam folder.`,
         ),
         "20px 48px 0",
       ),
 
       block(
         marker +
-          sectionTitle("What the workshop is like") +
+          sectionTitle("What the session is like") +
           para(
-            "Ninety minutes, live on Zoom. Roughly half is teaching, half is open question and answer. Each workshop stands alone — you don't need the ones before it.",
+            "Ninety minutes, live on Zoom. Roughly half is teaching, half is open question and answer. Each session stands alone — you don't need the ones before it.",
           ) +
           para(CAMERA_COPY),
         "48px 48px 0",
@@ -195,7 +195,7 @@ export function renderConfirmation(w: ConfirmationData, firstName?: string) {
         `  Now — This confirmation. All ten sessions are confirmed. Keep this as your guide to what happens next.`,
         `  ${CREDENTIALS_LEAD_DAYS} days before each session — Your Zoom link and passcode.`,
         `  A separate email ahead of every session with the meeting link and passcode.`,
-        `  Each workshop day — A short reminder with the link and passcode again.`,
+        `  Each session day — A short reminder with the link and passcode again.`,
       ]
     : [
         `You'll hear from us twice more before we meet.`,
@@ -203,17 +203,17 @@ export function renderConfirmation(w: ConfirmationData, firstName?: string) {
         `  Now — This confirmation. Keep it — your registration is confirmed, and this is your guide to what happens between now and the session.`,
         `  ${credsDate} (${CREDENTIALS_LEAD_DAYS} days before) — Your Zoom link and passcode.`,
         `  If it hasn't arrived by ${credsDateShort}, check your spam folder, then reach out for assistance.`,
-        `  ${dateShort} (workshop day) — A short reminder with the link and passcode again.`,
+        `  ${dateShort} (session day) — A short reminder with the link and passcode again.`,
       ];
 
   const text = [
     `${firstName ? firstName + ", you're" : "You're"} registered.`,
     ``,
     w.fromPass
-      ? `Your ${w.seriesTitle ?? "series"} pass covers this workshop.`
+      ? `Your ${w.seriesTitle ?? "series"} pass covers this session.`
       : `Thank you for signing up. Here's what you booked, and when to expect your Zoom link.`,
     ``,
-    `THE CONNECTION WORKSHOPS — WORKSHOP ${num}`,
+    `THE CONNECTION WORKSHOP — SESSION ${num}`,
     w.title,
     `${weekday}, ${dateLong}`,
     `${times} (${w.durationMinutes} minutes, live)`,
@@ -225,13 +225,13 @@ export function renderConfirmation(w: ConfirmationData, firstName?: string) {
     `WHAT HAPPENS NEXT`,
     ...textNext,
     ``,
-    `To find this email later, search your inbox for "The Connection Workshops."`,
+    `To find this email later, search your inbox for "The Connection Workshop."`,
     `Adding ${fromAddress} to your contacts also helps make sure your Zoom link`,
     `lands in your inbox rather than your spam folder.`,
     ``,
-    `WHAT THE WORKSHOP IS LIKE`,
+    `WHAT THE SESSION IS LIKE`,
     `Ninety minutes, live on Zoom. Roughly half is teaching, half is open Q&A.`,
-    `Each workshop stands alone.`,
+    `Each session stands alone.`,
     CAMERA_COPY,
     ``,
     `This is education, not therapy. These workshops are educational and do not`,
@@ -240,10 +240,10 @@ export function renderConfirmation(w: ConfirmationData, firstName?: string) {
     `Sessions aren't recorded. There's no replay, so plan to join live.`,
     `Cameras stay on. Registration is per participant. Please join with video enabled; you can stay muted throughout.`,
     ``,
-    `Questions about this workshop? Reply to this email.`,
-    `Workshop details: ${w.detailsUrl}`,
-    `Stefanie Schumacher · The Connection Workshops`,
-    `You're receiving this because you registered for a Connection Workshop. This is workshop correspondence, not a marketing message.`,
+    `Questions about this session? Reply to this email.`,
+    `Session details: ${w.detailsUrl}`,
+    `Stefanie Schumacher · The Connection Workshop`,
+    `You're receiving this because you registered for a session of The Connection Workshop. This is workshop correspondence, not a marketing message.`,
   ].join("\n");
 
   return { subject, html, text };
