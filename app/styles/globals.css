@@ -1692,8 +1692,6 @@ textarea {
   transition:
     color 0.25s var(--ease),
     -webkit-text-stroke 0.25s var(--ease);
-  position: relative;
-  z-index: 2;
 }
 
 .workshop-led:hover .num,
@@ -1711,8 +1709,6 @@ textarea {
   text-wrap: balance;
   margin-bottom: 12px;
   font-weight: 400;
-  position: relative;
-  z-index: 2;
 }
 
 .workshop-led .hook {
@@ -1721,8 +1717,6 @@ textarea {
   color: var(--muted);
   margin-bottom: 0;
   max-width: 36em;
-  position: relative;
-  z-index: 2;
 }
 
 .workshop-led-foot {
@@ -1736,14 +1730,6 @@ textarea {
   padding-right: 28px;
 }
 
-/* Let clicks pass through to the stretched link covering the card */
-.workshop-led .num,
-.workshop-led h2,
-.workshop-led .hook,
-.workshop-led-foot {
-  pointer-events: none;
-}
-
 .workshop-led .cta {
   align-self: flex-start;
   font-family: var(--font-mono);
@@ -1753,8 +1739,6 @@ textarea {
   text-transform: uppercase;
   color: var(--vermillion);
   transition: opacity 0.2s var(--ease);
-  pointer-events: auto; /* Override inherited none from parent */
-  /* No position: relative — ::after sizes to card, not link */
 }
 
 .workshop-led .cta:hover {
@@ -1773,7 +1757,7 @@ textarea {
   content: '';
   position: absolute;
   inset: 0;
-  z-index: 10; /* Above all card content to capture clicks */
+  z-index: 1;
 }
 
 /* ——— The Practice ——— */
