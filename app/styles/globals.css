@@ -1736,6 +1736,14 @@ textarea {
   padding-right: 28px;
 }
 
+/* Let clicks pass through to the stretched link covering the card */
+.workshop-led .num,
+.workshop-led h2,
+.workshop-led .hook,
+.workshop-led-foot {
+  pointer-events: none;
+}
+
 .workshop-led .cta {
   align-self: flex-start;
   font-family: var(--font-mono);
@@ -1745,8 +1753,7 @@ textarea {
   text-transform: uppercase;
   color: var(--vermillion);
   transition: opacity 0.2s var(--ease);
-  position: relative;
-  z-index: 2;
+  /* No position: relative — ::after sizes to card, not link */
 }
 
 .workshop-led .cta:hover {
