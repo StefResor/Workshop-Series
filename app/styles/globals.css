@@ -1753,6 +1753,7 @@ textarea {
   text-transform: uppercase;
   color: var(--vermillion);
   transition: opacity 0.2s var(--ease);
+  pointer-events: auto; /* Override inherited none from parent */
   /* No position: relative — ::after sizes to card, not link */
 }
 
@@ -1772,7 +1773,7 @@ textarea {
   content: '';
   position: absolute;
   inset: 0;
-  z-index: 1;
+  z-index: 10; /* Above all card content to capture clicks */
 }
 
 /* ——— The Practice ——— */
