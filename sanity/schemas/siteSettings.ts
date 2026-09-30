@@ -167,6 +167,15 @@ export const siteSettings = defineType({
       description:
         'Educational, not psychotherapy; no therapist-client relationship. Shown on workshop pages and at checkout.',
     }),
+    defineField({
+      name: 'marqueeKeywords',
+      title: 'Marquee keywords',
+      type: 'array',
+      of: [{ type: 'string' }],
+      description:
+        'Keywords shown in the scrolling banner below the hero. Order matters.',
+      validation: (rule) => rule.min(3).max(10),
+    }),
   ],
   preview: {
     prepare() {

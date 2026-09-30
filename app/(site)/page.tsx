@@ -54,7 +54,7 @@ const METHOD = [
   'Repair',
   'Boundaries',
   'Pattern Recognition',
-  'The Wise Adult',
+  'Mindfulness',
 ]
 
 export default async function HomePage() {
@@ -100,6 +100,10 @@ export default async function HomePage() {
     .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
     .slice(0, 2)
 
+  // Marquee keywords from CMS with fallback to hardcoded defaults
+  const marqueeKeywords =
+    settings?.marqueeKeywords?.length ? settings.marqueeKeywords : METHOD
+
   return (
     <>
       <div className="home-hero-stage">
@@ -133,7 +137,7 @@ export default async function HomePage() {
 
         <div className="bigband" aria-hidden="true">
           <div className="marquee-inner">
-            {[...METHOD, ...METHOD].map((item, i) => (
+            {[...marqueeKeywords, ...marqueeKeywords].map((item, i) => (
               <span key={`${item}-${i}`}>{item}</span>
             ))}
           </div>

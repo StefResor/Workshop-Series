@@ -541,6 +541,14 @@ const siteSettingsDoc = {
   seriesScheduleLine: 'Wednesdays · 7:00–8:30 PM ET · Zoom',
   seriesCtaLabel: 'Register',
   // seriesPaymentLink: paste Stripe Payment Link in Studio
+  marqueeKeywords: [
+    'Accountability',
+    'Honesty',
+    'Repair',
+    'Boundaries',
+    'Pattern Recognition',
+    'Mindfulness',
+  ],
 }
 
 // Public mailing list copy — see docs/email-list.md (never seed clinical contacts)

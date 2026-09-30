@@ -60,6 +60,7 @@ export type SiteSettings = {
   seriesCtaLabel?: string
   seriesPaymentLink?: string
   workshopDisclaimer?: string
+  marqueeKeywords?: string[]
 }
 
 export type EmailSignup = {

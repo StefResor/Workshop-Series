@@ -114,7 +114,8 @@ export const siteSettingsQuery = `*[_type == "siteSettings"][0] {
   seriesInclusions,
   seriesCtaLabel,
   seriesPaymentLink,
-  workshopDisclaimer
+  workshopDisclaimer,
+  marqueeKeywords
 }`
 
 export const emailSignupQuery = `*[_type == "emailSignup"][0] {
