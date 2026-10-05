@@ -6,7 +6,7 @@ Secret env: `SANITY_REVALIDATE_SECRET` (same value in Sanity webhook + Vercel + 
 
 ## Setup (Sanity → API → Webhooks)
 
-1. **URL** — preview: `https://stefanie-schumacher-com.vercel.app/api/revalidate`. Update to the production domain at cutover.
+1. **URL** — `https://stefanie-schumacher-com.vercel.app/api/revalidate`. Leave it on the Vercel alias; it works for either public host. See `docs/domain-cutover.md`.
 2. **Secret** — paste `SANITY_REVALIDATE_SECRET`. Must match Vercel env.
 3. **Dataset** — `production` (or whatever `NEXT_PUBLIC_SANITY_DATASET` is).
 4. **Filter (required)** — published documents only:
