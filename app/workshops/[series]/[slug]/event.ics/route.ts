@@ -5,11 +5,15 @@ import { workshopPath } from "@/lib/workshop-paths";
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://stefanie-schumacher.com";
 
 const QUERY = `*[
-  _type == "workshop" &&
+  _type in ["workshopSession", "workshop"] &&
   slug.current == $slug &&
   series->slug.current == $series
 ][0]{
-  sessionNumber, title, startsAt, durationMinutes, hook, shortDescription,
+  "sessionNumber": coalesce(sessionNumber, topic->order),
+  "title": coalesce(topic->title, title),
+  startsAt, durationMinutes,
+  "hook": coalesce(topic->hook, hook),
+  "shortDescription": coalesce(topic->shortDescription, shortDescription),
   "slug": slug.current, "seriesSlug": series->slug.current
 }`;
 

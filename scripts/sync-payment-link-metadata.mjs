@@ -197,9 +197,13 @@ async function main() {
   }
 
   const workshops = await sanity.fetch(
-    `*[_type == "workshop"] | order(sessionNumber asc){
-      _id, sessionNumber, title, "slug": slug.current
+    `*[_type in ["workshopSession", "workshop"] && series._ref == $seriesId] | order(sessionNumber asc){
+      _id,
+      "sessionNumber": coalesce(sessionNumber, topic->order),
+      "title": coalesce(topic->title, title),
+      "slug": slug.current
     }`,
+    { seriesId: series._id },
   )
   if (workshops.length === 0) throw new Error('No workshops in Sanity')
 

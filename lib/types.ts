@@ -17,7 +17,7 @@ export type Workshop = {
   stripePaymentLink?: string
   zoomRegistrationUrl?: string
   capacity?: number
-  registrationStatus?: 'draft' | 'open' | 'closed' | 'sold-out'
+  registrationStatus?: 'draft' | 'open' | 'closed' | 'sold-out' | 'cancelled'
   shortDescription?: string
   body?: string
   locationLabel?: string
@@ -28,6 +28,9 @@ export type Series = {
   _id: string
   title: string
   slug: string
+  label?: string
+  startsOn?: string
+  endsOn?: string
   active?: boolean
   passPrice?: number
   passPaymentLink?: string

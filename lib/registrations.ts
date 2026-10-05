@@ -115,7 +115,7 @@ export async function fanOutSeriesPass(opts: {
   testMode: boolean;
 }) {
   const workshops: { _id: string }[] = await writeClient.fetch(
-    `*[_type == "workshop" && series._ref == $seriesId]{ _id }`,
+    `*[_type in ["workshopSession", "workshop"] && series._ref == $seriesId]{ _id }`,
     { seriesId: opts.seriesId },
   );
 

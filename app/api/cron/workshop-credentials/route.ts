@@ -49,7 +49,13 @@ const PENDING = `{
     workshop->startsAt < $credsCutoff
   ]{
     _id, email, firstName,
-    "w": workshop->{ _id, sessionNumber, title, startsAt, durationMinutes, zoomLink, zoomPasscode, "slug": slug.current, "seriesSlug": series->slug.current }
+    "w": workshop->{
+      _id,
+      "sessionNumber": coalesce(sessionNumber, topic->order),
+      "title": coalesce(topic->title, title),
+      startsAt, durationMinutes, zoomLink, zoomPasscode,
+      "slug": slug.current, "seriesSlug": series->slug.current
+    }
   },
   "reminders": *[
     _type == "registration" &&
@@ -60,7 +66,13 @@ const PENDING = `{
     workshop->startsAt < $reminderCutoff
   ]{
     _id, email, firstName,
-    "w": workshop->{ _id, sessionNumber, title, startsAt, durationMinutes, zoomLink, zoomPasscode, "slug": slug.current, "seriesSlug": series->slug.current }
+    "w": workshop->{
+      _id,
+      "sessionNumber": coalesce(sessionNumber, topic->order),
+      "title": coalesce(topic->title, title),
+      startsAt, durationMinutes, zoomLink, zoomPasscode,
+      "slug": slug.current, "seriesSlug": series->slug.current
+    }
   }
 }`;
 

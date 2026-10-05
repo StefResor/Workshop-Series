@@ -25,6 +25,24 @@ export const series = defineType({
       validation: (r) => r.required(),
     }),
     defineField({
+      name: "label",
+      title: "Display label",
+      type: "string",
+      description: 'Short label for catalogue UI, e.g. "Fall 2026". Defaults to title.',
+    }),
+    defineField({
+      name: "startsOn",
+      title: "Starts on",
+      type: "date",
+      description: "First session date (America/New_York calendar date, not UTC).",
+    }),
+    defineField({
+      name: "endsOn",
+      title: "Ends on",
+      type: "date",
+      description: "Last session date (America/New_York calendar date, not UTC).",
+    }),
+    defineField({
       name: "passPrice",
       title: "Full-series pass price (USD)",
       type: "number",
@@ -38,9 +56,10 @@ export const series = defineType({
     defineField({
       name: "active",
       type: "boolean",
-      initialValue: true,
+      initialValue: false,
+      hidden: true,
       description:
-        "When false, workshops in this series are excluded from the homepage upcoming strip. The /workshops archive still lists them.",
+        "Deprecated. Current series is the one whose endsOn is still ahead and whose startsOn is earliest. Leave future series false so a leftover active-query cannot promote Winter over Fall.",
     }),
   ],
   preview: { select: { title: "title", subtitle: "passPrice" } },
@@ -56,7 +75,13 @@ export const registration = defineType({
   type: "document",
   readOnly: true, // written by the webhook; editing by hand desynchronizes it from Stripe
   fields: [
-    defineField({ name: "workshop", type: "reference", to: [{ type: "workshop" }] }),
+    defineField({
+      name: "workshop",
+      type: "reference",
+      to: [{ type: "workshopSession" }, { type: "workshop" }],
+      description:
+        "The dated session this registration belongs to. Field name is legacy — do not rename; IDs stay registration.{live|test}.{sessionId}.{hash}.",
+    }),
     defineField({ name: "email", type: "string" }),
     defineField({ name: "firstName", type: "string" }),
     defineField({
@@ -96,12 +121,14 @@ export const registration = defineType({
   preview: {
     select: {
       email: "email",
-      workshop: "workshop.title",
+      workshopTitle: "workshop.title",
+      topicTitle: "workshop.topic.title",
       status: "status",
       source: "source",
       testMode: "testMode",
     },
-    prepare: ({ email, workshop, status, source, testMode }) => {
+    prepare: ({ email, workshopTitle, topicTitle, status, source, testMode }) => {
+      const workshop = topicTitle || workshopTitle
       const base = `${workshop ?? "—"} · ${source ?? "?"}${status === "refunded" ? " · REFUNDED" : ""}`
       return {
         title: email,

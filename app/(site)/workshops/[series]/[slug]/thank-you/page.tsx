@@ -19,11 +19,13 @@ export const metadata: Metadata = {
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
 const WORKSHOP_QUERY = `*[
-  _type == "workshop" &&
+  _type in ["workshopSession", "workshop"] &&
   slug.current == $slug &&
   series->slug.current == $series
 ][0]{
-  sessionNumber, title, startsAt, durationMinutes,
+  "sessionNumber": coalesce(sessionNumber, topic->order),
+  "title": coalesce(topic->title, title),
+  startsAt, durationMinutes,
   "slug": slug.current, "seriesSlug": series->slug.current
 }`
 

@@ -90,3 +90,20 @@ export function formatWorkshopIcsUtc(utcIso: string): string {
   const ss = String(date.getUTCSeconds()).padStart(2, '0')
   return `${y}${m}${d}T${hh}${mm}${ss}Z`
 }
+
+/** America/New_York calendar date as YYYY-MM-DD — used for series startsOn/endsOn windows. */
+export function etCalendarDate(at: Date = new Date()): string {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: DISPLAY_TIME_ZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(at)
+  const year = parts.find((p) => p.type === 'year')?.value
+  const month = parts.find((p) => p.type === 'month')?.value
+  const day = parts.find((p) => p.type === 'day')?.value
+  if (!year || !month || !day) {
+    throw new Error('Could not format America/New_York calendar date')
+  }
+  return `${year}-${month}-${day}`
+}
