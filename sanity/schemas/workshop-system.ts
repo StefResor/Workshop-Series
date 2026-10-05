@@ -65,6 +65,13 @@ export const series = defineType({
         "Deprecated. Current series is the one whose endsOn is still ahead and whose startsOn is earliest. Leave future series false so a leftover active-query cannot promote Winter over Fall.",
     }),
   ],
+  orderings: [
+    {
+      title: "Season",
+      name: "startsOnAsc",
+      by: [{ field: "startsOn", direction: "asc" }],
+    },
+  ],
   preview: { select: { title: "title", subtitle: "label" } },
 });
 
