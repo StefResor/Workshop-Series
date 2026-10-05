@@ -10,11 +10,15 @@ export const BOOKABLE = `_type in ["workshopSession", "workshop"]`
 export const PUBLIC_BOOKABLE = `${BOOKABLE} && !(registrationStatus in ["draft", "cancelled"])`
 
 /**
- * Current series: hasn't ended yet, earliest startsOn.
+ * Current series: still has a session in the future, earliest first session.
+ * Derived from workshopSession.startsAt — not series.startsOn / endsOn.
  * "Winter 2027" sorts above "Fall 2026" by title, so never use active + title desc.
- * $today is America/New_York YYYY-MM-DD, injected by sanityFetch.
  */
-export const currentSeriesIdQuery = `(*[_type == "series" && defined(endsOn) && endsOn >= $today] | order(startsOn asc) [0]._id)`
+export const currentSeriesIdQuery = `(*[_type == "series"] {
+  _id,
+  "firstAt": *[_type == "workshopSession" && series._ref == ^._id] | order(startsAt asc)[0].startsAt,
+  "remaining": count(*[_type == "workshopSession" && series._ref == ^._id && startsAt > now()])
+}[remaining > 0] | order(firstAt asc)[0]._id)`
 
 /** Remaining sessions in the current series window (homepage Zone 1). */
 export const CURRENT_SERIES_BOOKABLE = `${PUBLIC_BOOKABLE} && series._ref == ${currentSeriesIdQuery}`
@@ -134,8 +138,13 @@ export const seriesBySlugQuery = `*[_type == "series" && slug.current == $slug][
 }`
 
 /** Current series for package CTA / legacy /workshops/series redirect. */
-export const activeSeriesSlugQuery = `*[_type == "series" && defined(slug.current) && defined(endsOn) && endsOn >= $today] | order(startsOn asc) [0]{
+export const activeSeriesSlugQuery = `*[_type == "series" && defined(slug.current)] {
   "slug": slug.current,
+  title,
+  "firstAt": *[_type == "workshopSession" && series._ref == ^._id] | order(startsAt asc)[0].startsAt,
+  "remaining": count(*[_type == "workshopSession" && series._ref == ^._id && startsAt > now()])
+}[remaining > 0] | order(firstAt asc)[0]{
+  slug,
   title
 }`
 
