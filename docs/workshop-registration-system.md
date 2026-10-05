@@ -61,6 +61,11 @@ nobody sees. Do not "fix" the display strings to say "Session" either. See
 
 ## Purchase flow
 
+All 40 sessions (Fall 2026 through Summer 2027) have live Payment Links. Server
+Checkout (`POST /api/checkout`, Phase 3) is optional. Re-run
+`scripts/create-season-stripe-links.mjs --series=fall-2027` when Fall 2027 is
+seeded. Redirect hosts: `docs/domain-cutover.md`.
+
 ### Payment Link metadata is load-bearing
 
 Every Stripe Payment Link must carry exactly one of:
@@ -101,18 +106,23 @@ Always dry-run and read the table before `--commit`. After writes, open one
 buy URL in a browser — API state and the hosted checkout page have diverged
 before.
 
-Success URL per link:
+Success URL per link (apex host; set 2026-10-05, before DNS):
 
 ```
-https://stefanie-schumacher.com/workshops/{slug}/thank-you?session_id={CHECKOUT_SESSION_ID}
+https://stefanie-schumacher.com/workshops/{series}/{slug}/thank-you?session_id={CHECKOUT_SESSION_ID}
 ```
 
-Stripe substitutes `{CHECKOUT_SESSION_ID}` literally. `{slug}` you fill in.
+Stripe substitutes `{CHECKOUT_SESSION_ID}` literally. Full `plink_` list:
+`docs/domain-cutover.md`. The Stripe webhook stays on the Vercel alias.
 
-### Series pass fans out
+### Series pass (retired)
 
-One pass purchase writes **ten** registration records, each `source: 'pass'`
-with a shared `passId`, and sends ten confirmations — one per workshop, each
+The live demo pass link `plink_1U18uLLJfnPqUVhgjfiYgQKH` is **inactive**
+(2026-10-05). Product `prod_V1BGfIM8ufDyGG` is archived. No real passes were
+sold. Fan-out code remains in the webhook for now; there is no UI.
+
+One pass purchase would write **ten** registration records, each `source: 'pass'`
+with a shared `passId`, and send ten confirmations — one per workshop, each
 with its own calendar file.
 
 Ten records rather than one flag because: every send has a single code path,
