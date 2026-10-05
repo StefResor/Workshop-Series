@@ -1,25 +1,28 @@
 /**
  * Workshop datetime formatting.
  * Stored values are UTC ISO. Display uses America/New_York.
- * Timezone abbreviation MUST come from Intl timeZoneName — never hardcode EDT/EST.
+ * Public label is always "ET" — never EDT/EST.
  */
 
 export const DISPLAY_TIME_ZONE = 'America/New_York'
+export const DISPLAY_TIME_ZONE_LABEL = 'ET'
 
 export type DisplayDateTime = {
   /** e.g. "7:00 PM" */
   time: string
-  /** e.g. "EDT" | "EST" from Intl */
+  /** Always "ET" on public surfaces */
   timeZoneName: string
   /** e.g. "Wednesday" */
   weekday: string
   /** e.g. "September" */
   month: string
+  /** e.g. "Jan" */
+  monthShort: string
   day: number
   year: number
   /** e.g. "Wednesday, September 9, 2026" */
   date: string
-  /** e.g. "7:00 PM EDT" */
+  /** e.g. "7:00 PM ET" */
   timeWithZone: string
 }
 
@@ -43,11 +46,15 @@ export function formatWorkshopDisplay(
     hour: 'numeric',
     minute: '2-digit',
     hour12: true,
-    timeZoneName: 'short',
     weekday: 'long',
     month: 'long',
     day: 'numeric',
     year: 'numeric',
+  }).formatToParts(date)
+
+  const shortMonth = new Intl.DateTimeFormat('en-US', {
+    timeZone,
+    month: 'short',
   }).formatToParts(date)
 
   const get = (type: Intl.DateTimeFormatPartTypes) =>
@@ -56,23 +63,35 @@ export function formatWorkshopDisplay(
   const hour = get('hour')
   const minute = get('minute')
   const dayPeriod = get('dayPeriod')
-  const timeZoneName = get('timeZoneName')
   const weekday = get('weekday')
   const month = get('month')
+  const monthShort =
+    shortMonth.find((p) => p.type === 'month')?.value.replace(/\.$/, '') ??
+    month.slice(0, 3)
   const day = Number(get('day'))
   const year = Number(get('year'))
   const time = `${hour}:${minute} ${dayPeriod}`
 
   return {
     time,
-    timeZoneName,
+    timeZoneName: DISPLAY_TIME_ZONE_LABEL,
     weekday,
     month,
+    monthShort,
     day,
     year,
     date: `${weekday}, ${month} ${day}, ${year}`,
-    timeWithZone: `${time} ${timeZoneName}`,
+    timeWithZone: `${time} ${DISPLAY_TIME_ZONE_LABEL}`,
   }
+}
+
+/** Catalogue / Register label, e.g. "Jan 27". */
+export function formatCatalogueDate(
+  utcIso: string,
+  timeZone: string = DISPLAY_TIME_ZONE,
+): string {
+  const d = formatWorkshopDisplay(utcIso, timeZone)
+  return `${d.monthShort} ${d.day}`
 }
 
 /**

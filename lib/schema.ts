@@ -24,7 +24,10 @@ type EventInput = Pick<
   | 'stripePaymentLink'
   | 'locationLabel'
   | 'price'
->
+> & {
+  /** Override public URL (topic page). */
+  pagePath?: string
+}
 
 /**
  * Person JSON-LD for the practitioner.
@@ -75,9 +78,11 @@ export function workshopEventJsonLd(
   resolvedPrice?: number | null,
 ) {
   const origin = siteOrigin()
-  const path = workshop.seriesSlug
-    ? `/workshops/${workshop.seriesSlug}/${workshop.slug}`
-    : `/workshops/${workshop.slug}`
+  const path =
+    workshop.pagePath ||
+    (workshop.seriesSlug
+      ? `/workshops/${workshop.seriesSlug}/${workshop.slug}`
+      : `/workshops/${workshop.slug}`)
   const url = absoluteUrl(path)
   const offerUrl = workshop.stripePaymentLink || url
   const price = resolvedPrice ?? workshop.price ?? null

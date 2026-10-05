@@ -43,7 +43,7 @@ export function EmailSignupFooter({ copy }: EmailSignupFooterProps) {
   if (isPolicyPath(pathname)) return null
 
   return (
-    <div className="email-signup-footer">
+    <div className="email-signup-footer" id="hear-about-workshops">
       <div className="email-signup-footer-accent" aria-hidden="true" />
       <div className="email-signup-footer-grid">
         <div className="email-signup-footer-copy">

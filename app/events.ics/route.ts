@@ -1,5 +1,5 @@
 import { sanityFetch } from '@/sanity/lib/fetch'
-import { workshopsQuery } from '@/sanity/queries'
+import { upcomingPublicWorkshopsQuery } from '@/sanity/queries'
 import { formatWorkshopIcsUtc } from '@/lib/datetime'
 import { buildIcsCalendar } from '@/lib/ics'
 import type { Workshop } from '@/lib/types'
@@ -10,7 +10,7 @@ import { workshopPath } from '@/lib/workshop-paths'
 export const revalidate = 60
 
 export async function GET() {
-  const workshops = await sanityFetch<Workshop[]>(workshopsQuery)
+  const workshops = await sanityFetch<Workshop[]>(upcomingPublicWorkshopsQuery)
   const origin = siteOrigin()
   const nowStamp = formatWorkshopIcsUtc(new Date().toISOString())
 

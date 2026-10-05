@@ -41,8 +41,8 @@ Price: default **$47** per participant on `siteSettings.defaultWorkshopPrice` (m
 
 Using `America/New_York`:
 
-1. Session **1** (`2026-09-09T23:00:00.000Z`) renders local time **7:00 PM** with label **EDT**.  
-2. Session **10** (`2026-11-12T00:00:00.000Z`) renders local time **7:00 PM** with label **EST**.  
+1. Session **1** (`2026-09-09T23:00:00.000Z`) renders local time **7:00 PM** with label **ET**.  
+2. Session **10** (`2026-11-12T00:00:00.000Z`) renders local time **7:00 PM** with label **ET**.  
 3. Session **10** local **calendar date** is **Wednesday, November 11, 2026** — not Thursday Nov 12.
 
 ## Workshop schema fields

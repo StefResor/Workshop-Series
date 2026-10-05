@@ -1,11 +1,11 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { formatWorkshopDisplay } from '@/lib/datetime'
 import { buildPageMetadata } from '@/lib/seo'
 import { EmailSignupBand } from '@/components/EmailSignupBand'
 import { HomeHeroHeadline } from '@/components/HomeHeroHeadline'
+import { HomeWorkshopCard } from '@/components/HomeWorkshopCard'
 import { HowChangeSection } from '@/components/HowChangeSection'
-import { SeriesPackageBand } from '@/components/SeriesPackageBand'
+import { SeeAllDatesCell } from '@/components/SeeAllDatesCell'
 import type {
   EmailSignup,
   PageDoc,
@@ -19,7 +19,8 @@ import {
   resolveSessionPrice,
 } from '@/lib/workshop-price'
 import { sanityFetch } from '@/sanity/lib/fetch'
-import { workshopPath } from '@/lib/workshop-paths'
+import { sessionRegisterHref, HOME_SESSION_CAP } from '@/lib/catalogue'
+import { topicPath } from '@/lib/workshop-paths'
 import {
   activeSeriesQuery,
   emailSignupQuery,
@@ -27,6 +28,7 @@ import {
   pageBySlugQuery,
   servicesQuery,
   siteSettingsQuery,
+  upcomingPublicWorkshopsQuery,
 } from '@/sanity/queries'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -59,7 +61,7 @@ const METHOD = [
 ]
 
 export default async function HomePage() {
-  const [home, services, workshops, settings, emailSignup, activeSeries] =
+  const [home, services, currentUpcoming, settings, emailSignup, activeSeries] =
     await Promise.all([
       sanityFetch<PageDoc | null>(pageBySlugQuery, { slug: 'home' }),
       sanityFetch<Service[]>(servicesQuery),
@@ -72,6 +74,14 @@ export default async function HomePage() {
         passPrice?: number
       } | null>(activeSeriesQuery).catch(() => null),
     ])
+
+  let workshops = (currentUpcoming || []).slice(0, HOME_SESSION_CAP)
+  let betweenSeries = false
+  if (workshops.length === 0) {
+    const across = await sanityFetch<Workshop[]>(upcomingPublicWorkshopsQuery)
+    workshops = (across || []).slice(0, HOME_SESSION_CAP)
+    betweenSeries = workshops.length > 0
+  }
 
   const couples = services?.find((s) => s.slug.includes('couples'))
   const individuals = services?.find((s) => s.slug.includes('individual'))
@@ -109,8 +119,8 @@ export default async function HomePage() {
   // Marquee keywords from CMS with fallback to hardcoded defaults
   const marqueeKeywords =
     settings?.marqueeKeywords?.length ? settings.marqueeKeywords : METHOD
-  const nextWorkshop = (workshops || []).find(
-    (w) => Boolean(w.seriesSlug) && Boolean(w.slug),
+  const nextWorkshop = workshops.find(
+    (w) => Boolean(w.topicSlug || w.slug),
   )
 
   return (
@@ -139,15 +149,23 @@ export default async function HomePage() {
               </p>
               <div className="hero-ctas">
                 {nextWorkshop ? (
-                  <Link
-                    className="btn"
-                    href={workshopPath(
-                      nextWorkshop.seriesSlug!,
-                      nextWorkshop.slug,
-                    )}
-                  >
-                    Register for {nextWorkshop.title}
-                  </Link>
+                  sessionRegisterHref(nextWorkshop) ? (
+                    <a
+                      className="btn"
+                      href={sessionRegisterHref(nextWorkshop)!}
+                    >
+                      Register for {nextWorkshop.title}
+                    </a>
+                  ) : (
+                    <Link
+                      className="btn"
+                      href={topicPath(
+                        nextWorkshop.topicSlug || nextWorkshop.slug,
+                      )}
+                    >
+                      Register for {nextWorkshop.title}
+                    </Link>
+                  )
                 ) : null}
                 <Link className="btn btn-outline" href="/workshops">
                   Check out our upcoming workshops
@@ -181,65 +199,29 @@ export default async function HomePage() {
           <p className="section-note">{workshopsNote}</p>
         ) : null}
         <div className="workshop-led-grid">
-          {(workshops || []).length === 0 ? (
+          {workshops.length === 0 ? (
             <div className="workshops-empty">
-              <p className="workshops-empty-heading">
-                This series has finished.
-              </p>
+              <p className="workshops-empty-heading">New dates coming soon</p>
               <p className="workshops-empty-body">
-                New dates are announced soon. Leave your email below and
-                you&rsquo;ll hear when registration opens — nothing else.
+                Leave your email below and you&rsquo;ll hear when registration
+                opens — nothing else.
               </p>
             </div>
           ) : (
-            (workshops || []).map((w) => {
-              const d = formatWorkshopDisplay(w.startsAt, w.timeZone)
-              const mon = d.month.slice(0, 3).toUpperCase()
-              const cardPrice =
-                w.price != null &&
-                workshopDefault != null &&
-                w.price !== workshopDefault
-                  ? w.price
-                  : null
-              const cardZone =
-                d.timeZoneName &&
-                d.timeZoneName !== 'EDT' &&
-                d.timeZoneName !== 'ET'
-                  ? d.timeZoneName
-                  : null
-              const hook = w.hook || w.shortDescription
-              const href =
-                w.seriesSlug && w.slug
-                  ? workshopPath(w.seriesSlug, w.slug)
-                  : '/workshops'
-              const ctaParts = [
-                `${mon} ${d.day}`,
-                cardPrice != null ? `$${cardPrice}` : null,
-                cardZone,
-                'Details',
-              ].filter(Boolean)
-              return (
-                <article key={w._id} className="workshop-led">
-                  <span className="num" aria-hidden="true">
-                    {String(w.sessionNumber).padStart(2, '0')}
-                  </span>
-                  <h2>{w.title}</h2>
-                  <p className="hook">{hook || null}</p>
-                  <div className="workshop-led-foot">
-                    <Link
-                      className="cta"
-                      href={href}
-                      aria-label={`Details: ${w.title}, ${d.month} ${d.day}`}
-                    >
-                      {ctaParts.join(' · ')}{' '}
-                      <span aria-hidden="true">→</span>
-                    </Link>
-                  </div>
-                </article>
-              )
-            })
+            <>
+              {workshops.map((w) => (
+                <HomeWorkshopCard
+                  key={w._id}
+                  workshop={w}
+                  settings={settings}
+                  showSeriesLabel={betweenSeries}
+                />
+              ))}
+              {workshops.length === HOME_SESSION_CAP ? (
+                <SeeAllDatesCell />
+              ) : null}
+            </>
           )}
-          <SeriesPackageBand settings={settings} embedded />
         </div>
       </section>
 

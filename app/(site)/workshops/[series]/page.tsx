@@ -1,14 +1,16 @@
 import type { Metadata } from 'next'
 import { notFound, permanentRedirect, redirect } from 'next/navigation'
 import { SeriesPackageContent } from '@/components/SeriesPackageContent'
+import { TopicDetail } from '@/components/TopicDetail'
 import { buildPageMetadata } from '@/lib/seo'
-import type { Series, SiteSettings, Workshop } from '@/lib/types'
-import { seriesPackagePath, workshopPath } from '@/lib/workshop-paths'
+import type { CatalogueTopic, Series, SiteSettings, Workshop } from '@/lib/types'
+import { seriesPackagePath, topicPath, workshopPath } from '@/lib/workshop-paths'
 import { isSeriesPassEnabled } from '@/lib/workshop-price'
 import { sanityFetch } from '@/sanity/lib/fetch'
 import {
   seriesBySlugQuery,
   siteSettingsQuery,
+  topicBySlugQuery,
   workshopBySlugQuery,
   workshopIndexSlugsQuery,
   workshopsBySeriesSlugQuery,
@@ -18,25 +20,26 @@ type Props = { params: Promise<{ series: string }> }
 
 /**
  * Single-segment /workshops/[x]:
- * 1. series slug → package page
- * 2. workshop slug → 301 to /workshops/[series]/[slug]
- * 3. else 404
- *
- * Phase 2: topic slugs currently hit (2) because Fall session slug == topic
- * slug. The topic page must win at this path; keep Fall at the series-scoped
- * URL until those 301 to the topic page.
- *
- * Param is named `series` to match the nested /workshops/[series]/[slug]
- * routes — Next.js requires the same dynamic name at this path depth.
- *
- * Static sibling /workshops/series wins for the literal path "series".
+ * 1. series slug → package page (or /workshops when the pass is hidden)
+ * 2. topic slug → topic detail (wins over Fall session slugs)
+ * 3. leftover session slug → 301 to /workshops/[series]/[slug]
+ * 4. else 404
  */
 export async function generateStaticParams() {
   const rows = await sanityFetch<{
     series: string[]
+    topics: string[]
     workshops: string[]
-  }>(workshopIndexSlugsQuery).catch(() => ({ series: [], workshops: [] }))
-  const slugs = new Set([...(rows.series || []), ...(rows.workshops || [])])
+  }>(workshopIndexSlugsQuery).catch(() => ({
+    series: [],
+    topics: [],
+    workshops: [],
+  }))
+  const slugs = new Set([
+    ...(rows.series || []),
+    ...(rows.topics || []),
+    ...(rows.workshops || []),
+  ])
   return [...slugs].map((series) => ({ series }))
 }
 
@@ -63,6 +66,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       path: seriesPackagePath(segment),
     })
   }
+
+  const topic = await sanityFetch<CatalogueTopic | null>(topicBySlugQuery, {
+    slug: segment,
+  })
+  if (topic) {
+    return buildPageMetadata({
+      title: topic.title,
+      description:
+        topic.hook ||
+        topic.shortDescription ||
+        'Live Relational Diplomacy workshop with Stefanie Schumacher.',
+      path: topicPath(topic.slug),
+    })
+  }
+
   return { title: 'Workshop' }
 }
 
@@ -96,6 +114,14 @@ export default async function WorkshopsSeriesSegmentPage({ params }: Props) {
         workshops={workshops || []}
       />
     )
+  }
+
+  const topic = await sanityFetch<CatalogueTopic | null>(topicBySlugQuery, {
+    slug: segment,
+  })
+  if (topic) {
+    const settings = await sanityFetch<SiteSettings | null>(siteSettingsQuery)
+    return <TopicDetail topic={topic} settings={settings} />
   }
 
   const workshop = await sanityFetch<Workshop | null>(workshopBySlugQuery, {

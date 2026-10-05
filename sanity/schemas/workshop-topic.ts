@@ -53,7 +53,7 @@ export const workshopTopic = defineType({
       rows: 12,
       group: 'content',
       description:
-        'Plain-text paragraphs (same as the previous workshop body). Portable text can wait; Phase 1 must not change the public page.',
+        'Plain-text paragraphs (same as the previous workshop body).',
     }),
   ],
   orderings: [

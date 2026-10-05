@@ -4,6 +4,7 @@ export type Workshop = {
   slug: string
   seriesSlug?: string
   seriesTitle?: string
+  topicSlug?: string
   seriesActive?: boolean
   seriesPassPrice?: number
   seriesPassPaymentLink?: string
@@ -144,4 +145,33 @@ export type Policy = {
   showInFooter?: boolean
   footerOrder?: number
   footerLabel?: string
+}
+
+export type CatalogueSession = Pick<
+  Workshop,
+  | '_id'
+  | 'title'
+  | 'slug'
+  | 'topicSlug'
+  | 'seriesSlug'
+  | 'seriesTitle'
+  | 'sessionNumber'
+  | 'startsAt'
+  | 'durationMinutes'
+  | 'timeZone'
+  | 'price'
+  | 'stripePaymentLink'
+  | 'registrationStatus'
+  | 'isPast'
+>
+
+export type CatalogueTopic = {
+  _id: string
+  title: string
+  slug: string
+  order: number
+  hook?: string
+  shortDescription?: string
+  description?: string
+  sessions: CatalogueSession[]
 }
