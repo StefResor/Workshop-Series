@@ -27,18 +27,21 @@ export const series = defineType({
       name: "label",
       title: "Display label",
       type: "string",
+      hidden: true,
       description: 'Short label for catalogue UI, e.g. "Fall 2026". Defaults to title.',
     }),
     defineField({
       name: "startsOn",
       title: "Starts on",
       type: "date",
+      hidden: true,
       description: "First session date (America/New_York calendar date, not UTC).",
     }),
     defineField({
       name: "endsOn",
       title: "Ends on",
       type: "date",
+      hidden: true,
       description: "Last session date (America/New_York calendar date, not UTC).",
     }),
     defineField({
@@ -61,7 +64,7 @@ export const series = defineType({
       initialValue: false,
       hidden: true,
       description:
-        "Deprecated. Current series is the one whose endsOn is still ahead and whose startsOn is earliest. Leave future series false so a leftover active-query cannot promote Winter over Fall.",
+        "Deprecated. Current series is the one that still has a future session and whose first session is earliest. Leave future series false so a leftover active-query cannot promote Winter over Fall.",
     }),
   ],
   orderings: [
