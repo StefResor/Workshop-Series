@@ -5,10 +5,6 @@ export type Workshop = {
   seriesSlug?: string
   seriesTitle?: string
   topicSlug?: string
-  seriesActive?: boolean
-  seriesPassPrice?: number
-  seriesPassPaymentLink?: string
-  seriesWorkshopCount?: number
   sessionNumber: number
   startsAt: string
   durationMinutes?: number
@@ -33,8 +29,6 @@ export type Series = {
   startsOn?: string
   endsOn?: string
   active?: boolean
-  passPrice?: number
-  passPaymentLink?: string
 }
 
 export type SiteSettings = {
@@ -51,20 +45,8 @@ export type SiteSettings = {
   ogTitle: string
   mailingAddress?: string
   notificationsEnabled?: boolean
-  /** @deprecated Prefer sessionPrice */
-  defaultWorkshopPrice?: number
   sessionPrice?: number
-  /** When true, show the full-series pass offer. Unset/false hides it. */
-  seriesPassEnabled?: boolean
-  seriesPrice?: number
-  seriesEyebrow?: string
-  seriesDisplayLine?: string
-  seriesSupportingLine?: string
-  seriesOfferLine?: string
   seriesScheduleLine?: string
-  seriesInclusions?: string[]
-  seriesCtaLabel?: string
-  seriesPaymentLink?: string
   workshopDisclaimer?: string
   marqueeKeywords?: string[]
 }

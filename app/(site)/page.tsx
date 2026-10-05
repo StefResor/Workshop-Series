@@ -15,14 +15,12 @@ import type {
 } from '@/lib/types'
 import {
   composeWorkshopSeriesSpecLine,
-  isSeriesPassEnabled,
   resolveSessionPrice,
 } from '@/lib/workshop-price'
 import { sanityFetch } from '@/sanity/lib/fetch'
 import { sessionRegisterHref, HOME_SESSION_CAP } from '@/lib/catalogue'
 import { topicPath } from '@/lib/workshop-paths'
 import {
-  activeSeriesQuery,
   emailSignupQuery,
   homeUpcomingWorkshopsQuery,
   pageBySlugQuery,
@@ -61,18 +59,13 @@ const METHOD = [
 ]
 
 export default async function HomePage() {
-  const [home, services, currentUpcoming, settings, emailSignup, activeSeries] =
+  const [home, services, currentUpcoming, settings, emailSignup] =
     await Promise.all([
       sanityFetch<PageDoc | null>(pageBySlugQuery, { slug: 'home' }),
       sanityFetch<Service[]>(servicesQuery),
       sanityFetch<Workshop[]>(homeUpcomingWorkshopsQuery),
       sanityFetch<SiteSettings | null>(siteSettingsQuery),
       sanityFetch<EmailSignup | null>(emailSignupQuery),
-      sanityFetch<{
-        slug: string
-        title?: string
-        passPrice?: number
-      } | null>(activeSeriesQuery).catch(() => null),
     ])
 
   let workshops = (currentUpcoming || []).slice(0, HOME_SESSION_CAP)
@@ -86,21 +79,10 @@ export default async function HomePage() {
   const couples = services?.find((s) => s.slug.includes('couples'))
   const individuals = services?.find((s) => s.slug.includes('individual'))
   const workshopDefault = resolveSessionPrice(settings)
-  const passOffered = isSeriesPassEnabled(settings)
-  const passPrice = passOffered
-    ? activeSeries?.passPrice != null
-      ? activeSeries.passPrice
-      : (settings?.seriesPrice ?? null)
-    : null
-  // Prefer authored subhead; fall back to composed line until Studio is populated.
-  // When the pass is hidden, skip authored copy that still advertises it.
-  const authoredSpec = home?.workshopsSpec?.trim()
-  const authoredMentionsPass = /\bfull series\b/i.test(authoredSpec || '')
   const workshopsSpecLine =
-    (passOffered || !authoredMentionsPass ? authoredSpec : '') ||
+    home?.workshopsSpec?.trim() ||
     composeWorkshopSeriesSpecLine({
       sessionPrice: workshopDefault,
-      passPrice,
       scheduleLine: settings?.seriesScheduleLine,
       editorialTail: home?.workshopsSpecTail,
     })

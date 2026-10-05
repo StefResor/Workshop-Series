@@ -46,12 +46,15 @@ export const series = defineType({
       name: "passPrice",
       title: "Full-series pass price (USD)",
       type: "number",
-      description: "Display only. The charged amount lives in the Stripe Payment Link.",
+      hidden: true,
+      readOnly: true,
     }),
     defineField({
       name: "passPaymentLink",
       title: "Stripe Payment Link — full series pass",
       type: "url",
+      hidden: true,
+      readOnly: true,
     }),
     defineField({
       name: "active",
@@ -62,7 +65,7 @@ export const series = defineType({
         "Deprecated. Current series is the one whose endsOn is still ahead and whose startsOn is earliest. Leave future series false so a leftover active-query cannot promote Winter over Fall.",
     }),
   ],
-  preview: { select: { title: "title", subtitle: "passPrice" } },
+  preview: { select: { title: "title", subtitle: "label" } },
 });
 
 /* ------------------------------------------------------------------ */

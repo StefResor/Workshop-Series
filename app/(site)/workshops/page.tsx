@@ -42,7 +42,7 @@ export default async function WorkshopsPage() {
       : `Now running: ${nowRunning[0].seriesTitle}`
     : null
 
-  const priceClause = workshopSeriesPriceClause(settings, null)
+  const priceClause = workshopSeriesPriceClause(settings)
   const catalogue = topics || []
 
   return (

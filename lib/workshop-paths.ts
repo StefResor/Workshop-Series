@@ -1,7 +1,7 @@
 /** Canonical public paths for workshop surfaces (series-scoped).
  *
  * Topic page owns `/workshops/[topic-slug]`. Fall sessions stay at
- * `/workshops/fall-2026/[slug]` until those docs are workshopSession.
+ * `/workshops/fall-2026/[slug]`.
  */
 
 export function seriesPackagePath(seriesSlug: string) {

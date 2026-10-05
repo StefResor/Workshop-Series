@@ -529,19 +529,8 @@ const siteSettingsDoc = {
     'Structured, direct relationship work for high-responsibility professionals and leaders. Private-pay, online, and discreet.',
   twitterTitle: 'Stefanie Schumacher — Relational Diplomacy',
   ogTitle: 'Stefanie Schumacher — Relational Diplomacy',
-  defaultWorkshopPrice: 47, // CONFIRM WITH STEF — legacy alias of sessionPrice
   sessionPrice: 47, // CONFIRM WITH STEF
-  seriesPassEnabled: false,
-  seriesPrice: 423, // CONFIRM WITH STEF
-  seriesEyebrow: 'The Full Series',
-  seriesDisplayLine: 'All Ten Sessions',
-  // CONFIRM WITH STEF — draft supporting line pending client review
-  seriesSupportingLine:
-    'From the fight that never ends through listening, acceptance, and repair — the full Relational Diplomacy arc.',
-  seriesOfferLine: 'ten sessions, one free',
   seriesScheduleLine: 'Wednesdays · 7:00–8:30 PM ET · Zoom',
-  seriesCtaLabel: 'Register',
-  // seriesPaymentLink: paste Stripe Payment Link in Studio
   marqueeKeywords: [
     'Accountability',
     'Honesty',
