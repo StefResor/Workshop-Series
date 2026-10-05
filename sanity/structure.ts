@@ -59,6 +59,7 @@ export const structure: StructureResolver = (S) =>
         .child(
           S.documentTypeList('series')
             .title('Sessions by series')
+            .defaultOrdering([{ field: 'startsOn', direction: 'asc' }])
             .child((seriesId) =>
               S.documentList()
                 .title('Sessions')
