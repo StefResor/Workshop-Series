@@ -56,29 +56,15 @@ async function main() {
 
   const settings = await client.fetch<{
     sessionPrice?: number
-    defaultWorkshopPrice?: number
-    seriesPrice?: number
     seriesScheduleLine?: string
   } | null>(`*[_type == "siteSettings"][0]{
-    sessionPrice, defaultWorkshopPrice, seriesPrice, seriesScheduleLine
+    sessionPrice, seriesScheduleLine
   }`)
 
-  const activeSeries = await client.fetch<{ passPrice?: number } | null>(
-    `*[_type == "workshopSeries" && active == true] | order(_updatedAt desc)[0]{
-      passPrice
-    }`,
-  )
-
-  const sessionPrice =
-    settings?.sessionPrice ?? settings?.defaultWorkshopPrice ?? null
-  const passPrice =
-    activeSeries?.passPrice != null
-      ? activeSeries.passPrice
-      : (settings?.seriesPrice ?? null)
+  const sessionPrice = settings?.sessionPrice ?? null
 
   const composedSpec = composeWorkshopSeriesSpecLine({
     sessionPrice,
-    passPrice,
     scheduleLine: settings?.seriesScheduleLine,
     editorialTail: home.workshopsSpecTail || 'Join any session, in any order · 18+',
   })

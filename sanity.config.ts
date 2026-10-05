@@ -14,6 +14,8 @@ const config = defineConfig({
   plugins: [structureTool({ structure }), visionTool()],
   schema: {
     types: schemaTypes,
+    templates: (templates) =>
+      templates.filter((template) => template.schemaType !== 'workshop'),
   },
 })
 

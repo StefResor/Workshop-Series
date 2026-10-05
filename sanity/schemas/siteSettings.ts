@@ -80,15 +80,6 @@ export const siteSettings = defineType({
       initialValue: false,
     }),
     defineField({
-      name: 'defaultWorkshopPrice',
-      title: 'Default workshop price (legacy)',
-      type: 'number',
-      description:
-        'Legacy alias for Session price. Prefer Session price below; kept so older documents keep resolving.',
-      validation: (rule) => rule.min(0),
-      hidden: ({ document }) => document?.sessionPrice != null,
-    }),
-    defineField({
       name: 'sessionPrice',
       title: 'Session price',
       type: 'number',
@@ -97,75 +88,81 @@ export const siteSettings = defineType({
       validation: (rule) => rule.required().min(0),
     }),
     defineField({
+      name: 'defaultWorkshopPrice',
+      title: 'Default workshop price (legacy)',
+      type: 'number',
+      hidden: true,
+      readOnly: true,
+    }),
+    defineField({
       name: 'seriesPassEnabled',
       title: 'Offer full-series pass',
       type: 'boolean',
-      initialValue: false,
-      description:
-        'When off, hide the All Ten Sessions offer everywhere. Stripe links and prices stay in Studio.',
+      hidden: true,
+      readOnly: true,
     }),
     defineField({
       name: 'seriesPrice',
       title: 'Full series price',
       type: 'number',
-      description:
-        'Set in Stripe — this field is display only. Contact Mike to change the actual charge.',
+      hidden: true,
       readOnly: true,
-      validation: (rule) => rule.min(0),
     }),
     defineField({
       name: 'seriesEyebrow',
       title: 'Series band eyebrow',
       type: 'string',
-      description: 'e.g. The Full Series',
+      hidden: true,
+      readOnly: true,
     }),
     defineField({
       name: 'seriesDisplayLine',
       title: 'Series band display line',
       type: 'string',
-      description: 'Hero line under the eyebrow — e.g. All Ten Sessions',
+      hidden: true,
+      readOnly: true,
     }),
     defineField({
       name: 'seriesSupportingLine',
       title: 'Series band supporting line',
       type: 'text',
-      rows: 3,
-      description:
-        'One sentence about the arc (left column). Draft until client review.',
+      hidden: true,
+      readOnly: true,
     }),
     defineField({
       name: 'seriesOfferLine',
       title: 'Series meta — offer phrase',
       type: 'string',
-      description:
-        'Phrase after the price in the meta line (no dollar amounts). e.g. ten sessions, one free → “$423 · ten sessions, one free”',
+      hidden: true,
+      readOnly: true,
     }),
     defineField({
       name: 'seriesScheduleLine',
-      title: 'Series meta — schedule',
+      title: 'Workshop schedule line',
       type: 'string',
       description: 'e.g. Wednesdays · 7:00–8:30 PM ET · Zoom',
     }),
     defineField({
       name: 'seriesInclusions',
-      title: 'Series inclusions (unused in band)',
+      title: 'Series inclusions',
       type: 'array',
       of: [{ type: 'string' }],
-      description:
-        'Retained for Studio; the band no longer lists inclusions. Do not mention recordings (Phase 2).',
       hidden: true,
+      readOnly: true,
     }),
     defineField({
       name: 'seriesCtaLabel',
       title: 'Series CTA label',
       type: 'string',
+      hidden: true,
+      readOnly: true,
     }),
     defineField({
       name: 'seriesPaymentLink',
       title: 'Series payment link',
       type: 'url',
-      description:
-        'Stripe Payment Link for the full-series pass. Required for the band CTA.',
+      hidden: true,
+      readOnly: true,
     }),
     defineField({
       name: 'workshopDisclaimer',

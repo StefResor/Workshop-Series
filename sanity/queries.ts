@@ -43,10 +43,6 @@ const workshopProjection = `{
   "topicSlug": coalesce(topic->slug.current, slug.current),
   "seriesSlug": series->slug.current,
   "seriesTitle": series->title,
-  "seriesActive": series._ref == ${currentSeriesIdQuery},
-  "seriesPassPrice": series->passPrice,
-  "seriesPassPaymentLink": series->passPaymentLink,
-  "seriesWorkshopCount": count(*[${CURRENT_SERIES_BOOKABLE} && series._ref == ^.series._ref]),
   "sessionNumber": coalesce(sessionNumber, topic->order),
   startsAt,
   durationMinutes,
@@ -117,9 +113,7 @@ export const workshopSeriesListQuery = `*[_type == "series" && _id == ${currentS
   title,
   "slug": slug.current,
   startsOn,
-  endsOn,
-  passPrice,
-  passPaymentLink
+  endsOn
 }`
 
 export const workshopBySeriesAndSlugQuery = `*[
@@ -136,23 +130,13 @@ export const seriesBySlugQuery = `*[_type == "series" && slug.current == $slug][
   title,
   "slug": slug.current,
   startsOn,
-  endsOn,
-  passPrice,
-  passPaymentLink
+  endsOn
 }`
 
 /** Current series for package CTA / legacy /workshops/series redirect. */
 export const activeSeriesSlugQuery = `*[_type == "series" && defined(slug.current) && defined(endsOn) && endsOn >= $today] | order(startsOn asc) [0]{
   "slug": slug.current,
   title
-}`
-
-/** Current series with pass display fields for homepage spec composition. */
-export const activeSeriesQuery = `*[_type == "series" && defined(slug.current) && defined(endsOn) && endsOn >= $today] | order(startsOn asc) [0]{
-  "slug": slug.current,
-  title,
-  passPrice,
-  passPaymentLink
 }`
 
 export const workshopsBySeriesSlugQuery = `*[
@@ -181,18 +165,8 @@ export const siteSettingsQuery = `*[_type == "siteSettings"][0] {
   ogTitle,
   mailingAddress,
   notificationsEnabled,
-  defaultWorkshopPrice,
   sessionPrice,
-  seriesPassEnabled,
-  seriesPrice,
-  seriesEyebrow,
-  seriesDisplayLine,
-  seriesSupportingLine,
-  seriesOfferLine,
   seriesScheduleLine,
-  seriesInclusions,
-  seriesCtaLabel,
-  seriesPaymentLink,
   workshopDisclaimer,
   marqueeKeywords
 }`

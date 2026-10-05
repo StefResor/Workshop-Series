@@ -2,13 +2,12 @@ import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { SeriesContextBand } from '@/components/SeriesContextBand'
 import { WorkshopWhen } from '@/components/WorkshopWhen'
 import { breadcrumbJsonLd, workshopEventJsonLd } from '@/lib/schema'
 import { buildPageMetadata } from '@/lib/seo'
 import type { SiteSettings, Workshop } from '@/lib/types'
 import { DEFAULT_WORKSHOP_DISCLAIMER } from '@/lib/workshop-disclaimer'
-import { resolveWorkshopPrice, isSeriesPassEnabled } from '@/lib/workshop-price'
+import { resolveWorkshopPrice } from '@/lib/workshop-price'
 import { workshopPath } from '@/lib/workshop-paths'
 import { sanityFetch } from '@/sanity/lib/fetch'
 import {
@@ -108,19 +107,6 @@ export default async function WorkshopDetailPage({ params }: Props) {
     )
   }
 
-  const seriesCount = workshop.seriesWorkshopCount ?? 0
-  const seriesSlug = workshop.seriesSlug
-  const seriesTitle = workshop.seriesTitle
-  const seriesPassPrice = workshop.seriesPassPrice
-  const showSeriesBand = Boolean(
-    isSeriesPassEnabled(settings) &&
-      workshop.seriesPassPaymentLink &&
-      seriesPassPrice != null &&
-      seriesSlug &&
-      seriesTitle &&
-      seriesCount > 0,
-  )
-
   return (
     <>
       <script
@@ -174,20 +160,6 @@ export default async function WorkshopDetailPage({ params }: Props) {
             ))}
           </div>
           <div className="ev-cta">{cta}</div>
-          {showSeriesBand &&
-          seriesSlug &&
-          seriesTitle &&
-          seriesPassPrice != null ? (
-            <SeriesContextBand
-              sessionNumber={workshop.sessionNumber}
-              seriesCount={seriesCount}
-              seriesTitle={seriesTitle}
-              seriesSlug={seriesSlug}
-              passPrice={seriesPassPrice}
-              sessionPrice={price}
-              isPast={Boolean(workshop.isPast)}
-            />
-          ) : null}
           <p className="ev-note">{policyNote}</p>
         </article>
       </div>

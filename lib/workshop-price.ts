@@ -1,24 +1,13 @@
 import type { SiteSettings, Workshop } from '@/lib/types'
 
 /**
- * Full-series pass is opt-in. Unset documents stay hidden.
- */
-export function isSeriesPassEnabled(
-  settings?: Pick<SiteSettings, 'seriesPassEnabled'> | null,
-): boolean {
-  return settings?.seriesPassEnabled === true
-}
-
-/**
  * Canonical per-session default from site settings.
- * Prefer sessionPrice; fall back to legacy defaultWorkshopPrice.
  * Never invent a JSX fallback — return null when unset.
  */
 export function resolveSessionPrice(
-  settings: Pick<SiteSettings, 'sessionPrice' | 'defaultWorkshopPrice'> | null | undefined,
+  settings: Pick<SiteSettings, 'sessionPrice'> | null | undefined,
 ): number | null {
   if (settings?.sessionPrice != null) return settings.sessionPrice
-  if (settings?.defaultWorkshopPrice != null) return settings.defaultWorkshopPrice
   return null
 }
 
@@ -28,45 +17,20 @@ export function resolveSessionPrice(
  */
 export function resolveWorkshopPrice(
   workshop: Pick<Workshop, 'price'>,
-  settings:
-    | Pick<SiteSettings, 'sessionPrice' | 'defaultWorkshopPrice'>
-    | null
-    | undefined,
+  settings: Pick<SiteSettings, 'sessionPrice'> | null | undefined,
 ): number | null {
   if (workshop.price != null) return workshop.price
   return resolveSessionPrice(settings)
 }
 
 /**
- * Subhead price clause. Full dual pricing only when both figures exist;
- * otherwise session-only, or empty (never hardcode).
- * Prefer `passPrice` (active series) over legacy `settings.seriesPrice`.
+ * Subhead price clause. Session-only; never invent a dollar amount.
  */
 export function workshopSeriesPriceClause(
-  settings:
-    | Pick<SiteSettings, 'sessionPrice' | 'defaultWorkshopPrice' | 'seriesPrice'>
-    | null
-    | undefined,
-  passPrice?: number | null,
+  settings: Pick<SiteSettings, 'sessionPrice'> | null | undefined,
 ): string {
   const session = resolveSessionPrice(settings)
-  // `null` means the caller suppressed the pass (flag off).
-  // `undefined` falls back to site settings.
-  const series =
-    passPrice === null
-      ? null
-      : passPrice != null
-        ? passPrice
-        : settings?.seriesPrice
-  if (session != null && series != null) {
-    return ` · $${session} per session, or $${series} for the full series`
-  }
-  if (session != null) {
-    return ` · $${session} per session`
-  }
-  if (series != null) {
-    return ` · $${series} for the full series`
-  }
+  if (session != null) return ` · $${session} per session`
   return ''
 }
 
@@ -77,7 +41,6 @@ export function workshopSeriesPriceClause(
  */
 export function composeWorkshopSeriesSpecLine(opts: {
   sessionPrice: number | null
-  passPrice: number | null
   scheduleLine?: string | null
   editorialTail?: string | null
 }): string {
@@ -85,15 +48,8 @@ export function composeWorkshopSeriesSpecLine(opts: {
   const schedule = opts.scheduleLine?.trim()
   if (schedule) parts.push(schedule)
 
-  const { sessionPrice, passPrice } = opts
-  if (sessionPrice != null && passPrice != null) {
-    parts.push(
-      `$${sessionPrice} per session, or $${passPrice} for the full series`,
-    )
-  } else if (sessionPrice != null) {
-    parts.push(`$${sessionPrice} per session`)
-  } else if (passPrice != null) {
-    parts.push(`$${passPrice} for the full series`)
+  if (opts.sessionPrice != null) {
+    parts.push(`$${opts.sessionPrice} per session`)
   }
 
   const tail = opts.editorialTail?.trim()

@@ -1,11 +1,9 @@
 import type { Metadata } from 'next'
 import { notFound, permanentRedirect, redirect } from 'next/navigation'
-import { SeriesPackageContent } from '@/components/SeriesPackageContent'
 import { TopicDetail } from '@/components/TopicDetail'
 import { buildPageMetadata } from '@/lib/seo'
 import type { CatalogueTopic, Series, SiteSettings, Workshop } from '@/lib/types'
-import { seriesPackagePath, topicPath, workshopPath } from '@/lib/workshop-paths'
-import { isSeriesPassEnabled } from '@/lib/workshop-price'
+import { topicPath, workshopPath } from '@/lib/workshop-paths'
 import { sanityFetch } from '@/sanity/lib/fetch'
 import {
   seriesBySlugQuery,
@@ -13,14 +11,13 @@ import {
   topicBySlugQuery,
   workshopBySlugQuery,
   workshopIndexSlugsQuery,
-  workshopsBySeriesSlugQuery,
 } from '@/sanity/queries'
 
 type Props = { params: Promise<{ series: string }> }
 
 /**
  * Single-segment /workshops/[x]:
- * 1. series slug → package page (or /workshops when the pass is hidden)
+ * 1. series slug → /workshops (no series-pass package page)
  * 2. topic slug → topic detail (wins over Fall session slugs)
  * 3. leftover session slug → 301 to /workshops/[series]/[slug]
  * 4. else 404
@@ -49,22 +46,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     slug: segment,
   })
   if (series) {
-    const settings = await sanityFetch<SiteSettings | null>(siteSettingsQuery)
-    if (!isSeriesPassEnabled(settings)) {
-      return { title: 'Workshops' }
-    }
-    const title =
-      settings?.seriesDisplayLine?.trim() ||
-      settings?.seriesEyebrow?.trim() ||
-      series.title ||
-      'Full Series'
-    return buildPageMetadata({
-      title,
-      description:
-        settings?.seriesSupportingLine?.trim() ||
-        'All ten Relational Diplomacy workshop sessions — live online.',
-      path: seriesPackagePath(segment),
-    })
+    return { title: 'Workshops' }
   }
 
   const topic = await sanityFetch<CatalogueTopic | null>(topicBySlugQuery, {
@@ -91,29 +73,7 @@ export default async function WorkshopsSeriesSegmentPage({ params }: Props) {
     slug: segment,
   })
   if (series) {
-    const [settings, workshops] = await Promise.all([
-      sanityFetch<SiteSettings | null>(siteSettingsQuery),
-      sanityFetch<Workshop[]>(workshopsBySeriesSlugQuery, {
-        series: series.slug,
-      }),
-    ])
-    if (!isSeriesPassEnabled(settings)) {
-      redirect('/workshops')
-    }
-    if (
-      !settings ||
-      settings.seriesPrice == null ||
-      !settings.seriesDisplayLine?.trim()
-    ) {
-      notFound()
-    }
-    return (
-      <SeriesPackageContent
-        seriesSlug={series.slug}
-        settings={settings}
-        workshops={workshops || []}
-      />
-    )
+    redirect('/workshops')
   }
 
   const topic = await sanityFetch<CatalogueTopic | null>(topicBySlugQuery, {

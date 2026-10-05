@@ -3,11 +3,15 @@ import type { StructureResolver } from 'sanity/structure'
 const SINGLETONS = new Set(['siteSettings', 'emailSignup'])
 /**
  * Hide auto-generated duplicates of types that have custom desk items.
- * Keep `workshop` visible until Fall docs are workshopSession — hiding it
- * before that migration leaves Stef unable to edit Fall. Hide `workshop` in
- * the same deploy that runs the type change.
+ * `workshop` is retired — Fall docs are workshopSession.
  */
-const HIDDEN_TYPES = new Set(['workshopTopic', 'workshopSession', ...SINGLETONS])
+const HIDDEN_TYPES = new Set([
+  'workshopTopic',
+  'workshopSession',
+  'workshop',
+  'registration',
+  ...SINGLETONS,
+])
 
 /**
  * Site Settings group — singletons use fixed document IDs (no "Create new").
@@ -63,6 +67,38 @@ export const structure: StructureResolver = (S) =>
                 .params({ seriesId })
                 .defaultOrdering([{ field: 'startsAt', direction: 'asc' }]),
             ),
+        ),
+      S.listItem()
+        .title('Registrations')
+        .child(
+          S.list()
+            .title('Registrations')
+            .items([
+              S.listItem()
+                .title('Live')
+                .id('registrations-live')
+                .child(
+                  S.documentList()
+                    .title('Live')
+                    .schemaType('registration')
+                    .filter('_type == "registration" && testMode != true')
+                    .defaultOrdering([
+                      { field: 'registeredAt', direction: 'desc' },
+                    ]),
+                ),
+              S.listItem()
+                .title('Test')
+                .id('registrations-test')
+                .child(
+                  S.documentList()
+                    .title('Test')
+                    .schemaType('registration')
+                    .filter('_type == "registration" && testMode == true')
+                    .defaultOrdering([
+                      { field: 'registeredAt', direction: 'desc' },
+                    ]),
+                ),
+            ]),
         ),
       S.divider(),
       ...S.documentTypeListItems().filter((item) => {
