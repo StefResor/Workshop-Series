@@ -33,7 +33,7 @@ export async function GET() {
       authors: settings
         ? [{ name: settings.siteName, url: origin }]
         : undefined,
-      tags: ['workshop', 'relational-diplomacy'],
+      tags: ['workshop', 'connection-workshop'],
       _stef: {
         sessionNumber: w.sessionNumber,
         durationMinutes: w.durationMinutes ?? 90,
@@ -55,7 +55,7 @@ export async function GET() {
     feed_url: feedUrl,
     description:
       settings?.defaultDescription ||
-      'Relational Diplomacy workshop series — live online.',
+      'The Connection Workshop — live online.',
     language: 'en-US',
     items,
   }

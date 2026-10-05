@@ -8,14 +8,14 @@ Site settings and SEO must use the **correct** column only. The **wrong** column
 |---|---|
 | Site / person name | Stefanie Schumacher |
 | Credentials | MS, LPC, EMDR |
-| Practice line | Relational Diplomacy for Individuals and Couples |
+| Practice line | The Practice of Connection for Individuals and Couples |
 | Domain | https://stefanie-schumacher.com |
 | Contact email (public / form destination) | stef8.schumacher@gmail.com *(CONFIRM WITH STEF if a practice domain address exists)* |
 | Transactional from-address | `noreply@mail.stefanie-schumacher.com` (Resend-verified subdomain — later) |
 | Practice geography | Online practice · Ohio-based *(do not invent a city)* |
-| Default meta title | Stefanie Schumacher — Relational Diplomacy |
+| Default meta title | Stefanie Schumacher — The Connection Workshop |
 | Default meta description | Structured, direct relationship work for high-responsibility professionals and leaders. Private-pay, online, and discreet. |
-| Twitter / X title | Stefanie Schumacher — Relational Diplomacy |
+| Twitter / X title | Stefanie Schumacher — The Connection Workshop |
 | JSON-LD `@type` | `Person` (+ `WebSite` / `Event` as needed). **Do not** use `LocalBusiness` or `ProfessionalService` — the latter is a LocalBusiness subtype on schema.org and inherits address/geo expectations. |
 | JSON-LD address | Online / Ohio label on Person only — **never** invent a city or street address |
 

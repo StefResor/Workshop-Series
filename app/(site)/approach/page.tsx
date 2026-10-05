@@ -13,7 +13,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: 'Approach',
     description:
       page?.summary ||
-      'How change happens in Relational Diplomacy — accountability, honesty, repair, boundaries, and the Wise Adult.',
+      'How change happens in the Connection Workshop — accountability, honesty, repair, boundaries, and the Wise Adult.',
     path: '/approach',
   })
 }

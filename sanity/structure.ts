@@ -1,17 +1,65 @@
 import type { StructureResolver } from 'sanity/structure'
 
+type StructureBuilder = Parameters<StructureResolver>[0]
+
 const SINGLETONS = new Set(['siteSettings', 'emailSignup'])
 /**
  * Hide auto-generated duplicates of types that have custom desk items.
  * `workshop` is retired — Fall docs are workshopSession.
+ * `series` lives under Schedule, not as its own sidebar item.
  */
 const HIDDEN_TYPES = new Set([
   'workshopTopic',
   'workshopSession',
   'workshop',
+  'series',
   'registration',
   ...SINGLETONS,
 ])
+
+function topicPane(S: StructureBuilder, topicId: string) {
+  return S.list()
+    .title('Workshop')
+    .items([
+      S.listItem()
+        .title('Topic')
+        .id('topic')
+        .child(S.document().schemaType('workshopTopic').documentId(topicId)),
+      S.listItem()
+        .title('Dates')
+        .id('dates')
+        .child(
+          S.documentList()
+            .title('Dates')
+            .schemaType('workshopSession')
+            .filter('_type == "workshopSession" && topic._ref == $topicId')
+            .params({ topicId })
+            .defaultOrdering([{ field: 'startsAt', direction: 'asc' }]),
+        ),
+    ])
+}
+
+function seriesPane(S: StructureBuilder, seriesId: string) {
+  return S.list()
+    .title('Season')
+    .items([
+      S.listItem()
+        .title('Season')
+        .id('season')
+        .child(S.document().schemaType('series').documentId(seriesId)),
+      S.listItem()
+        .title('Dates')
+        .id('dates')
+        .child(
+          S.documentList()
+            .title('Dates')
+            .schemaType('workshopSession')
+            .filter('_type == "workshopSession" && series._ref == $seriesId')
+            .params({ seriesId })
+            .defaultOrdering([{ field: 'startsAt', direction: 'asc' }]),
+        ),
+    ])
+}
 
 /**
  * Site Settings group — singletons use fixed document IDs (no "Create new").
@@ -47,27 +95,23 @@ export const structure: StructureResolver = (S) =>
         ),
       S.divider(),
       S.listItem()
-        .title('Workshop topics')
+        .title('Workshops')
+        .id('workshops')
         .schemaType('workshopTopic')
         .child(
           S.documentTypeList('workshopTopic')
-            .title('Workshop topics')
-            .defaultOrdering([{ field: 'order', direction: 'asc' }]),
+            .title('Workshops')
+            .defaultOrdering([{ field: 'order', direction: 'asc' }])
+            .child((topicId) => topicPane(S, topicId)),
         ),
       S.listItem()
-        .title('Sessions')
+        .title('Schedule')
+        .id('schedule')
         .child(
           S.documentTypeList('series')
-            .title('Sessions by series')
+            .title('Schedule')
             .defaultOrdering([{ field: 'startsOn', direction: 'asc' }])
-            .child((seriesId) =>
-              S.documentList()
-                .title('Sessions')
-                .schemaType('workshopSession')
-                .filter('_type == "workshopSession" && series._ref == $seriesId')
-                .params({ seriesId })
-                .defaultOrdering([{ field: 'startsAt', direction: 'asc' }]),
-            ),
+            .child((seriesId) => seriesPane(S, seriesId)),
         ),
       S.listItem()
         .title('Registrations')

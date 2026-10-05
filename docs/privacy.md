@@ -22,7 +22,7 @@ resolved — do not publish while DECISION NEEDED blocks remain in the body.
 ## What this policy covers
 
 This policy describes how information is handled on stefanie-schumacher.com and
-in connection with the Relational Diplomacy workshop series.
+in connection with the Connection Workshop series.
 
 It does not cover clinical services. Information shared in the course of
 therapy is governed separately by professional confidentiality obligations and

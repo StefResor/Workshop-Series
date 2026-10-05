@@ -55,7 +55,7 @@ export default async function WorkshopsPage() {
         </p>
       </header>
 
-      {nowRunning.length > 0 && zone1Title ? (
+      {betweenSeries && nowRunning.length > 0 && zone1Title ? (
         <section
           className="section workshops-now-section"
           aria-labelledby="workshops-now-heading"

@@ -37,7 +37,7 @@ export const viewport: Viewport = {
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await sanityFetch<SiteSettings | null>(siteSettingsQuery)
   const title =
-    settings?.defaultTitle || 'Stefanie Schumacher — Relational Diplomacy'
+    settings?.defaultTitle || 'Stefanie Schumacher — The Connection Workshop'
   const description =
     settings?.defaultDescription ||
     'Structured, direct relationship work for high-responsibility professionals and leaders. Private-pay, online, and discreet.'
@@ -57,7 +57,7 @@ export async function generateMetadata(): Promise<Metadata> {
     creator: settings?.siteName || 'Stefanie Schumacher',
     keywords: [
       'Stefanie Schumacher',
-      'Relational Diplomacy',
+      'The Connection Workshop',
       'couples therapy',
       'relationship workshops',
       'EMDR',

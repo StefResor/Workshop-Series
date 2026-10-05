@@ -20,8 +20,7 @@ export const series = defineType({
       name: "slug",
       type: "slug",
       options: { source: "title", isUnique: isUniqueSeriesSlug },
-      description:
-        "Must not match any workshop slug — /workshops/[x] serves the series package first.",
+      description: 'Short URL name for this season, e.g. fall-2026',
       validation: (r) => r.required(),
     }),
     defineField({

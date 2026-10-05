@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return buildPageMetadata({
       title: policy?.title?.trim() || DEFAULT_TERMS_TITLE,
       description:
-        'Workshop registration terms, refunds, conduct, and educational scope for Stefanie Schumacher’s Relational Diplomacy series.',
+        'Workshop registration terms, refunds, conduct, and educational scope for Stefanie Schumacher’s Connection Workshop series.',
       path: publicPath(slug),
     })
   }
@@ -54,7 +54,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return buildPageMetadata({
       title: 'Policy',
       description:
-        'Practice policies for Stefanie Schumacher’s Relational Diplomacy.',
+        'Practice policies for Stefanie Schumacher’s Connection Workshop.',
       path: publicPath(slug),
     })
   }

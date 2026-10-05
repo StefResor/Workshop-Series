@@ -58,7 +58,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description:
         topic.hook ||
         topic.shortDescription ||
-        'Live Relational Diplomacy workshop with Stefanie Schumacher.',
+        'Live Connection Workshop session with Stefanie Schumacher.',
       path: topicPath(topic.slug),
     })
   }

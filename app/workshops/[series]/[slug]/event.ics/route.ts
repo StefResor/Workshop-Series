@@ -52,7 +52,7 @@ export async function GET(
   const lines = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Relational Diplomacy//Workshops//EN",
+    "PRODID:-//The Connection Workshop//Workshops//EN",
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
     "BEGIN:VEVENT",

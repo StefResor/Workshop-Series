@@ -416,7 +416,7 @@ Questions about these terms can be sent through the contact form at [stefanie-sc
     footerLabel: 'Privacy',
     body: `## What this policy covers
 
-This policy describes how information is handled on stefanie-schumacher.com and in connection with the Relational Diplomacy workshop series.
+This policy describes how information is handled on stefanie-schumacher.com and in connection with the Connection Workshop series.
 
 It does not cover clinical services. Information shared in the course of therapy is governed separately by professional confidentiality obligations and applicable health privacy law, and is described in the paperwork provided to therapy clients directly.
 
@@ -519,16 +519,16 @@ const siteSettingsDoc = {
   _id: 'siteSettings',
   _type: 'siteSettings',
   siteName: 'Stefanie Schumacher',
-  practiceLine: 'Relational Diplomacy for Individuals and Couples',
+  practiceLine: 'The Practice of Connection for Individuals and Couples',
   credentials: 'MS, LPC, EMDR',
   canonicalUrl: 'https://stefanie-schumacher.com',
   contactEmail: 'stef8.schumacher@gmail.com', // CONFIRM WITH STEF
   locationLabel: 'Online · Ohio',
-  defaultTitle: 'Stefanie Schumacher — Relational Diplomacy',
+  defaultTitle: 'Stefanie Schumacher — The Connection Workshop',
   defaultDescription:
     'Structured, direct relationship work for high-responsibility professionals and leaders. Private-pay, online, and discreet.',
-  twitterTitle: 'Stefanie Schumacher — Relational Diplomacy',
-  ogTitle: 'Stefanie Schumacher — Relational Diplomacy',
+  twitterTitle: 'Stefanie Schumacher — The Connection Workshop',
+  ogTitle: 'Stefanie Schumacher — The Connection Workshop',
   sessionPrice: 47, // CONFIRM WITH STEF
   seriesScheduleLine: 'Wednesdays · 7:00–8:30 PM ET · Zoom',
   marqueeKeywords: [
