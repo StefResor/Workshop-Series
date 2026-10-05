@@ -18,8 +18,7 @@ import {
   resolveSessionPrice,
 } from '@/lib/workshop-price'
 import { sanityFetch } from '@/sanity/lib/fetch'
-import { sessionRegisterHref, HOME_SESSION_CAP } from '@/lib/catalogue'
-import { topicPath } from '@/lib/workshop-paths'
+import { HOME_SESSION_CAP } from '@/lib/catalogue'
 import {
   emailSignupQuery,
   homeUpcomingWorkshopsQuery,
@@ -33,7 +32,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const settings = await sanityFetch<SiteSettings | null>(siteSettingsQuery)
   const meta = buildPageMetadata({
     title:
-      settings?.defaultTitle || 'Stefanie Schumacher — Relational Diplomacy',
+      settings?.defaultTitle || 'Stefanie Schumacher — The Connection Workshop',
     description:
       settings?.defaultDescription ||
       'Structured, direct relationship work for high-responsibility professionals and leaders. Private-pay, online, and discreet.',
@@ -44,7 +43,7 @@ export async function generateMetadata(): Promise<Metadata> {
     ...meta,
     title: {
       absolute:
-        settings?.defaultTitle || 'Stefanie Schumacher — Relational Diplomacy',
+        settings?.defaultTitle || 'Stefanie Schumacher — The Connection Workshop',
     },
   }
 }
@@ -101,10 +100,6 @@ export default async function HomePage() {
   // Marquee keywords from CMS with fallback to hardcoded defaults
   const marqueeKeywords =
     settings?.marqueeKeywords?.length ? settings.marqueeKeywords : METHOD
-  const nextWorkshop = workshops.find(
-    (w) => Boolean(w.topicSlug || w.slug),
-  )
-
   return (
     <>
       <div className="home-hero-stage">
@@ -130,27 +125,8 @@ export default async function HomePage() {
                   'Structured, direct relationship work for high-responsibility professionals and leaders. Deliberately small caseload. Private-pay, online, and discreet — all adults welcome.'}
               </p>
               <div className="hero-ctas">
-                {nextWorkshop ? (
-                  sessionRegisterHref(nextWorkshop) ? (
-                    <a
-                      className="btn"
-                      href={sessionRegisterHref(nextWorkshop)!}
-                    >
-                      Register for {nextWorkshop.title}
-                    </a>
-                  ) : (
-                    <Link
-                      className="btn"
-                      href={topicPath(
-                        nextWorkshop.topicSlug || nextWorkshop.slug,
-                      )}
-                    >
-                      Register for {nextWorkshop.title}
-                    </Link>
-                  )
-                ) : null}
-                <Link className="btn btn-outline" href="/workshops">
-                  Check out our upcoming workshops
+                <Link className="btn" href="#workshops">
+                  See workshops
                 </Link>
               </div>
             </div>

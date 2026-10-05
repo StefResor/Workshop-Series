@@ -6,7 +6,7 @@ export function generateMetadata(): Metadata {
   return buildPageMetadata({
     title: 'Contact',
     description:
-      'Request a confidential consultation with Stefanie Schumacher. Private-pay Relational Diplomacy for individuals and couples.',
+      'Request a confidential consultation with Stefanie Schumacher. Private-pay practice and the Connection Workshop for individuals and couples.',
     path: '/contact',
   })
 }

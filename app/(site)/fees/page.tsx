@@ -18,7 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: 'Fees',
     description:
       page?.summary ||
-      'Private-pay fees for couples and individual Relational Diplomacy sessions, plus workshop pricing.',
+      'Private-pay fees for couples and individual sessions, plus the Connection Workshop.',
     path: '/fees',
   })
 }
@@ -93,16 +93,9 @@ export default async function FeesPage() {
         </div>
       </section>
 
-      <section className="section" aria-labelledby="workshop-fees-heading">
-        <h2 id="workshop-fees-heading" className="section-title">
-          Workshops
-        </h2>
-        <p className="section-sub">
-          The Connection Workshop
-          {workshopDefault != null
-            ? ` — $${workshopDefault} per participant`
-            : ''}{' '}
-          · live on Zoom · 90 minutes. Non-refundable. Educational — not
+      <section className="section" aria-labelledby="workshop-fees-note">
+        <p id="workshop-fees-note" className="section-sub">
+          Workshop registrations are non-refundable. Educational — not
           psychotherapy.
         </p>
         <Link className="btn" href="/workshops">

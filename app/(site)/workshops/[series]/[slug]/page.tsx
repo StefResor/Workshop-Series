@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: workshop.title,
     description:
       workshop.shortDescription ||
-      'Live Relational Diplomacy workshop with Stefanie Schumacher.',
+      'Live Connection Workshop session with Stefanie Schumacher.',
     path: workshopPath(series, slug),
   })
 }

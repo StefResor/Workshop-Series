@@ -1938,13 +1938,13 @@ textarea {
 }
 
 .catalogue-row-also a {
-  color: var(--ink);
+  color: var(--vermillion);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
 .catalogue-row-also a:hover {
-  color: var(--vermillion);
+  opacity: 0.72;
 }
 
 .catalogue-row-empty {

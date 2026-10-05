@@ -37,7 +37,7 @@ export function SiteFooter({
           ))}
         </p>
         <p>
-          <span>{practiceLine || 'Relational Diplomacy'}</span>
+          <span>{practiceLine || 'The Connection Workshop'}</span>
         </p>
       </div>
     </footer>

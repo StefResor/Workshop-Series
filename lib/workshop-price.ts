@@ -44,7 +44,7 @@ export function composeWorkshopSeriesSpecLine(opts: {
   scheduleLine?: string | null
   editorialTail?: string | null
 }): string {
-  const parts: string[] = ['Relational Diplomacy', 'Live']
+  const parts: string[] = ['The Connection Workshop', 'Live']
   const schedule = opts.scheduleLine?.trim()
   if (schedule) parts.push(schedule)
 

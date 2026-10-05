@@ -172,22 +172,24 @@ export const workshopSession = defineType({
   preview: {
     select: {
       topicTitle: 'topic.title',
-      sessionNumber: 'sessionNumber',
       registrationStatus: 'registrationStatus',
       seriesTitle: 'series.title',
       startsAt: 'startsAt',
     },
-    prepare({
-      topicTitle,
-      sessionNumber,
-      registrationStatus,
-      seriesTitle,
-      startsAt,
-    }) {
-      const when = startsAt ? String(startsAt).slice(0, 10) : 'no date'
+    prepare({ topicTitle, registrationStatus, seriesTitle, startsAt }) {
+      const when = startsAt
+        ? new Date(startsAt)
+            .toLocaleDateString('en-US', {
+              timeZone: 'America/New_York',
+              weekday: 'short',
+              month: 'short',
+              day: 'numeric',
+            })
+            .replace(/,/g, '')
+        : 'no date'
       return {
-        title: topicTitle || 'Untitled session',
-        subtitle: `${seriesTitle ?? 'No series'} · #${sessionNumber ?? '?'} · ${when} · ${registrationStatus ?? 'draft'}`,
+        title: `${when} · ${topicTitle || 'Untitled session'}`,
+        subtitle: `${seriesTitle ?? 'No series'} · ${registrationStatus ?? 'draft'}`,
       }
     },
   },

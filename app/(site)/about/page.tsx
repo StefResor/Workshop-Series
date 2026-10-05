@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: 'About',
     description:
       page?.summary ||
-      'Licensed psychotherapist Stefanie Schumacher — Relational Diplomacy for individuals and couples. Private practice since 2015.',
+      'Licensed psychotherapist Stefanie Schumacher — the Connection Workshop for individuals and couples. Private practice since 2015.',
     path: '/about',
   })
 }
