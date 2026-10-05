@@ -1,22 +1,17 @@
 import type { MetadataRoute } from 'next'
 import { absoluteUrl } from '@/lib/site-url'
-import { isSeriesPassEnabled } from '@/lib/workshop-price'
 import { sanityFetch } from '@/sanity/lib/fetch'
 import {
-  activeSeriesSlugQuery,
+  catalogueTopicsQuery,
   footerPoliciesQuery,
-  siteSettingsQuery,
-  workshopsQuery,
 } from '@/sanity/queries'
-import type { Policy, SiteSettings, Workshop } from '@/lib/types'
-import { seriesPackagePath, workshopPath } from '@/lib/workshop-paths'
+import type { CatalogueTopic, Policy } from '@/lib/types'
+import { topicPath } from '@/lib/workshop-paths'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [workshops, settings, footerPolicies, activeSeries] = await Promise.all([
-    sanityFetch<Workshop[]>(workshopsQuery).catch(() => []),
-    sanityFetch<SiteSettings | null>(siteSettingsQuery).catch(() => null),
+  const [topics, footerPolicies] = await Promise.all([
+    sanityFetch<CatalogueTopic[]>(catalogueTopicsQuery).catch(() => []),
     sanityFetch<Pick<Policy, 'slug'>[]>(footerPoliciesQuery).catch(() => []),
-    sanityFetch<{ slug: string } | null>(activeSeriesSlugQuery).catch(() => null),
   ])
 
   const staticRoutes: MetadataRoute.Sitemap = [
@@ -43,28 +38,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })
   }
 
-  if (
-    isSeriesPassEnabled(settings) &&
-    settings?.seriesPrice != null &&
-    settings?.seriesDisplayLine?.trim() &&
-    activeSeries?.slug
-  ) {
-    staticRoutes.push({
-      url: absoluteUrl(seriesPackagePath(activeSeries.slug)),
+  const topicRoutes: MetadataRoute.Sitemap = (topics || [])
+    .filter((t) => t.slug)
+    .map((t) => ({
+      url: absoluteUrl(topicPath(t.slug)),
       lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.85,
-    })
-  }
-
-  const workshopRoutes: MetadataRoute.Sitemap = (workshops || [])
-    .filter((w) => w.seriesSlug && w.slug)
-    .map((w) => ({
-      url: absoluteUrl(workshopPath(w.seriesSlug!, w.slug)),
-      lastModified: new Date(w.startsAt),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
     }))
 
-  return [...staticRoutes, ...workshopRoutes]
+  return [...staticRoutes, ...topicRoutes]
 }

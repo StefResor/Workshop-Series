@@ -1,27 +1,16 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
-import { SeriesIndexRow } from '@/components/SeriesIndexRow'
-import { WorkshopDateLabel } from '@/components/WorkshopWhen'
-import { formatWorkshopDisplay } from '@/lib/datetime'
+import { CatalogueTopicRow } from '@/components/CatalogueTopicRow'
+import { HomeWorkshopCard } from '@/components/HomeWorkshopCard'
 import { buildPageMetadata } from '@/lib/seo'
-import type { SiteSettings, Workshop } from '@/lib/types'
-import { workshopPath } from '@/lib/workshop-paths'
-import { isSeriesPassEnabled, workshopSeriesPriceClause } from '@/lib/workshop-price'
+import type { CatalogueTopic, SiteSettings, Workshop } from '@/lib/types'
+import { workshopSeriesPriceClause } from '@/lib/workshop-price'
 import { sanityFetch } from '@/sanity/lib/fetch'
 import {
+  catalogueTopicsQuery,
   siteSettingsQuery,
-  workshopSeriesListQuery,
+  upcomingPublicWorkshopsQuery,
   workshopsQuery,
 } from '@/sanity/queries'
-
-type SeriesRow = {
-  _id: string
-  title: string
-  slug: string
-  active?: boolean
-  passPrice?: number
-  passPaymentLink?: string
-}
 
 export function generateMetadata(): Metadata {
   return buildPageMetadata({
@@ -32,44 +21,29 @@ export function generateMetadata(): Metadata {
   })
 }
 
-function sortWithinSeries(a: Workshop, b: Workshop) {
-  const aPast = Boolean(a.isPast)
-  const bPast = Boolean(b.isPast)
-  if (aPast !== bPast) return aPast ? 1 : -1
-  return a.startsAt.localeCompare(b.startsAt)
-}
-
-function canShowSeriesPass(
-  series: SeriesRow,
-  settings: SiteSettings | null,
-): boolean {
-  if (!isSeriesPassEnabled(settings)) return false
-  const link = series.passPaymentLink?.trim()
-  return series.passPrice != null && series.passPrice > 0 && Boolean(link)
-}
-
 export default async function WorkshopsPage() {
-  const [workshops, seriesList, settings] = await Promise.all([
+  const [zone1, fallbackUpcoming, topics, settings] = await Promise.all([
     sanityFetch<Workshop[]>(workshopsQuery),
-    sanityFetch<SeriesRow[]>(workshopSeriesListQuery),
+    sanityFetch<Workshop[]>(upcomingPublicWorkshopsQuery),
+    sanityFetch<CatalogueTopic[]>(catalogueTopicsQuery),
     sanityFetch<SiteSettings | null>(siteSettingsQuery),
   ])
 
-  const priceClause = workshopSeriesPriceClause(
-    settings,
-    isSeriesPassEnabled(settings) ? undefined : null,
-  )
-  const bySeries = new Map<string, Workshop[]>()
-  for (const w of workshops || []) {
-    const key = w.seriesSlug || 'unknown'
-    const list = bySeries.get(key) || []
-    list.push(w)
-    bySeries.set(key, list)
-  }
-  for (const list of bySeries.values()) list.sort(sortWithinSeries)
+  const currentRemaining = zone1 || []
+  const betweenSeries = currentRemaining.length === 0
+  const nowRunning = betweenSeries
+    ? (fallbackUpcoming || []).filter(
+        (w) => w.seriesSlug === fallbackUpcoming?.[0]?.seriesSlug,
+      )
+    : currentRemaining
+  const zone1Title = nowRunning[0]?.seriesTitle
+    ? betweenSeries
+      ? `Next up: ${nowRunning[0].seriesTitle}`
+      : `Now running: ${nowRunning[0].seriesTitle}`
+    : null
 
-  const orderedSeries = (seriesList || []).filter((s) => bySeries.has(s.slug))
-  const hasAny = orderedSeries.some((s) => (bySeries.get(s.slug) || []).length > 0)
+  const priceClause = workshopSeriesPriceClause(settings, null)
+  const catalogue = topics || []
 
   return (
     <>
@@ -81,90 +55,44 @@ export default async function WorkshopsPage() {
         </p>
       </header>
 
-      <section
-        className="section workshops-index-section"
-        aria-labelledby="workshop-list-heading"
-      >
-        <h2 id="workshop-list-heading" className="visually-hidden">
-          Workshops by series
-        </h2>
-
-        {!hasAny ? (
-          <div className="workshops-empty workshops-empty--index">
-            <p className="workshops-empty-heading">
-              This series has finished.
-            </p>
-            <p className="workshops-empty-body">
-              New dates are announced soon. Use the signup below — a short note
-              when the next series opens. Nothing else.
-            </p>
+      {nowRunning.length > 0 && zone1Title ? (
+        <section
+          className="section workshops-now-section"
+          aria-labelledby="workshops-now-heading"
+        >
+          <h2 id="workshops-now-heading" className="section-heading section-title">
+            {zone1Title}
+          </h2>
+          <div className="workshop-led-grid">
+            {nowRunning.map((w) => (
+              <HomeWorkshopCard
+                key={w._id}
+                workshop={w}
+                settings={settings}
+                showSeriesLabel={false}
+              />
+            ))}
           </div>
-        ) : (
-          orderedSeries.map((series) => {
-            const rows = bySeries.get(series.slug) || []
-            const showPass = canShowSeriesPass(series, settings)
-            return (
-              <div key={series._id} className="workshop-series-group">
-                <h3 className="workshop-series-group-title">{series.title}</h3>
-                <div className="workshop-list">
-                  {rows.map((w) => {
-                    const d = formatWorkshopDisplay(w.startsAt, w.timeZone)
-                    const hook = w.hook || w.shortDescription
-                    const href = workshopPath(series.slug, w.slug)
-                    const past = Boolean(w.isPast)
-                    return (
-                      <Link
-                        key={w._id}
-                        href={href}
-                        className={`workshop-row${past ? ' workshop-row--past' : ''}`}
-                        aria-label={`${past ? 'Past: ' : 'Register: '}${w.title}, ${d.month} ${d.day}`}
-                      >
-                        <span className="num" aria-hidden="true">
-                          {String(w.sessionNumber).padStart(2, '0')}
-                        </span>
-                        <WorkshopDateLabel
-                          startsAt={w.startsAt}
-                          timeZone={w.timeZone}
-                        />
-                        <span className="workshop-row-copy">
-                          <span className="workshop-row-title">{w.title}</span>
-                          {hook ? (
-                            <span className="workshop-row-hook">{hook}</span>
-                          ) : null}
-                        </span>
-                        <span className="workshop-row-cta">
-                          {past ? (
-                            <>Past</>
-                          ) : (
-                            <>
-                              Register <span aria-hidden="true">→</span>
-                            </>
-                          )}
-                        </span>
-                      </Link>
-                    )
-                  })}
-                  {showPass ? (
-                    <SeriesIndexRow
-                      seriesSlug={series.slug}
-                      seriesTitle={series.title}
-                      passPrice={series.passPrice!}
-                      passPaymentLink={series.passPaymentLink!}
-                      workshops={rows}
-                      settings={settings}
-                    />
-                  ) : null}
-                </div>
-              </div>
-            )
-          })
-        )}
-      </section>
+        </section>
+      ) : null}
 
-      <section className="section workshops-index-footer">
-        <a className="btn" href="/events.ics">
-          Subscribe · Calendar (.ics)
-        </a>
+      <section
+        className="section workshops-catalogue-section"
+        id="all-workshops"
+        aria-labelledby="all-workshops-heading"
+      >
+        <h2 id="all-workshops-heading" className="section-heading section-title">
+          All workshops
+        </h2>
+        <p className="section-sub">
+          Each workshop stands alone and runs several times a year. Join any
+          session, in any order.
+        </p>
+        <div className="catalogue-list">
+          {catalogue.map((topic) => (
+            <CatalogueTopicRow key={topic._id} topic={topic} />
+          ))}
+        </div>
       </section>
     </>
   )

@@ -124,14 +124,7 @@ export default async function ThankYou({ params, searchParams }: Props) {
       ...o,
     }).format(d)
   const clock = (d: Date) => fmt(d, { hour: 'numeric', minute: '2-digit' })
-  const tzName = start
-    ? (new Intl.DateTimeFormat('en-US', {
-        timeZone: 'America/New_York',
-        timeZoneName: 'short',
-      })
-        .formatToParts(start)
-        .find((p) => p.type === 'timeZoneName')?.value ?? 'ET')
-    : 'ET'
+  const tzName = 'ET'
 
   const credsDate = start
     ? fmt(new Date(start.getTime() - CREDENTIALS_LEAD_DAYS * 86_400_000), {

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { sanityFetch } from '@/sanity/lib/fetch'
-import { siteSettingsQuery, workshopsQuery } from '@/sanity/queries'
+import { siteSettingsQuery, upcomingPublicWorkshopsQuery } from '@/sanity/queries'
 import type { SiteSettings, Workshop } from '@/lib/types'
 import { siteOrigin } from '@/lib/site-url'
 import { workshopPath } from '@/lib/workshop-paths'
@@ -12,7 +12,7 @@ export const revalidate = 60
 export async function GET() {
   const [settings, workshops] = await Promise.all([
     sanityFetch<SiteSettings | null>(siteSettingsQuery),
-    sanityFetch<Workshop[]>(workshopsQuery),
+    sanityFetch<Workshop[]>(upcomingPublicWorkshopsQuery),
   ])
 
   const origin = siteOrigin()
