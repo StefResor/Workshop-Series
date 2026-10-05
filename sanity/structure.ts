@@ -17,8 +17,34 @@ const HIDDEN_TYPES = new Set([
   ...SINGLETONS,
 ])
 
+/** Leftover pane ids from the Topic/Dates and Season/Dates middle panes. */
+const RETIRED_PANE_IDS = new Set(['topic', 'dates', 'season'])
+
+function paneId(rawId: string) {
+  return rawId.split(';')[0]
+}
+
+function topicEditor(S: StructureBuilder, rawId: string) {
+  const topicId = paneId(rawId)
+  return S.document()
+    .schemaType('workshopTopic')
+    .documentId(topicId)
+    .views([S.view.form().id('topic')])
+    .child((nextId) =>
+      RETIRED_PANE_IDS.has(paneId(nextId))
+        ? topicEditor(S, topicId)
+        : S.document()
+            .schemaType('workshopTopic')
+            .documentId(topicId),
+    )
+}
+
 function seriesDates(S: StructureBuilder, seriesId: string) {
-  const defaults = S.documentTypeList('workshopSession').getMenuItems() ?? []
+  const createItems = S.menuItemsFromInitialValueTemplateItems(
+    S.defaultInitialValueTemplateItems().filter(
+      (item) => item.getTemplateId() === 'workshopSession',
+    ),
+  )
   return S.documentList()
     .title('Dates')
     .schemaType('workshopSession')
@@ -28,9 +54,20 @@ function seriesDates(S: StructureBuilder, seriesId: string) {
     .menuItems([
       S.menuItem()
         .title('Edit season')
+        .showAsAction(true)
         .intent({ type: 'edit', params: { type: 'series', id: seriesId } }),
-      ...defaults,
+      ...createItems,
     ])
+    .child((rawId) => {
+      const id = paneId(rawId)
+      if (id === 'season') {
+        return S.document().schemaType('series').documentId(seriesId)
+      }
+      if (id === 'dates') {
+        return seriesDates(S, seriesId)
+      }
+      return S.document().schemaType('workshopSession').documentId(id)
+    })
 }
 
 /**
@@ -73,7 +110,8 @@ export const structure: StructureResolver = (S) =>
         .child(
           S.documentTypeList('workshopTopic')
             .title('Workshops')
-            .defaultOrdering([{ field: 'order', direction: 'asc' }]),
+            .defaultOrdering([{ field: 'order', direction: 'asc' }])
+            .child((topicId) => topicEditor(S, topicId)),
         ),
       S.listItem()
         .title('Schedule')
@@ -82,7 +120,7 @@ export const structure: StructureResolver = (S) =>
           S.documentTypeList('series')
             .title('Schedule')
             .defaultOrdering([{ field: 'startsOn', direction: 'asc' }])
-            .child((seriesId) => seriesDates(S, seriesId)),
+            .child((seriesId) => seriesDates(S, paneId(seriesId))),
         ),
       S.listItem()
         .title('Registrations')
