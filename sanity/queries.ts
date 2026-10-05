@@ -1,77 +1,97 @@
 /** Central GROQ queries — no inline queries elsewhere. */
 
+/**
+ * Dated offerings are workshopSession. Dual-type keeps webhook/GROQ working
+ * if a leftover workshop doc (or workshop_slug Payment Link) is still around.
+ */
+export const BOOKABLE = `_type in ["workshopSession", "workshop"]`
+
+/** Published listings hide registrationStatus draft (Winter/Spring/Summer seed). */
+export const PUBLIC_BOOKABLE = `${BOOKABLE} && registrationStatus != "draft"`
+
+/**
+ * Current series: hasn't ended yet, earliest startsOn.
+ * "Winter 2027" sorts above "Fall 2026" by title, so never use active + title desc.
+ * $today is America/New_York YYYY-MM-DD, injected by sanityFetch.
+ */
+export const currentSeriesIdQuery = `(*[_type == "series" && defined(endsOn) && endsOn >= $today] | order(startsOn asc) [0]._id)`
+
+/** Phase 1 public surfaces: current series only. Later seasons wait for the Phase 2 catalogue. */
+export const CURRENT_SERIES_BOOKABLE = `${PUBLIC_BOOKABLE} && series._ref == ${currentSeriesIdQuery}`
+
 const workshopProjection = `{
   _id,
-  title,
+  "title": coalesce(topic->title, title),
   "slug": slug.current,
   "seriesSlug": series->slug.current,
   "seriesTitle": series->title,
-  "seriesActive": series->active,
+  "seriesActive": series._ref == ${currentSeriesIdQuery},
   "seriesPassPrice": series->passPrice,
   "seriesPassPaymentLink": series->passPaymentLink,
-  "seriesWorkshopCount": count(*[_type == "workshop" && series._ref == ^.series._ref]),
-  sessionNumber,
+  "seriesWorkshopCount": count(*[${CURRENT_SERIES_BOOKABLE} && series._ref == ^.series._ref]),
+  "sessionNumber": coalesce(sessionNumber, topic->order),
   startsAt,
   durationMinutes,
   timeZone,
   price,
-  hook,
+  "hook": coalesce(topic->hook, hook),
   stripePaymentLink,
   zoomRegistrationUrl,
   capacity,
   registrationStatus,
-  shortDescription,
-  body,
+  "shortDescription": coalesce(topic->shortDescription, shortDescription),
+  "body": coalesce(topic->description, body),
   locationLabel,
   "isPast": startsAt <= now()
 }`
 
-/** Homepage: all upcoming workshops across active series. */
+/** Homepage: upcoming sessions in the current series window. */
 export const homeUpcomingWorkshopsQuery = `*[
-  _type == "workshop" &&
-  startsAt > now() &&
-  series->active == true
+  ${CURRENT_SERIES_BOOKABLE} &&
+  startsAt > now()
 ] | order(startsAt asc) ${workshopProjection}`
 
-/** Archive list — all workshops; UI groups by series. */
-export const workshopsQuery = `*[_type == "workshop"] | order(startsAt asc) ${workshopProjection}`
+/** Archive list — current series only, same window as the homepage. */
+export const workshopsQuery = `*[${CURRENT_SERIES_BOOKABLE}] | order(startsAt asc) ${workshopProjection}`
 
-/** Series documents that have at least one workshop, newest first. */
-export const workshopSeriesListQuery = `*[_type == "series" && count(*[_type == "workshop" && series._ref == ^._id]) > 0] | order(title desc) {
+/** Series documents that have at least one public session in the current window. */
+export const workshopSeriesListQuery = `*[_type == "series" && _id == ${currentSeriesIdQuery}] {
   _id,
   title,
   "slug": slug.current,
-  active,
+  startsOn,
+  endsOn,
   passPrice,
   passPaymentLink
 }`
 
 export const workshopBySeriesAndSlugQuery = `*[
-  _type == "workshop" &&
+  ${CURRENT_SERIES_BOOKABLE} &&
   slug.current == $slug &&
   series->slug.current == $series
 ][0] ${workshopProjection}`
 
 /** Flat slug lookup for 301 redirects from legacy /workshops/[slug]. */
-export const workshopBySlugQuery = `*[_type == "workshop" && slug.current == $slug][0] ${workshopProjection}`
+export const workshopBySlugQuery = `*[${CURRENT_SERIES_BOOKABLE} && slug.current == $slug][0] ${workshopProjection}`
 
 export const seriesBySlugQuery = `*[_type == "series" && slug.current == $slug][0]{
   _id,
   title,
   "slug": slug.current,
-  active,
+  startsOn,
+  endsOn,
   passPrice,
   passPaymentLink
 }`
 
-/** Active series for package CTA / legacy /workshops/series redirect. */
-export const activeSeriesSlugQuery = `*[_type == "series" && active == true && defined(slug.current)] | order(title desc) [0]{
+/** Current series for package CTA / legacy /workshops/series redirect. */
+export const activeSeriesSlugQuery = `*[_type == "series" && defined(slug.current) && defined(endsOn) && endsOn >= $today] | order(startsOn asc) [0]{
   "slug": slug.current,
   title
 }`
 
-/** Active series with pass display fields for homepage spec composition. */
-export const activeSeriesQuery = `*[_type == "series" && active == true && defined(slug.current)] | order(title desc) [0]{
+/** Current series with pass display fields for homepage spec composition. */
+export const activeSeriesQuery = `*[_type == "series" && defined(slug.current) && defined(endsOn) && endsOn >= $today] | order(startsOn asc) [0]{
   "slug": slug.current,
   title,
   passPrice,
@@ -79,14 +99,14 @@ export const activeSeriesQuery = `*[_type == "series" && active == true && defin
 }`
 
 export const workshopsBySeriesSlugQuery = `*[
-  _type == "workshop" &&
+  ${CURRENT_SERIES_BOOKABLE} &&
   series->slug.current == $series
 ] | order(startsAt asc) ${workshopProjection}`
 
-/** Single-segment /workshops/[slug] static params: series + workshop slugs. */
+/** Single-segment /workshops/[slug] static params: current series + its session slugs. */
 export const workshopIndexSlugsQuery = `{
-  "series": *[_type == "series" && defined(slug.current)].slug.current,
-  "workshops": *[_type == "workshop" && defined(slug.current)].slug.current
+  "series": *[_id == ${currentSeriesIdQuery} && defined(slug.current)].slug.current,
+  "workshops": *[${CURRENT_SERIES_BOOKABLE} && defined(slug.current)].slug.current
 }`
 
 export const siteSettingsQuery = `*[_type == "siteSettings"][0] {
@@ -200,7 +220,7 @@ export const footerPoliciesQuery = `*[_type == "policy" && showInFooter == true]
   footerOrder
 }`
 
-export const workshopsForStaticParamsQuery = `*[_type == "workshop" && defined(slug.current) && defined(series->slug.current)]{
+export const workshopsForStaticParamsQuery = `*[${CURRENT_SERIES_BOOKABLE} && defined(slug.current) && defined(series->slug.current)]{
   "slug": slug.current,
   "series": series->slug.current
 }`

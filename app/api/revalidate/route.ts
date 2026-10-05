@@ -55,7 +55,9 @@ export function targetsForDoc(body: WebhookBody): RevalidateTarget[] {
       ]
     }
 
-    case 'workshop': {
+    case 'workshop':
+    case 'workshopSession':
+    case 'workshopTopic': {
       const paths = new Set<string>([
         '/',
         '/workshops',

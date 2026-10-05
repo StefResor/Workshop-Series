@@ -1,7 +1,9 @@
 import type { SlugValidationContext } from 'sanity'
 
+const BOOKABLE = `_type in ["workshopSession", "workshop"]`
+
 /**
- * Workshop slugs are unique within a series — Fall and Winter may reuse the
+ * Session slugs are unique within a series — Fall and Winter may reuse the
  * same title/slug. They must also never collide with a series slug, because
  * `/workshops/[x]` resolves series package pages before workshop redirects.
  */
@@ -21,7 +23,7 @@ export async function isUniqueWorkshopSlug(
   }>(
     `{
       "workshopDup": count(*[
-        _type == "workshop" &&
+        ${BOOKABLE} &&
         slug.current == $slug &&
         series._ref == $series &&
         !(_id in [$published, $draft])
@@ -40,7 +42,7 @@ export async function isUniqueWorkshopSlug(
 
 /**
  * Series slugs are globally unique among series docs, and must not match any
- * workshop slug (same `/workshops/[x]` collision).
+ * workshop / session slug (same `/workshops/[x]` collision).
  */
 export async function isUniqueSeriesSlug(
   slug: string | undefined,
@@ -61,7 +63,7 @@ export async function isUniqueSeriesSlug(
         slug.current == $slug &&
         !(_id in [$published, $draft])
       ]),
-      "workshopHit": count(*[_type == "workshop" && slug.current == $slug])
+      "workshopHit": count(*[${BOOKABLE} && slug.current == $slug])
     }`,
     {
       slug,

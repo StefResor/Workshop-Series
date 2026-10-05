@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getReadClient } from '@/sanity/lib/client'
+import { sanityFetch } from '@/sanity/lib/fetch'
 import { siteSettingsQuery, workshopsQuery } from '@/sanity/queries'
 import type { SiteSettings, Workshop } from '@/lib/types'
 import { siteOrigin } from '@/lib/site-url'
@@ -10,10 +10,9 @@ import { resolveWorkshopPrice } from '@/lib/workshop-price'
 export const revalidate = 60
 
 export async function GET() {
-  const client = getReadClient()
   const [settings, workshops] = await Promise.all([
-    client.fetch<SiteSettings | null>(siteSettingsQuery),
-    client.fetch<Workshop[]>(workshopsQuery),
+    sanityFetch<SiteSettings | null>(siteSettingsQuery),
+    sanityFetch<Workshop[]>(workshopsQuery),
   ])
 
   const origin = siteOrigin()

@@ -22,20 +22,28 @@ const REPLY_TO =
   process.env.CONTACT_TO_EMAIL?.trim() ||
   undefined;
 
+const BOOKABLE = `_type in ["workshopSession", "workshop"]`;
+
 // zoomLink and zoomPasscode are deliberately NOT selected here. They ship 8 days out.
 const WORKSHOP_BY_SERIES_AND_SLUG = `*[
-  _type == "workshop" &&
+  ${BOOKABLE} &&
   slug.current == $slug &&
   series->slug.current == $series
 ][0]{
-  _id, sessionNumber, title, startsAt, durationMinutes,
+  _id,
+  "sessionNumber": coalesce(sessionNumber, topic->order),
+  "title": coalesce(topic->title, title),
+  startsAt, durationMinutes,
   "slug": slug.current, "seriesSlug": series->slug.current, "seriesTitle": series->title
 }`;
 
 const SERIES_BY_SLUG = `*[_type == "series" && slug.current == $slug][0]{ _id, title }`;
 
-const WORKSHOPS_IN_SERIES = `*[_type == "workshop" && series._ref == $seriesId] | order(sessionNumber asc){
-  _id, sessionNumber, title, startsAt, durationMinutes,
+const WORKSHOPS_IN_SERIES = `*[${BOOKABLE} && series._ref == $seriesId] | order(sessionNumber asc){
+  _id,
+  "sessionNumber": coalesce(sessionNumber, topic->order),
+  "title": coalesce(topic->title, title),
+  startsAt, durationMinutes,
   "slug": slug.current, "seriesSlug": series->slug.current, "seriesTitle": series->title
 }`;
 
@@ -184,7 +192,11 @@ async function handlePurchase(
 
   // Metadata is set on each Payment Link.
   // Pass: series_slug only. Single: workshop_slug + series_slug (both required).
-  const workshopSlug = session.metadata?.workshop_slug?.trim() || "";
+  // session_slug is the Phase 3 name; Fall Payment Links still send workshop_slug.
+  const workshopSlug =
+    session.metadata?.session_slug?.trim() ||
+    session.metadata?.workshop_slug?.trim() ||
+    "";
   const seriesSlug = session.metadata?.series_slug?.trim() || "";
 
   /* ---- full-series pass ---- */

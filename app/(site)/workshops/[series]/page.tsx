@@ -22,6 +22,10 @@ type Props = { params: Promise<{ series: string }> }
  * 2. workshop slug → 301 to /workshops/[series]/[slug]
  * 3. else 404
  *
+ * Phase 2: topic slugs currently hit (2) because Fall session slug == topic
+ * slug. The topic page must win at this path; keep Fall at the series-scoped
+ * URL until those 301 to the topic page.
+ *
  * Param is named `series` to match the nested /workshops/[series]/[slug]
  * routes — Next.js requires the same dynamic name at this path depth.
  *

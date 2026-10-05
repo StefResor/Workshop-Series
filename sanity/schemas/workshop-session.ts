@@ -1,9 +1,9 @@
-import { defineType, defineField } from 'sanity'
+import { defineField, defineType } from 'sanity'
 import { isUniqueWorkshopSlug } from '../lib/isUniqueWorkshopSlug'
 
-export const workshop = defineType({
-  name: 'workshop',
-  title: 'Workshop (legacy)',
+export const workshopSession = defineType({
+  name: 'workshopSession',
+  title: 'Workshop session',
   type: 'document',
   groups: [
     { name: 'content', title: 'Content', default: true },
@@ -13,19 +13,18 @@ export const workshop = defineType({
   ],
   fields: [
     defineField({
+      name: 'topic',
+      title: 'Topic',
+      type: 'reference',
+      to: [{ type: 'workshopTopic' }],
+      group: 'content',
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
       name: 'series',
       title: 'Series',
       type: 'reference',
       to: [{ type: 'series' }],
-      group: 'content',
-      description:
-        'The cohort this workshop belongs to. Determines pass eligibility, listing, and URL.',
-      validation: (rule) => rule.required(),
-    }),
-    defineField({
-      name: 'title',
-      title: 'Title',
-      type: 'string',
       group: 'content',
       validation: (rule) => rule.required(),
     }),
@@ -35,12 +34,12 @@ export const workshop = defineType({
       type: 'slug',
       group: 'content',
       options: {
-        source: 'title',
+        source: 'topic.slug.current',
         maxLength: 96,
         isUnique: isUniqueWorkshopSlug,
       },
       description:
-        'Unique within its series. Must not match any series slug (/workshops/[x] collision).',
+        'Fall keeps the legacy topic slug so URLs stay put. Later seasons use {topic-slug}-{yyyy-mm-dd}. Unique within the series.',
       validation: (rule) => rule.required(),
     }),
     defineField({
@@ -49,30 +48,8 @@ export const workshop = defineType({
       type: 'number',
       group: 'content',
       description:
-        'Position in the series. Displays everywhere as "Workshop 01". Field name is legacy — do not rename without a content migration.',
+        'Copied from the topic order. Displays as "Workshop 01". Keep in sync with topic.order.',
       validation: (rule) => rule.required().integer().min(1),
-    }),
-    defineField({
-      name: 'hook',
-      title: 'Hook',
-      type: 'string',
-      group: 'content',
-      description: 'One-line summary for cards, ICS, and social captions.',
-      validation: (rule) => rule.max(90),
-    }),
-    defineField({
-      name: 'shortDescription',
-      title: 'Short description',
-      type: 'text',
-      rows: 3,
-      group: 'content',
-    }),
-    defineField({
-      name: 'body',
-      title: 'Full description',
-      type: 'text',
-      rows: 12,
-      group: 'content',
     }),
     defineField({
       name: 'locationLabel',
@@ -86,16 +63,12 @@ export const workshop = defineType({
       title: 'Zoom registration URL',
       type: 'url',
       group: 'content',
-      description:
-        "Zoom's public registration page for this session (may appear on the site/feeds). Meeting join URL and passcode belong in Private.",
     }),
-
     defineField({
       name: 'startsAt',
       title: 'Starts at (UTC)',
       type: 'datetime',
       group: 'schedule',
-      description: 'Store UTC from docs/workshop-schedule.md. Do not enter local wall time here.',
       validation: (rule) => rule.required(),
     }),
     defineField({
@@ -104,7 +77,6 @@ export const workshop = defineType({
       type: 'number',
       group: 'schedule',
       initialValue: 90,
-      description: 'End time is derived from Starts at + Duration.',
       validation: (rule) => rule.required().integer().min(1),
     }),
     defineField({
@@ -124,15 +96,12 @@ export const workshop = defineType({
       },
       validation: (rule) => rule.required(),
     }),
-
     defineField({
       name: 'price',
       title: 'Price override',
       type: 'number',
       group: 'commerce',
-      description:
-        'Display only. The charged amount is set on the Stripe Payment Link.',
-      readOnly: true,
+      description: 'Display only. Leave empty to use the site default ($47).',
       validation: (rule) => rule.min(0),
     }),
     defineField({
@@ -140,7 +109,6 @@ export const workshop = defineType({
       title: 'Stripe Payment Link',
       type: 'url',
       group: 'commerce',
-      description: 'External Stripe Payment Link for this session.',
     }),
     defineField({
       name: 'registrationStatus',
@@ -158,8 +126,6 @@ export const workshop = defineType({
         layout: 'radio',
       },
       initialValue: 'draft',
-      description:
-        'Can buyers purchase this session. Past/upcoming is derived from Starts at — not set here.',
       validation: (rule) => rule.required(),
     }),
     defineField({
@@ -170,7 +136,6 @@ export const workshop = defineType({
       description: 'Leave empty for unlimited.',
       validation: (rule) => rule.min(1).integer(),
     }),
-
     defineField({
       name: 'stripeProductId',
       title: 'Stripe Product ID',
@@ -178,48 +143,51 @@ export const workshop = defineType({
       group: 'private',
       hidden: true,
       readOnly: true,
-      description: 'Deprecated — superseded by stripePaymentLink.',
     }),
     defineField({
       name: 'zoomLink',
       title: 'Zoom join URL',
       type: 'url',
       group: 'private',
-      description:
-        'Sent 8 days before the workshop and again on the day. Never published on the site.',
     }),
     defineField({
       name: 'zoomPasscode',
       title: 'Zoom passcode',
       type: 'string',
       group: 'private',
-      description:
-        'Sent 8 days before the workshop and again on the day. Never published on the site.',
     }),
   ],
   orderings: [
-    {
-      title: 'Session number',
-      name: 'sessionNumberAsc',
-      by: [{ field: 'sessionNumber', direction: 'asc' }],
-    },
     {
       title: 'Starts at',
       name: 'startsAtAsc',
       by: [{ field: 'startsAt', direction: 'asc' }],
     },
+    {
+      title: 'Workshop number',
+      name: 'sessionNumberAsc',
+      by: [{ field: 'sessionNumber', direction: 'asc' }],
+    },
   ],
   preview: {
     select: {
-      title: 'title',
+      topicTitle: 'topic.title',
       sessionNumber: 'sessionNumber',
       registrationStatus: 'registrationStatus',
       seriesTitle: 'series.title',
+      startsAt: 'startsAt',
     },
-    prepare({ title, sessionNumber, registrationStatus, seriesTitle }) {
+    prepare({
+      topicTitle,
+      sessionNumber,
+      registrationStatus,
+      seriesTitle,
+      startsAt,
+    }) {
+      const when = startsAt ? String(startsAt).slice(0, 10) : 'no date'
       return {
-        title: title || 'Untitled workshop',
-        subtitle: `${seriesTitle ?? 'No series'} · #${sessionNumber ?? '?'} · ${registrationStatus ?? 'draft'}`,
+        title: topicTitle || 'Untitled session',
+        subtitle: `${seriesTitle ?? 'No series'} · #${sessionNumber ?? '?'} · ${when} · ${registrationStatus ?? 'draft'}`,
       }
     },
   },
