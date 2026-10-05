@@ -105,6 +105,7 @@ export const siteSettingsQuery = `*[_type == "siteSettings"][0] {
   notificationsEnabled,
   defaultWorkshopPrice,
   sessionPrice,
+  seriesPassEnabled,
   seriesPrice,
   seriesEyebrow,
   seriesDisplayLine,
@@ -160,6 +161,15 @@ export const pageBySlugQuery = `*[_type == "page" && slug.current == $slug][0] {
   workshopsSpec,
   workshopsSpecTail,
   workshopsNote,
+  portrait {
+    alt,
+    hotspot,
+    crop,
+    asset->{
+      _id,
+      metadata { dimensions { width, height, aspectRatio } }
+    }
+  },
   summary,
   body,
   ctaLabel,

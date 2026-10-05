@@ -964,6 +964,21 @@ textarea {
   color: var(--muted);
 }
 
+.hero-ctas {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.hero-ctas .btn {
+  white-space: normal;
+  text-wrap: balance;
+  max-width: 520px;
+  line-height: 1.35;
+  text-align: left;
+}
+
 /* ——— Marquee ——— */
 .bigband {
   background: var(--vermillion);

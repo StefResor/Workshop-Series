@@ -1,9 +1,15 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
+import { urlForImage } from '@/lib/image'
 import { buildPageMetadata } from '@/lib/seo'
-import type { PageDoc } from '@/lib/types'
+import type { PageDoc, PagePortrait } from '@/lib/types'
 import { sanityFetch } from '@/sanity/lib/fetch'
 import { pageBySlugQuery } from '@/sanity/queries'
+
+const FALLBACK_SRC = '/stefanie-schumacher.webp'
+const FALLBACK_WIDTH = 1024
+const FALLBACK_HEIGHT = 951
+const DEFAULT_ALT = 'Portrait of Stefanie Schumacher, MS, LPC, EMDR'
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await sanityFetch<PageDoc | null>(pageBySlugQuery, {
@@ -25,6 +31,43 @@ function paragraphs(body?: string) {
     .filter(Boolean)
 }
 
+function portraitImage(portrait?: PagePortrait) {
+  const assetId = portrait?.asset?._id
+  if (!assetId) {
+    return {
+      src: FALLBACK_SRC,
+      width: FALLBACK_WIDTH,
+      height: FALLBACK_HEIGHT,
+      alt: DEFAULT_ALT,
+    }
+  }
+
+  const dims = portrait.asset?.metadata?.dimensions
+  const width = 800
+  const height = dims?.aspectRatio
+    ? Math.round(width / dims.aspectRatio)
+    : dims?.width && dims?.height
+      ? Math.round((width * dims.height) / dims.width)
+      : FALLBACK_HEIGHT
+
+  const src = urlForImage(
+    {
+      _type: 'image',
+      asset: { _ref: assetId, _type: 'reference' },
+      hotspot: portrait.hotspot,
+      crop: portrait.crop,
+    },
+    { width },
+  ).url()
+
+  return {
+    src,
+    width,
+    height,
+    alt: portrait.alt?.trim() || DEFAULT_ALT,
+  }
+}
+
 export default async function AboutPage() {
   const page = await sanityFetch<PageDoc | null>(pageBySlugQuery, {
     slug: 'about',
@@ -43,6 +86,7 @@ export default async function AboutPage() {
       p.startsWith('Practice:') ||
       p.startsWith('Discipline:'),
   )
+  const portrait = portraitImage(page?.portrait)
 
   return (
     <div className="about-grid">
@@ -50,10 +94,10 @@ export default async function AboutPage() {
       <aside className="about-sticky">
         <div className="about-portrait">
           <Image
-            src="/stefanie-schumacher.jpg"
-            alt="Portrait of Stefanie Schumacher, MS, LPC, EMDR"
-            width={676}
-            height={926}
+            src={portrait.src}
+            alt={portrait.alt}
+            width={portrait.width}
+            height={portrait.height}
             sizes="(max-width: 860px) 100vw, 380px"
             priority
             style={{ width: '100%', height: 'auto' }}

@@ -249,7 +249,7 @@ const pages = [
     heroJoin: 'none' as const,
     workshopsHeading: 'The Notice* Workshop Series.',
     workshopsSpec:
-      'Relational Diplomacy · Live · Wednesdays · 7:00–8:30 PM ET · Zoom · $47 per session, or $423 for the full series · Join any session, in any order · 18+',
+      'The Connection Workshop · Live · Wednesdays · 7:00–8:30 PM ET · Zoom · $47 per session · Join any session, in any order · 18+',
     workshopsNote:
       'Separate from the series, I see a small number of couples and individuals privately.',
     summary:
@@ -531,6 +531,7 @@ const siteSettingsDoc = {
   ogTitle: 'Stefanie Schumacher — Relational Diplomacy',
   defaultWorkshopPrice: 47, // CONFIRM WITH STEF — legacy alias of sessionPrice
   sessionPrice: 47, // CONFIRM WITH STEF
+  seriesPassEnabled: false,
   seriesPrice: 423, // CONFIRM WITH STEF
   seriesEyebrow: 'The Full Series',
   seriesDisplayLine: 'All Ten Sessions',
@@ -574,6 +575,9 @@ const emailSignupDoc = {
 }
 
 async function main() {
+  const aboutPortrait = await client.fetch<unknown>(
+    `*[_id == "page-about"][0].portrait`,
+  )
   const tx = client.transaction()
 
   tx.createOrReplace(siteSettingsDoc)
@@ -637,6 +641,9 @@ async function main() {
         ? { workshopsSpecTail: p.workshopsSpecTail }
         : {}),
       ...('workshopsNote' in p ? { workshopsNote: p.workshopsNote } : {}),
+      ...(p._id === 'page-about' && aboutPortrait
+        ? { portrait: aboutPortrait }
+        : {}),
       summary: p.summary,
       body: p.body,
       ctaLabel: p.ctaLabel,

@@ -97,6 +97,14 @@ export const siteSettings = defineType({
       validation: (rule) => rule.required().min(0),
     }),
     defineField({
+      name: 'seriesPassEnabled',
+      title: 'Offer full-series pass',
+      type: 'boolean',
+      initialValue: false,
+      description:
+        'When off, hide the All Ten Sessions offer everywhere. Stripe links and prices stay in Studio.',
+    }),
+    defineField({
       name: 'seriesPrice',
       title: 'Full series price',
       type: 'number',

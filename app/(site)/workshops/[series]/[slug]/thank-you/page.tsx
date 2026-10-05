@@ -4,6 +4,9 @@ import Stripe from 'stripe'
 import { client as sanity } from '@/sanity/lib/client'
 import { CREDENTIALS_LEAD_DAYS } from '@/lib/email/theme'
 import { workshopIcsPath } from '@/lib/workshop-paths'
+import { isSeriesPassEnabled } from '@/lib/workshop-price'
+import { siteSettingsQuery } from '@/sanity/queries'
+import type { SiteSettings } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
 
@@ -105,6 +108,10 @@ export default async function ThankYou({ params, searchParams }: Props) {
   }
 
   const hasDetails = Boolean(workshop?.startsAt)
+  const settings = await sanity
+    .fetch<SiteSettings | null>(siteSettingsQuery)
+    .catch(() => null)
+  const showSeriesCta = isSeriesPassEnabled(settings)
   const start = hasDetails ? new Date(workshop.startsAt) : null
   const duration = workshop?.durationMinutes ?? 90
   const end = start ? new Date(start.getTime() + duration * 60_000) : null
@@ -233,9 +240,15 @@ export default async function ThankYou({ params, searchParams }: Props) {
             <a className="btn" href={workshopIcsPath(series, slug)}>
               Add to calendar
             </a>
-            <Link className="btn btn-outline" href="/workshops">
-              See the full series
-            </Link>
+            {showSeriesCta ? (
+              <Link className="btn btn-outline" href="/workshops">
+                See the full series
+              </Link>
+            ) : (
+              <Link className="btn btn-outline" href="/workshops">
+                See all workshops
+              </Link>
+            )}
           </div>
         </section>
       )}
@@ -254,7 +267,7 @@ export default async function ThankYou({ params, searchParams }: Props) {
       {!hasDetails ? (
         <div className="thank-you-actions thank-you-actions--solo">
           <Link className="btn btn-outline" href="/workshops">
-            See the full series
+            {showSeriesCta ? 'See the full series' : 'See all workshops'}
           </Link>
         </div>
       ) : null}

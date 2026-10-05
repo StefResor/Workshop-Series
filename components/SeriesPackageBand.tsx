@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import type { SiteSettings } from '@/lib/types'
 import { seriesPackagePath } from '@/lib/workshop-paths'
+import { isSeriesPassEnabled } from '@/lib/workshop-price'
 import { sanityFetch } from '@/sanity/lib/fetch'
 import { activeSeriesSlugQuery } from '@/sanity/queries'
 
@@ -17,7 +18,8 @@ export async function SeriesPackageBand({
   const seriesPrice = settings?.seriesPrice
   const displayLine = settings?.seriesDisplayLine?.trim()
   // Offer band needs a price and a display line — never invent either.
-  if (seriesPrice == null || !displayLine) return null
+  if (!isSeriesPassEnabled(settings) || seriesPrice == null || !displayLine)
+    return null
 
   const active = await sanityFetch<{ slug: string } | null>(
     activeSeriesSlugQuery,

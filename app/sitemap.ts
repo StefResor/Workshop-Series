@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { absoluteUrl } from '@/lib/site-url'
+import { isSeriesPassEnabled } from '@/lib/workshop-price'
 import { sanityFetch } from '@/sanity/lib/fetch'
 import {
   activeSeriesSlugQuery,
@@ -43,6 +44,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   if (
+    isSeriesPassEnabled(settings) &&
     settings?.seriesPrice != null &&
     settings?.seriesDisplayLine?.trim() &&
     activeSeries?.slug

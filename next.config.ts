@@ -6,6 +6,15 @@ const nextConfig: NextConfig = {
   experimental: {
     useTypeScriptCli: true,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'cdn.sanity.io',
+        pathname: '/images/**',
+      },
+    ],
+  },
   async rewrites() {
     // Public URLs stay /terms and /privacy; pages live under /policies/[slug].
     return [

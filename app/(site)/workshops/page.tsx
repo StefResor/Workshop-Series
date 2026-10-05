@@ -6,7 +6,7 @@ import { formatWorkshopDisplay } from '@/lib/datetime'
 import { buildPageMetadata } from '@/lib/seo'
 import type { SiteSettings, Workshop } from '@/lib/types'
 import { workshopPath } from '@/lib/workshop-paths'
-import { workshopSeriesPriceClause } from '@/lib/workshop-price'
+import { isSeriesPassEnabled, workshopSeriesPriceClause } from '@/lib/workshop-price'
 import { sanityFetch } from '@/sanity/lib/fetch'
 import {
   siteSettingsQuery,
@@ -39,7 +39,11 @@ function sortWithinSeries(a: Workshop, b: Workshop) {
   return a.startsAt.localeCompare(b.startsAt)
 }
 
-function canShowSeriesPass(series: SeriesRow): boolean {
+function canShowSeriesPass(
+  series: SeriesRow,
+  settings: SiteSettings | null,
+): boolean {
+  if (!isSeriesPassEnabled(settings)) return false
   const link = series.passPaymentLink?.trim()
   return series.passPrice != null && series.passPrice > 0 && Boolean(link)
 }
@@ -51,7 +55,10 @@ export default async function WorkshopsPage() {
     sanityFetch<SiteSettings | null>(siteSettingsQuery),
   ])
 
-  const priceClause = workshopSeriesPriceClause(settings)
+  const priceClause = workshopSeriesPriceClause(
+    settings,
+    isSeriesPassEnabled(settings) ? undefined : null,
+  )
   const bySeries = new Map<string, Workshop[]>()
   for (const w of workshops || []) {
     const key = w.seriesSlug || 'unknown'
@@ -95,7 +102,7 @@ export default async function WorkshopsPage() {
         ) : (
           orderedSeries.map((series) => {
             const rows = bySeries.get(series.slug) || []
-            const showPass = canShowSeriesPass(series)
+            const showPass = canShowSeriesPass(series, settings)
             return (
               <div key={series._id} className="workshop-series-group">
                 <h3 className="workshop-series-group-title">{series.title}</h3>

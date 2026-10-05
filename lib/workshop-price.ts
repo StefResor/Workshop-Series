@@ -1,6 +1,15 @@
 import type { SiteSettings, Workshop } from '@/lib/types'
 
 /**
+ * Full-series pass is opt-in. Unset documents stay hidden.
+ */
+export function isSeriesPassEnabled(
+  settings?: Pick<SiteSettings, 'seriesPassEnabled'> | null,
+): boolean {
+  return settings?.seriesPassEnabled === true
+}
+
+/**
  * Canonical per-session default from site settings.
  * Prefer sessionPrice; fall back to legacy defaultWorkshopPrice.
  * Never invent a JSX fallback — return null when unset.
@@ -41,7 +50,14 @@ export function workshopSeriesPriceClause(
   passPrice?: number | null,
 ): string {
   const session = resolveSessionPrice(settings)
-  const series = passPrice != null ? passPrice : settings?.seriesPrice
+  // `null` means the caller suppressed the pass (flag off).
+  // `undefined` falls back to site settings.
+  const series =
+    passPrice === null
+      ? null
+      : passPrice != null
+        ? passPrice
+        : settings?.seriesPrice
   if (session != null && series != null) {
     return ` · $${session} per session, or $${series} for the full series`
   }

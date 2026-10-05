@@ -8,7 +8,7 @@ import { breadcrumbJsonLd, workshopEventJsonLd } from '@/lib/schema'
 import { buildPageMetadata } from '@/lib/seo'
 import type { SiteSettings, Workshop } from '@/lib/types'
 import { DEFAULT_WORKSHOP_DISCLAIMER } from '@/lib/workshop-disclaimer'
-import { resolveWorkshopPrice } from '@/lib/workshop-price'
+import { resolveWorkshopPrice, isSeriesPassEnabled } from '@/lib/workshop-price'
 import { workshopPath } from '@/lib/workshop-paths'
 import { sanityFetch } from '@/sanity/lib/fetch'
 import {
@@ -113,7 +113,8 @@ export default async function WorkshopDetailPage({ params }: Props) {
   const seriesTitle = workshop.seriesTitle
   const seriesPassPrice = workshop.seriesPassPrice
   const showSeriesBand = Boolean(
-    workshop.seriesPassPaymentLink &&
+    isSeriesPassEnabled(settings) &&
+      workshop.seriesPassPaymentLink &&
       seriesPassPrice != null &&
       seriesSlug &&
       seriesTitle &&

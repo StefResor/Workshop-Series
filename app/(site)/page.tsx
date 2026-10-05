@@ -15,6 +15,7 @@ import type {
 } from '@/lib/types'
 import {
   composeWorkshopSeriesSpecLine,
+  isSeriesPassEnabled,
   resolveSessionPrice,
 } from '@/lib/workshop-price'
 import { sanityFetch } from '@/sanity/lib/fetch'
@@ -75,13 +76,18 @@ export default async function HomePage() {
   const couples = services?.find((s) => s.slug.includes('couples'))
   const individuals = services?.find((s) => s.slug.includes('individual'))
   const workshopDefault = resolveSessionPrice(settings)
-  const passPrice =
-    activeSeries?.passPrice != null
+  const passOffered = isSeriesPassEnabled(settings)
+  const passPrice = passOffered
+    ? activeSeries?.passPrice != null
       ? activeSeries.passPrice
       : (settings?.seriesPrice ?? null)
+    : null
   // Prefer authored subhead; fall back to composed line until Studio is populated.
+  // When the pass is hidden, skip authored copy that still advertises it.
+  const authoredSpec = home?.workshopsSpec?.trim()
+  const authoredMentionsPass = /\bfull series\b/i.test(authoredSpec || '')
   const workshopsSpecLine =
-    home?.workshopsSpec?.trim() ||
+    (passOffered || !authoredMentionsPass ? authoredSpec : '') ||
     composeWorkshopSeriesSpecLine({
       sessionPrice: workshopDefault,
       passPrice,
@@ -103,6 +109,9 @@ export default async function HomePage() {
   // Marquee keywords from CMS with fallback to hardcoded defaults
   const marqueeKeywords =
     settings?.marqueeKeywords?.length ? settings.marqueeKeywords : METHOD
+  const nextWorkshop = (workshops || []).find(
+    (w) => Boolean(w.seriesSlug) && Boolean(w.slug),
+  )
 
   return (
     <>
@@ -128,9 +137,22 @@ export default async function HomePage() {
                 {home?.summary ||
                   'Structured, direct relationship work for high-responsibility professionals and leaders. Deliberately small caseload. Private-pay, online, and discreet — all adults welcome.'}
               </p>
-              <Link className="btn" href={home?.ctaHref || '/contact'}>
-                {home?.ctaLabel || 'Request a Consultation'}
-              </Link>
+              <div className="hero-ctas">
+                {nextWorkshop ? (
+                  <Link
+                    className="btn"
+                    href={workshopPath(
+                      nextWorkshop.seriesSlug!,
+                      nextWorkshop.slug,
+                    )}
+                  >
+                    Register for {nextWorkshop.title}
+                  </Link>
+                ) : null}
+                <Link className="btn btn-outline" href="/workshops">
+                  Check out our upcoming workshops
+                </Link>
+              </div>
             </div>
           </div>
         </section>

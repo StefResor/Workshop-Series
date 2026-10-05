@@ -1,9 +1,10 @@
 import type { Metadata } from 'next'
-import { notFound, permanentRedirect } from 'next/navigation'
+import { notFound, permanentRedirect, redirect } from 'next/navigation'
 import { SeriesPackageContent } from '@/components/SeriesPackageContent'
 import { buildPageMetadata } from '@/lib/seo'
 import type { Series, SiteSettings, Workshop } from '@/lib/types'
 import { seriesPackagePath, workshopPath } from '@/lib/workshop-paths'
+import { isSeriesPassEnabled } from '@/lib/workshop-price'
 import { sanityFetch } from '@/sanity/lib/fetch'
 import {
   seriesBySlugQuery,
@@ -42,6 +43,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   })
   if (series) {
     const settings = await sanityFetch<SiteSettings | null>(siteSettingsQuery)
+    if (!isSeriesPassEnabled(settings)) {
+      return { title: 'Workshops' }
+    }
     const title =
       settings?.seriesDisplayLine?.trim() ||
       settings?.seriesEyebrow?.trim() ||
@@ -71,6 +75,9 @@ export default async function WorkshopsSeriesSegmentPage({ params }: Props) {
         series: series.slug,
       }),
     ])
+    if (!isSeriesPassEnabled(settings)) {
+      redirect('/workshops')
+    }
     if (
       !settings ||
       settings.seriesPrice == null ||

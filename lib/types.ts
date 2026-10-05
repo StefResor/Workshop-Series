@@ -50,6 +50,8 @@ export type SiteSettings = {
   /** @deprecated Prefer sessionPrice */
   defaultWorkshopPrice?: number
   sessionPrice?: number
+  /** When true, show the full-series pass offer. Unset/false hides it. */
+  seriesPassEnabled?: boolean
   seriesPrice?: number
   seriesEyebrow?: string
   seriesDisplayLine?: string
@@ -93,6 +95,18 @@ export type Service = {
 
 export type HeroJoin = 'break' | 'space' | 'none'
 
+export type PagePortrait = {
+  alt?: string
+  hotspot?: { x: number; y: number; height: number; width: number }
+  crop?: { top: number; bottom: number; left: number; right: number }
+  asset?: {
+    _id: string
+    metadata?: {
+      dimensions?: { width: number; height: number; aspectRatio?: number }
+    }
+  }
+}
+
 export type PageDoc = {
   _id: string
   title: string
@@ -112,6 +126,7 @@ export type PageDoc = {
   /** @deprecated Use workshopsSpec. Kept for fallback until migrated. */
   workshopsSpecTail?: string
   workshopsNote?: string
+  portrait?: PagePortrait
   summary?: string
   body?: string
   ctaLabel?: string

@@ -10,6 +10,10 @@ function isHomePage(document: unknown): boolean {
   return pageSlugCurrent(document) === 'home'
 }
 
+function isAboutPage(document: unknown): boolean {
+  return pageSlugCurrent(document) === 'about'
+}
+
 export const page = defineType({
   name: 'page',
   title: 'Page',
@@ -128,6 +132,24 @@ export const page = defineType({
       group: 'workshopsIntro',
     }),
     defineField({
+      name: 'portrait',
+      title: 'Headshot',
+      type: 'image',
+      group: 'content',
+      hidden: ({ document }) => !isAboutPage(document),
+      options: { hotspot: true },
+      description:
+        'About page portrait. Upload the original photo — the site serves WebP (and other formats) from the image CDN. Drag the hotspot to set the crop.',
+      fields: [
+        defineField({
+          name: 'alt',
+          type: 'string',
+          title: 'Alternative text',
+          initialValue: 'Portrait of Stefanie Schumacher, MS, LPC, EMDR',
+        }),
+      ],
+    }),
+    defineField({
       name: 'summary',
       title: 'Summary',
       type: 'text',
@@ -144,11 +166,17 @@ export const page = defineType({
       name: 'ctaLabel',
       title: 'CTA label',
       type: 'string',
+      description:
+        'Unused on the home page — the hero buttons are derived from the next upcoming workshop. Still used on other pages if wired.',
+      hidden: ({ document }) => isHomePage(document),
     }),
     defineField({
       name: 'ctaHref',
       title: 'CTA href',
       type: 'string',
+      description:
+        'Unused on the home page — the hero buttons are derived from the next upcoming workshop.',
+      hidden: ({ document }) => isHomePage(document),
     }),
   ],
   preview: {
