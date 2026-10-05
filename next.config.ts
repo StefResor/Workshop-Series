@@ -110,6 +110,16 @@ const nextConfig: NextConfig = {
         destination: '/workshops/the-art-of-the-apology',
         permanent: true,
       },
+      {
+        source: '/studio/structure/workshops/:id/dates',
+        destination: '/studio/structure/workshops/:id/topic',
+        permanent: false,
+      },
+      {
+        source: '/studio/structure/schedule/:id/season',
+        destination: '/studio/structure/schedule/:id',
+        permanent: false,
+      },
     ]
   },
 }
