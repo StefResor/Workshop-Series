@@ -979,6 +979,21 @@ textarea {
   text-align: left;
 }
 
+@media (min-width: 861px) {
+  .hero-ctas {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .hero-ctas .btn {
+    white-space: nowrap;
+    max-width: none;
+    text-align: center;
+  }
+}
+
 /* ——— Marquee ——— */
 .bigband {
   background: var(--vermillion);
