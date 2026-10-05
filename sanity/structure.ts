@@ -30,21 +30,15 @@ function topicEditor(S: StructureBuilder, rawId: string) {
     .schemaType('workshopTopic')
     .documentId(topicId)
     .views([S.view.form().id('topic')])
-    .child((nextId) =>
-      RETIRED_PANE_IDS.has(paneId(nextId))
-        ? topicEditor(S, topicId)
-        : S.document()
-            .schemaType('workshopTopic')
-            .documentId(topicId),
+    .child(() =>
+      S.document()
+        .schemaType('workshopTopic')
+        .documentId(topicId)
+        .views([S.view.form().id('topic')]),
     )
 }
 
 function seriesDates(S: StructureBuilder, seriesId: string) {
-  const createItems = S.menuItemsFromInitialValueTemplateItems(
-    S.defaultInitialValueTemplateItems().filter(
-      (item) => item.getTemplateId() === 'workshopSession',
-    ),
-  )
   return S.documentList()
     .title('Dates')
     .schemaType('workshopSession')
@@ -56,15 +50,11 @@ function seriesDates(S: StructureBuilder, seriesId: string) {
         .title('Edit season')
         .showAsAction(true)
         .intent({ type: 'edit', params: { type: 'series', id: seriesId } }),
-      ...createItems,
     ])
     .child((rawId) => {
       const id = paneId(rawId)
-      if (id === 'season') {
+      if (RETIRED_PANE_IDS.has(id)) {
         return S.document().schemaType('series').documentId(seriesId)
-      }
-      if (id === 'dates') {
-        return seriesDates(S, seriesId)
       }
       return S.document().schemaType('workshopSession').documentId(id)
     })
