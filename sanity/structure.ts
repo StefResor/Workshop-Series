@@ -26,16 +26,16 @@ function paneId(rawId: string) {
 
 function topicEditor(S: StructureBuilder, rawId: string) {
   const topicId = paneId(rawId)
-  return S.document()
-    .schemaType('workshopTopic')
-    .documentId(topicId)
-    .views([S.view.form().id('topic')])
-    .child(() =>
-      S.document()
-        .schemaType('workshopTopic')
-        .documentId(topicId)
-        .views([S.view.form().id('topic')]),
-    )
+  const editor = () =>
+    S.document().schemaType('workshopTopic').documentId(topicId)
+  return S.list()
+    .id(topicId)
+    .title('Workshop')
+    .items([
+      S.listItem().id('topic').title('Topic').child(editor()),
+      // Leftover pane from the old Topic/Dates desk. Same editor — dates live under Schedule.
+      S.listItem().id('dates').title('Topic').child(editor()),
+    ])
 }
 
 function seriesDates(S: StructureBuilder, seriesId: string) {
