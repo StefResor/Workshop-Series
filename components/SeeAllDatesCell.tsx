@@ -9,7 +9,7 @@ export function SeeAllDatesCell() {
         Every workshop returns in Winter, Spring and Summer.
       </h2>
       <Link className="see-all-dates-cta" href="/workshops#all-workshops">
-        See all dates <span aria-hidden="true">→</span>
+        See all workshops <span aria-hidden="true">→</span>
       </Link>
     </aside>
   )
