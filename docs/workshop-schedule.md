@@ -35,7 +35,9 @@ For sessions 9 and 10, 7:00 PM Eastern is **exactly midnight UTC**, so the **UTC
 9. The Art of Generosity & Empowering Your Partner  
 10. The Art of the Apology  
 
-Price: default **$47** per participant on `siteSettings.defaultWorkshopPrice` (mark `// CONFIRM WITH STEF` in seed). Per-workshop `price` is an optional override. Location: Zoom. Status: published.
+Price: default **$47** per participant on `siteSettings.sessionPrice` (mark `// CONFIRM WITH STEF` in seed). Per-session `price` is an optional override. Location: Zoom. Status: open.
+
+Live Fall 2026 window (moved): first session **Wednesday 28 October 2026**, last **Wednesday 20 January 2027**. The UTC table above is the DST fixture for `scripts/timezone-assertion.ts` — do not rewrite those strings.
 
 ## Timezone assertion (write this test before any feed code)
 
@@ -45,29 +47,24 @@ Using `America/New_York`:
 2. Session **10** (`2026-11-12T00:00:00.000Z`) renders local time **7:00 PM** with label **ET**.  
 3. Session **10** local **calendar date** is **Wednesday, November 11, 2026** — not Thursday Nov 12.
 
-## Workshop schema fields
+## Content model
 
-Document type: `workshop`
+Evergreen copy lives on `workshopTopic` (title, slug, hook ≤90, shortDescription, description). Dated offerings are `workshopSession` (topic + series + startsAt + Payment Link). There is no `workshop` document type.
 
-| Field | Type | Notes |
+| Session field | Type | Notes |
 |---|---|---|
-| `title` | string | required |
-| `slug` | slug | from title (no `workshop-N-` prefix) |
-| `sessionNumber` | number | 1–10 |
-| `startsAt` | datetime | UTC ISO from table |
-| `endsAt` | datetime | UTC ISO from table |
+| `topic` | reference | `workshopTopic` |
+| `series` | reference | season (`fall-2026`, …) |
+| `slug` | slug | Fall keeps the topic slug; later seasons use `{topic-slug}-{yyyy-mm-dd}` |
+| `sessionNumber` | number | 1–10, copied from `topic.order` |
+| `startsAt` | datetime | UTC ISO |
 | `timeZone` | string | always `America/New_York` |
-| `price` | number | optional override; else `siteSettings.defaultWorkshopPrice` ($47 seeded) |
-| `hook` | string | max ~90 chars; cards / social |
+| `price` | number | optional override; else `siteSettings.sessionPrice` ($47) |
 | `stripePaymentLink` | url | Stripe Payment Link (public CTA) |
+| `stripeProductId` | string | **Private** — written when the season script creates the link |
 | `capacity` | number | optional; empty = unlimited |
-| `registrationStatus` | string | `draft` \| `open` \| `sold-out` \| `past` |
-| `shortDescription` | text | feed / cards |
-| `body` | text | full event page (plain text paragraphs for now) |
-| `status` | string | `published` \| `draft` |
-| `zoomRegistrationUrl` | url | Zoom public registration page (may appear on site/feeds) |
+| `registrationStatus` | string | `draft` \| `open` \| `closed` \| `sold-out` \| `cancelled` |
 | `locationLabel` | string | default `Zoom` |
-| `stripeProductId` | string | **Deprecated / private** — hidden in Studio; superseded by Payment Link metadata |
 | `zoomLink` | url | **Private** — Zoom join URL for credentials cron (never on the public site) |
 | `zoomPasscode` | string | **Private** — Zoom passcode for credentials cron |
 

@@ -20,8 +20,7 @@ export type RegistrationInput = {
   email: string;
   firstName?: string;
   stripeSessionId: string;
-  source: "single" | "pass";
-  passId?: string;
+  source: "single";
   /** From `!event.livemode` — required, never defaulted at call sites. */
   testMode: boolean;
 };
@@ -51,12 +50,7 @@ export function registrationId(
 
 /**
  * Idempotent. Safe to call twice for the same (mode, workshop, email) — Stripe
- * does retry webhooks, and someone who bought a single workshop and later
- * upgraded to a pass must not end up with two registrations and two of every
- * email within the same mode.
- *
- * An existing 'single' registration is never downgraded to 'pass': they paid
- * for it directly, and that's the record worth keeping.
+ * does retry webhooks.
  */
 export async function createRegistration(input: RegistrationInput) {
   const _id = registrationId(input.workshopId, input.email, input.testMode);
@@ -68,15 +62,13 @@ export async function createRegistration(input: RegistrationInput) {
     email: input.email.trim().toLowerCase(),
     firstName: input.firstName,
     source: input.source,
-    passId: input.passId,
     stripeSessionId: input.stripeSessionId,
     status: "active",
     testMode: input.testMode,
     registeredAt: new Date().toISOString(),
   });
 
-  // Reactivate only on a genuinely new purchase after a refund — never when
-  // fanOutSeriesPass backfills a workshop onto an already-refunded pass.
+  // Reactivate only on a genuinely new purchase after a refund.
   // Test/live IDs cannot collide, so a test retry cannot flip a live row.
   const existing = await writeClient.fetch<{
     status?: string;
@@ -98,52 +90,7 @@ export async function createRegistration(input: RegistrationInput) {
 }
 
 /**
- * A series pass writes one registration per workshop in the series.
- *
- * Ten records rather than one membership flag: every send has a single code
- * path, headcount per workshop is a real number, and a refund voids the whole
- * set by passId in one query.
- *
- * Re-runnable. If a workshop is added to the series after passes were sold,
- * calling this again with the same passId backfills only the missing rows.
- */
-export async function fanOutSeriesPass(opts: {
-  seriesId: string;
-  email: string;
-  firstName?: string;
-  stripeSessionId: string;
-  testMode: boolean;
-}) {
-  const workshops: { _id: string }[] = await writeClient.fetch(
-    `*[_type in ["workshopSession", "workshop"] && series._ref == $seriesId]{ _id }`,
-    { seriesId: opts.seriesId },
-  );
-
-  if (workshops.length === 0) {
-    throw new Error(
-      `Series pass purchased but series ${opts.seriesId} has no workshops`,
-    );
-  }
-
-  for (const w of workshops) {
-    await createRegistration({
-      workshopId: w._id,
-      email: opts.email,
-      firstName: opts.firstName,
-      stripeSessionId: opts.stripeSessionId,
-      source: "pass",
-      passId: opts.stripeSessionId,
-      testMode: opts.testMode,
-    });
-  }
-
-  return workshops.length;
-}
-
-/**
- * Refund handling. Voids by Stripe Checkout Session ID, which covers both a
- * single workshop and an entire pass fan-out — the pass writes its session ID
- * onto all ten rows. Mode-agnostic: test session IDs only exist in test mode.
+ * Refund handling. Voids by Stripe Checkout Session ID.
  *
  * Refunded registrations stay in the dataset rather than being deleted: the
  * record of what happened is worth more than the tidiness, and status is what
@@ -151,7 +98,7 @@ export async function fanOutSeriesPass(opts: {
  */
 export async function voidRegistrations(stripeSessionId: string) {
   const ids: string[] = await writeClient.fetch(
-    `*[_type == "registration" && (stripeSessionId == $sid || passId == $sid)]._id`,
+    `*[_type == "registration" && stripeSessionId == $sid]._id`,
     { sid: stripeSessionId },
   );
 

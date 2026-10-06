@@ -27,6 +27,3 @@ meetings/
 ideas/
 .env*
 .vercel-token
-
-# Zoom passcodes for Winter/Spring/Summer sessions
-scripts/data/workshops-seed-2027.ndjson

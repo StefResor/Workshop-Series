@@ -1,6 +1,8 @@
 /**
  * Create a live Stripe product + Payment Link for every open session in the
- * given series that has no stripePaymentLink yet, and write the link to Sanity.
+ * given series that has no stripePaymentLink yet, and write the link and
+ * stripeProductId to Sanity. Sessions that already have a link but no
+ * product ID get the ID from that link's product.
  * Default series: winter-2027, spring-2027, summer-2027 (30 sessions).
  *
  * Per session: product "Workshop NN: <topic title> (<Series label>)" with a
@@ -79,7 +81,7 @@ async function main() {
   const sessions = await sanity.fetch(
     `*[_type == "workshopSession" && series->slug.current in $series && !(_id in path("drafts.**"))]
       | order(startsAt asc){
-        _id, "slug": slug.current, startsAt, durationMinutes, price, registrationStatus, stripePaymentLink,
+        _id, "slug": slug.current, startsAt, durationMinutes, price, registrationStatus, stripePaymentLink, stripeProductId,
         "num": coalesce(sessionNumber, topic->order), "title": topic->title,
         "seriesSlug": series->slug.current, "seriesLabel": coalesce(series->label, series->title)
       }`,
@@ -89,9 +91,28 @@ async function main() {
 
   const products = await listAll((p) => stripe.products.list(p), { active: true })
   const productBySession = new Map(products.filter((p) => p.metadata?.session_slug).map((p) => [`${p.metadata.series_slug}/${p.metadata.session_slug}`, p]))
+  const links = await listAll((p) => stripe.paymentLinks.list(p), { active: true })
+  const linkByUrl = new Map(links.map((l) => [l.url, l]))
+  const productFromLink = new Map()
+
+  async function productIdForLink(url) {
+    if (!url) return null
+    if (productFromLink.has(url)) return productFromLink.get(url)
+    const link = linkByUrl.get(url)
+    if (!link) {
+      productFromLink.set(url, null)
+      return null
+    }
+    const items = await stripe.paymentLinks.listLineItems(link.id, { limit: 10 })
+    const raw = items.data[0]?.price?.product
+    const id = typeof raw === 'string' ? raw : raw?.id || null
+    productFromLink.set(url, id)
+    return id
+  }
 
   let problems = 0
   const todo = []
+  const backfill = []
   for (const s of sessions) {
     const label = `${s.seriesSlug} ${pad(s.num)} ${etDate(s.startsAt)}`
     if (!s.title || !s.slug || !s.startsAt || !s.num) {
@@ -100,7 +121,25 @@ async function main() {
       continue
     }
     if (s.stripePaymentLink) {
-      console.log(`· ${label} already has a link (${s.stripePaymentLink}) — skip`)
+      if (s.stripeProductId) {
+        console.log(`· ${label} already has a link and product — skip`)
+        continue
+      }
+      const fromMeta = productBySession.get(`${s.seriesSlug}/${s.slug}`)?.id
+      const fromLink = await productIdForLink(s.stripePaymentLink)
+      const productId = fromLink || fromMeta
+      if (!productId) {
+        console.error(`✗ ${label} has a link but no Stripe product could be resolved`)
+        problems++
+        continue
+      }
+      if (fromLink && fromMeta && fromLink !== fromMeta) {
+        console.error(`✗ ${label} product mismatch: link ${fromLink} vs metadata ${fromMeta}`)
+        problems++
+        continue
+      }
+      backfill.push({ s, label, productId })
+      console.log(`~ ${label} backfill stripeProductId ${productId}`)
       continue
     }
     if (s.registrationStatus !== 'open') console.log(`! ${label} status is ${s.registrationStatus} — link still created`)
@@ -121,7 +160,7 @@ async function main() {
     console.log(`    redirect ${row.redirect}`)
   }
 
-  console.log(`\n${todo.length} link(s) to create.`)
+  console.log(`\n${todo.length} link(s) to create. ${backfill.length} product ID(s) to backfill.`)
   if (problems) {
     console.error(`${problems} problem(s); nothing written.`)
     process.exit(1)
@@ -129,6 +168,11 @@ async function main() {
   if (!commit) {
     console.log('Dry run. Re-run with --commit.')
     return
+  }
+
+  for (const b of backfill) {
+    await sanity.patch(b.s._id).set({ stripeProductId: b.productId }).commit()
+    console.log(`✓ ${b.label}  stripeProductId ${b.productId}`)
   }
 
   for (const r of todo) {
@@ -150,7 +194,7 @@ async function main() {
       consent_collection: { terms_of_service: 'required' },
       after_completion: { type: 'redirect', redirect: { url: r.redirect } },
     })
-    await sanity.patch(r.s._id).set({ stripePaymentLink: link.url }).commit()
+    await sanity.patch(r.s._id).set({ stripePaymentLink: link.url, stripeProductId: product.id }).commit()
     console.log(`✓ ${r.label}  ${product.id}  ${link.url}`)
   }
   console.log('\nDone.')

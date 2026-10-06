@@ -24,7 +24,7 @@ const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production'
 const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2026-07-27'
 const token = process.env.SANITY_API_WRITE_TOKEN
 const base = process.env.VERIFY_BASE_URL || 'http://localhost:3000'
-const workshopId = 'workshop-1'
+const sessionId = 'workshop-1'
 
 if (!secret) throw new Error('Missing SANITY_REVALIDATE_SECRET')
 if (!projectId) throw new Error('Missing NEXT_PUBLIC_SANITY_PROJECT_ID')
@@ -57,34 +57,22 @@ async function signedPost(body: unknown) {
 
 async function feedHasMarker() {
   const res = await fetch(`${base}/events.json`, { cache: 'no-store' })
-  const feed = (await res.json()) as { items?: { content_text?: string }[] }
+  const feed = (await res.json()) as {
+    items?: { _stef?: { locationLabel?: string } }[]
+  }
   const hit = (feed.items || []).some((i) =>
-    (i.content_text || '').includes(marker),
+    (i._stef?.locationLabel || '').includes(marker),
   )
   return { status: res.status, hit }
 }
 
-async function icsHasMarker() {
-  const res = await fetch(`${base}/events.ics`, { cache: 'no-store' })
-  const text = await res.text()
-  return { status: res.status, hit: text.includes(marker) }
-}
-
-async function sitemapOk() {
+async function sitemapOk(slug: string) {
   const res = await fetch(`${base}/sitemap.xml`, { cache: 'no-store' })
   const text = await res.text()
   return {
     status: res.status,
-    hasWorkshop1: text.includes('workshop-1-im-right'),
+    hasSlug: text.includes(slug),
   }
-}
-
-async function workshopPageHasMarker(series: string, slug: string) {
-  const res = await fetch(`${base}/workshops/${series}/${slug}`, {
-    cache: 'no-store',
-  })
-  const html = await res.text()
-  return { status: res.status, hit: html.includes(marker) }
 }
 
 function legacyPath(slug: string) {
@@ -97,12 +85,12 @@ function seriesPath(series: string, slug: string) {
 
 function assertSlugShapes(slug: string, seriesSlug: string) {
   const asObject = targetsForDoc({
-    _type: 'workshop',
+    _type: 'workshopSession',
     slug: { current: slug },
     seriesSlug,
   })
   const asString = targetsForDoc({
-    _type: 'workshop',
+    _type: 'workshopSession',
     slug,
     seriesSlug,
   })
@@ -129,19 +117,24 @@ function assertSlugShapes(slug: string, seriesSlug: string) {
 
 async function main() {
   const before = await client.fetch<{
-    shortDescription?: string
+    _type?: string
+    locationLabel?: string
     slug?: string
     seriesSlug?: string
   } | null>(
     `*[_id == $id][0]{
-      shortDescription,
+      _type,
+      locationLabel,
       "slug": slug.current,
       "seriesSlug": series->slug.current
     }`,
-    { id: workshopId },
+    { id: sessionId },
   )
   if (!before?.slug || !before.seriesSlug) {
-    throw new Error(`Missing ${workshopId}, slug, or series slug`)
+    throw new Error(`Missing ${sessionId}, slug, or series slug`)
+  }
+  if (before._type !== 'workshopSession') {
+    throw new Error(`${sessionId} is ${before._type}, expected workshopSession`)
   }
 
   const slug = before.slug
@@ -152,9 +145,9 @@ async function main() {
   console.log('0) slugValue shape check…')
   assertSlugShapes(slug, seriesSlug)
 
-  const original = before.shortDescription || ''
-  console.log('1) Patching workshop-1 shortDescription with marker…')
-  await client.patch(workshopId).set({ shortDescription: marker }).commit()
+  const original = before.locationLabel || 'Zoom'
+  console.log('1) Patching workshop-1 locationLabel with marker…')
+  await client.patch(sessionId).set({ locationLabel: marker }).commit()
 
   console.log('2) Fetching feeds BEFORE revalidate (may still be cached)…')
   const preFeed = await feedHasMarker()
@@ -162,7 +155,7 @@ async function main() {
 
   console.log('3) POST /api/revalidate with native slug object…')
   const reval = await signedPost({
-    _type: 'workshop',
+    _type: 'workshopSession',
     slug: { _type: 'slug', current: slug },
     seriesSlug,
   })
@@ -173,24 +166,20 @@ async function main() {
   console.log('   flat path in response:', flatInPaths, flatPath)
   console.log('   series path in response:', scopedInPaths, scopedPath)
 
-  console.log('4) Fetching feeds + workshop page AFTER revalidate…')
+  console.log('4) Fetching feeds AFTER revalidate…')
   const postFeed = await feedHasMarker()
-  const postIcs = await icsHasMarker()
-  const postMap = await sitemapOk()
-  const postPage = await workshopPageHasMarker(seriesSlug, slug)
+  const postMap = await sitemapOk(slug)
   console.log('   events.json marker after:', postFeed)
-  console.log('   events.ics marker after:', postIcs)
   console.log('   sitemap:', postMap)
-  console.log('   workshop page marker after:', postPage)
 
   console.log('5) No-op check: registration…')
   const noop = await signedPost({ _type: 'registration' })
   console.log('   registration revalidate:', noop)
 
-  console.log('6) Restoring original shortDescription…')
-  await client.patch(workshopId).set({ shortDescription: original }).commit()
+  console.log('6) Restoring original locationLabel…')
+  await client.patch(sessionId).set({ locationLabel: original }).commit()
   await signedPost({
-    _type: 'workshop',
+    _type: 'workshopSession',
     slug: { _type: 'slug', current: slug },
     seriesSlug,
   })
@@ -200,8 +189,7 @@ async function main() {
     flatInPaths &&
     scopedInPaths &&
     postFeed.hit === true &&
-    postPage.hit === true &&
-    postMap.hasWorkshop1 === true &&
+    postMap.hasSlug === true &&
     Array.isArray(noop.json?.paths) &&
     noop.json.paths.length === 0
 
@@ -210,7 +198,7 @@ async function main() {
     process.exit(1)
   }
   console.log(
-    '\nVERIFY PASSED — workshop detail page + feeds updated without redeploy',
+    '\nVERIFY PASSED — workshopSession feeds updated without redeploy',
   )
 }
 

@@ -1,4 +1,3 @@
-import { workshop } from './workshop'
 import { workshopTopic } from './workshop-topic'
 import { workshopSession } from './workshop-session'
 import { service } from './service'
@@ -12,7 +11,6 @@ export const schemaTypes = [
   series,
   workshopTopic,
   workshopSession,
-  workshop,
   service,
   page,
   siteSettings,

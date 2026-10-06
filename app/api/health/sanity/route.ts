@@ -28,7 +28,7 @@ export async function GET() {
 
   try {
     const workshopCount = await client.fetch<number>(
-      `count(*[_type in ["workshopSession", "workshop"]])`,
+      `count(*[_type == "workshopSession"])`,
     )
     const hasSettings = Boolean(
       await client.fetch(`*[_type == "siteSettings"][0]._id`),

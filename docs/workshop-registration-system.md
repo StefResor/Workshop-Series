@@ -40,9 +40,10 @@ cohorts — it is how a Fall registrant hears about the Winter series.
 ## Content model
 
 ```
-series          Fall 2026, Winter 2027
-  └─ workshop   1–10, each with startsAt (UTC), joinUrl, passcode, paymentLink
-       └─ registration   workshop ref, email, firstName, source, status
+workshopTopic   evergreen title, hook, body
+series          Fall 2026, Winter 2027, …
+  └─ workshopSession   topic + series + startsAt + Payment Link
+       └─ registration   session ref, email, firstName, source: single, status
 ```
 
 `registration` is `readOnly: true` in the Studio. It is written by the Stripe
@@ -68,17 +69,18 @@ seeded. Redirect hosts: `docs/domain-cutover.md`.
 
 ### Payment Link metadata is load-bearing
 
-Every Stripe Payment Link must carry exactly one of:
+Every Stripe Payment Link must carry **both**:
 
-| Metadata key    | Value              | Used for              |
-| --------------- | ------------------ | --------------------- |
-| `workshop_slug` | the workshop slug  | single workshop sale  |
-| `series_slug`   | the series slug    | full-series pass      |
+| Metadata key    | Value             | Used for             |
+| --------------- | ----------------- | -------------------- |
+| `workshop_slug` | the session slug  | which session sold   |
+| `series_slug`   | the series slug   | which season         |
 
-Singles need **both** `workshop_slug` and `series_slug`. Passes need
-`series_slug` only (plus `kind: series_pass`). Without the pair the webhook
-throws and Stripe retries. This is the single most likely configuration
-mistake across eleven Payment Links.
+Later-season links also send `session_slug` (same value as `workshop_slug`).
+The webhook accepts either. Without the pair it throws and Stripe retries.
+
+The series pass is retired. The Fall pass Payment Link and product are
+inactive. Pass fan-out code is gone — do not add `kind: series_pass` links.
 
 ### Canonical Payment Link management
 
@@ -115,38 +117,19 @@ https://stefanie-schumacher.com/workshops/{series}/{slug}/thank-you?session_id={
 Stripe substitutes `{CHECKOUT_SESSION_ID}` literally. Full `plink_` list:
 `docs/domain-cutover.md`. The Stripe webhook stays on the Vercel alias.
 
-### Series pass (retired)
-
-The live demo pass link `plink_1U18uLLJfnPqUVhgjfiYgQKH` is **inactive**
-(2026-10-05). Product `prod_V1BGfIM8ufDyGG` is archived. No real passes were
-sold. Fan-out code remains in the webhook for now; there is no UI.
-
-One pass purchase would write **ten** registration records, each `source: 'pass'`
-with a shared `passId`, and send ten confirmations — one per workshop, each
-with its own calendar file.
-
-Ten records rather than one flag because: every send has a single code path,
-per-workshop headcount is a real number Stef can read, and a refund voids the
-set in one query.
-
-`fanOutSeriesPass` is re-runnable. If a workshop is added to a series after
-passes were sold, call it again with the same `passId` to backfill.
-
 ### Dedupe
 
-Registration `_id` is deterministic: `registration.{workshopId}.{sha256(email)[0:16]}`.
+Registration `_id` is deterministic:
+`registration.{live|test}.{sessionId}.{sha256(email)[0:16]}`.
 
 The email is hashed, not embedded — document IDs surface in URLs, logs, and the
 Studio history pane, and addresses don't belong there.
 
-This makes someone who bought workshop 03 individually and later upgraded to a
-pass collapse to one registration rather than receiving everything twice.
-
 ### Refunds
 
 `charge.refunded` → `voidRegistrations(sessionId)` → `status: 'refunded'`.
-Matches on both `stripeSessionId` and `passId`, so refunding a pass voids all
-ten. Records are kept, not deleted; every send filters on `status == 'active'`.
+Matches `stripeSessionId`. Records are kept, not deleted; every send filters
+on `status == 'active'`.
 
 ### Delayed payment methods
 
@@ -233,9 +216,8 @@ Session metadata. There is no legacy fallback. Live links were synced via
 management above). Re-run that script whenever checkout fields or slugs
 change — not the Dashboard.
 
-Also backfill `workshop.series` refs (`scripts/backfill-series.mjs --commit`)
-before relying on series-pass fan-out — without refs, `fanOutSeriesPass`
-queries an empty set.
+New seasons: `scripts/create-season-stripe-links.mjs --series=fall-2027 --commit`
+writes each session’s Payment Link and `stripeProductId`.
 
 ---
 
@@ -243,7 +225,7 @@ queries an empty set.
 
 Stripe test mode is a separate universe — products, prices, Payment Links,
 webhooks and customers do not cross over. Recreate at least one workshop link
-and one pass link in test mode.
+link in test mode.
 
 **Do not put `sk_test_` on Production env vars** if that deployment might take
 live payments. Use a **Preview** deployment instead:

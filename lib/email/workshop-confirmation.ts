@@ -47,8 +47,6 @@ export type ConfirmationData = {
   calendarUrl: string;
   detailsUrl: string;
   amountPaid: string;
-  /** True when this came from an all-access series pass rather than a single sale. */
-  fromPass?: boolean;
   seriesTitle?: string; // "Fall 2026"
 };
 
@@ -92,43 +90,26 @@ export function renderConfirmation(w: ConfirmationData, firstName?: string) {
 
   const greeting = firstName ? `${firstName}, you're<br />registered.` : "You're<br />registered.";
 
-  const nextIntro = w.fromPass
-    ? "You'll hear from us twice before each session. Nothing else is needed from you between now and September 9."
-    : "You'll hear from us twice more before we meet. Nothing else is needed from you between now and then.";
+  const nextIntro =
+    "You'll hear from us twice more before we meet. Nothing else is needed from you between now and then.";
 
-  const nextSteps = w.fromPass
-    ? step(
-        "Now",
-        "This confirmation",
-        "All ten sessions are confirmed. Keep this as your guide to what happens next.",
-        true,
-      ) +
-      step(
-        `${CREDENTIALS_LEAD_DAYS} days before each session`,
-        "Your Zoom link and passcode",
-        "A separate email ahead of every session with the meeting link and passcode.",
-      ) +
-      step(
-        "Each session day",
-        "A short reminder",
-        "The link and passcode again, so you don't have to go looking on the day.",
-      )
-    : step(
-        "Now",
-        "This confirmation",
-        "Keep it — your registration is confirmed, and this is your guide to what happens between now and the session.",
-        true,
-      ) +
-      step(
-        `${credsDate} · ${CREDENTIALS_LEAD_DAYS} days before`,
-        "Your Zoom link and passcode",
-        `A separate email with the Zoom meeting link and the passcode you'll need to get in. If it hasn't arrived by ${credsDateShort}, check your spam folder, then reach out for assistance.`,
-      ) +
-      step(
-        `${dateShort} · Session day`,
-        "A short reminder",
-        "The link and passcode again, so you don't have to go looking on the day.",
-      );
+  const nextSteps =
+    step(
+      "Now",
+      "This confirmation",
+      "Keep it — your registration is confirmed, and this is your guide to what happens between now and the session.",
+      true,
+    ) +
+    step(
+      `${credsDate} · ${CREDENTIALS_LEAD_DAYS} days before`,
+      "Your Zoom link and passcode",
+      `A separate email with the Zoom meeting link and the passcode you'll need to get in. If it hasn't arrived by ${credsDateShort}, check your spam folder, then reach out for assistance.`,
+    ) +
+    step(
+      `${dateShort} · Session day`,
+      "A short reminder",
+      "The link and passcode again, so you don't have to go looking on the day.",
+    );
 
   const html = emailShell({
     subject,
@@ -137,9 +118,7 @@ export function renderConfirmation(w: ConfirmationData, firstName?: string) {
       block(
         hero(greeting) +
           lede(
-            w.fromPass
-              ? `Your ${w.seriesTitle ?? "series"} pass covers this session. Here are the details, and when to expect your Zoom link.`
-              : `Thank you for signing up. Here's what you booked, and when to expect your Zoom link.`,
+            `Thank you for signing up. Here's what you booked, and when to expect your Zoom link.`,
           ),
       ),
 
@@ -151,7 +130,7 @@ export function renderConfirmation(w: ConfirmationData, firstName?: string) {
             ${dataRow("Date", `${weekday}, ${dateLong}`)}
             ${dataRow("Time", `${times}<br /><span style="font-size:14px;color:${MUTED};">${w.durationMinutes} minutes, live</span>`)}
             ${dataRow("Where", "Zoom &mdash; link sent separately")}
-            ${dataRow(w.fromPass ? "Covered by" : "Paid", w.fromPass ? `${w.seriesTitle ?? "Series"} pass` : w.amountPaid)}
+            ${dataRow("Paid", w.amountPaid)}
           </table>` +
           solidButton(w.calendarUrl, "Add to calendar"),
       ),
@@ -188,37 +167,26 @@ export function renderConfirmation(w: ConfirmationData, firstName?: string) {
     ].join("\n"),
   });
 
-  const textNext = w.fromPass
-    ? [
-        `You'll hear from us twice before each session. Nothing else is needed from you between now and September 9.`,
-        ``,
-        `  Now — This confirmation. All ten sessions are confirmed. Keep this as your guide to what happens next.`,
-        `  ${CREDENTIALS_LEAD_DAYS} days before each session — Your Zoom link and passcode.`,
-        `  A separate email ahead of every session with the meeting link and passcode.`,
-        `  Each session day — A short reminder with the link and passcode again.`,
-      ]
-    : [
-        `You'll hear from us twice more before we meet.`,
-        ``,
-        `  Now — This confirmation. Keep it — your registration is confirmed, and this is your guide to what happens between now and the session.`,
-        `  ${credsDate} (${CREDENTIALS_LEAD_DAYS} days before) — Your Zoom link and passcode.`,
-        `  If it hasn't arrived by ${credsDateShort}, check your spam folder, then reach out for assistance.`,
-        `  ${dateShort} (session day) — A short reminder with the link and passcode again.`,
-      ];
+  const textNext = [
+    `You'll hear from us twice more before we meet.`,
+    ``,
+    `  Now — This confirmation. Keep it — your registration is confirmed, and this is your guide to what happens between now and the session.`,
+    `  ${credsDate} (${CREDENTIALS_LEAD_DAYS} days before) — Your Zoom link and passcode.`,
+    `  If it hasn't arrived by ${credsDateShort}, check your spam folder, then reach out for assistance.`,
+    `  ${dateShort} (session day) — A short reminder with the link and passcode again.`,
+  ];
 
   const text = [
     `${firstName ? firstName + ", you're" : "You're"} registered.`,
     ``,
-    w.fromPass
-      ? `Your ${w.seriesTitle ?? "series"} pass covers this session.`
-      : `Thank you for signing up. Here's what you booked, and when to expect your Zoom link.`,
+    `Thank you for signing up. Here's what you booked, and when to expect your Zoom link.`,
     ``,
     `THE CONNECTION WORKSHOP — SESSION ${num}`,
     w.title,
     `${weekday}, ${dateLong}`,
     `${times} (${w.durationMinutes} minutes, live)`,
     `Where: Zoom — link sent separately`,
-    w.fromPass ? `Covered by: ${w.seriesTitle ?? "Series"} pass` : `Paid: ${w.amountPaid}`,
+    `Paid: ${w.amountPaid}`,
     ``,
     `Add to calendar: ${w.calendarUrl}`,
     ``,

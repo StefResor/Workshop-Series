@@ -1,6 +1,6 @@
 import type { SlugValidationContext } from 'sanity'
 
-const BOOKABLE = `_type in ["workshopSession", "workshop"]`
+const BOOKABLE = `_type == "workshopSession"`
 
 /**
  * Session slugs are unique within a series — Fall and Winter may reuse the

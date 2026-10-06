@@ -1,0 +1,25 @@
+Finished one-off scripts. Do not run against production.
+
+- `seed.ts` — first content seed; still writes `_type: "workshop"`.
+- `seed-stripe-links.mjs` — created the first Fall Payment Links.
+- `wire-sanity-links.mjs` — pasted those links (and the pass URL) into Sanity.
+- `backfill-series.mjs` — attached Fall sessions to `series.fall-2026`.
+- `migrate-workshops-to-sessions.mjs` — renamed Fall docs to `workshopSession`.
+- `import-future-sessions.mjs` — imported Winter/Spring/Summer sessions.
+- `migrate-workshop-fields.ts` — one-off field copy.
+- `migrate-workshop-lifecycle.ts` — one-off status values.
+- `migrate-default-workshop-price.ts` — wrote leftover `defaultWorkshopPrice`.
+- `migrate-series-package.ts` — wrote leftover series-pass copy and price.
+- `migrate-series-pass-enabled.ts` — set leftover `seriesPassEnabled`.
+- `migrate-home-hero-fields.ts` — homepage hero field move.
+- `migrate-home-hero-footnote.ts` — homepage footnote move.
+- `migrate-home-workshops-intro.ts` — homepage workshops intro move.
+- `migrate-marquee-keywords.ts` — marquee keyword seed.
+- `migrate-practice-services.ts` — practice service seed.
+- `backfill-workshop-fields.ts` — one-off session field backfill.
+- `fix-typos.ts` — one-off copy fix.
+- `upload-about-headshot.ts` — one-off about image upload.
+- `update-fall-2026.mjs` — moved Fall dates/slugs to Oct 2026–Jan 2027.
+- `update-fall-stripe-products.mjs` — renamed Fall Stripe products after that move.
+- `create-test-workshop-link.mjs` — Stripe test-mode single link.
+- `create-test-series-pass-link.mjs` — Stripe test-mode pass link.

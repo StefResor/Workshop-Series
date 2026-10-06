@@ -89,3 +89,12 @@ Static images committed to `/public` should be WebP, except the OG and favicon a
 If the user asks for schemas + seed only: **do not** create marketing pages, layouts, components, or styling beyond what Studio requires.
 
 If the user asks for data/routes only: **do not** create marketing pages, components, layouts, design tokens, or styling.
+
+## Ship / production
+
+Failed Vercel builds email Stef. A failed deploy leaves the previous version live, but it should never reach `main`.
+
+1. Run `npx tsc --noEmit` and `npm run build` before every push.
+2. Never merge a PR until the Vercel preview check has passed.
+3. Group related changes into one PR instead of several small production deploys.
+4. Keep branch protection on `main`: require the **Vercel** status check.

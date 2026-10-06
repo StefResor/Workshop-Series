@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { Resend } from "resend";
 import { client as sanity } from "@/sanity/lib/client";
-import { createRegistration, fanOutSeriesPass, voidRegistrations } from "@/lib/registrations";
+import { createRegistration, voidRegistrations } from "@/lib/registrations";
 import { renderConfirmation } from "@/lib/email/workshop-confirmation";
 import { workshopIcsPath, workshopPath } from "@/lib/workshop-paths";
 
@@ -22,7 +22,7 @@ const REPLY_TO =
   process.env.CONTACT_TO_EMAIL?.trim() ||
   undefined;
 
-const BOOKABLE = `_type in ["workshopSession", "workshop"]`;
+const BOOKABLE = `_type == "workshopSession"`;
 
 // zoomLink and zoomPasscode are deliberately NOT selected here. They ship 8 days out.
 const WORKSHOP_BY_SERIES_AND_SLUG = `*[
@@ -30,16 +30,6 @@ const WORKSHOP_BY_SERIES_AND_SLUG = `*[
   slug.current == $slug &&
   series->slug.current == $series
 ][0]{
-  _id,
-  "sessionNumber": coalesce(sessionNumber, topic->order),
-  "title": coalesce(topic->title, title),
-  startsAt, durationMinutes,
-  "slug": slug.current, "seriesSlug": series->slug.current, "seriesTitle": series->title
-}`;
-
-const SERIES_BY_SLUG = `*[_type == "series" && slug.current == $slug][0]{ _id, title }`;
-
-const WORKSHOPS_IN_SERIES = `*[${BOOKABLE} && series._ref == $seriesId] | order(sessionNumber asc){
   _id,
   "sessionNumber": coalesce(sessionNumber, topic->order),
   "title": coalesce(topic->title, title),
@@ -63,7 +53,7 @@ async function sendConfirmation(
   email: string,
   firstName: string | undefined,
   amountPaid: string,
-  opts: { fromPass: boolean; idempotencyRef: string },
+  opts: { idempotencyRef: string },
 ) {
   const seriesSlug = w.seriesSlug;
   if (!seriesSlug) {
@@ -79,7 +69,6 @@ async function sendConfirmation(
       calendarUrl: `${SITE}${workshopIcsPath(seriesSlug, w.slug)}`,
       detailsUrl: `${SITE}${path}`,
       amountPaid,
-      fromPass: opts.fromPass,
       seriesTitle: w.seriesTitle,
     },
     firstName,
@@ -191,49 +180,13 @@ async function handlePurchase(
   }).format((session.amount_total ?? 0) / 100);
 
   // Metadata is set on each Payment Link.
-  // Pass: series_slug only. Single: workshop_slug + series_slug (both required).
-  // session_slug is the Phase 3 name; Fall Payment Links still send workshop_slug.
+  // Single: workshop_slug (or session_slug) + series_slug. Both required.
   const workshopSlug =
     session.metadata?.session_slug?.trim() ||
     session.metadata?.workshop_slug?.trim() ||
     "";
   const seriesSlug = session.metadata?.series_slug?.trim() || "";
 
-  /* ---- full-series pass ---- */
-  if (seriesSlug && !workshopSlug) {
-    const series = await sanity.fetch(SERIES_BY_SLUG, { slug: seriesSlug });
-    if (!series) {
-      throw new Error(`No series in Sanity for slug "${seriesSlug}" (session ${session.id})`);
-    }
-
-    const count = await fanOutSeriesPass({
-      seriesId: series._id,
-      email,
-      firstName,
-      stripeSessionId: session.id,
-      testMode,
-    });
-    console.info(
-      `[stripe] Pass fanned out to ${count} workshops for ${session.id}` +
-        (testMode ? " (testMode)" : ""),
-    );
-
-    // One confirmation per workshop, so each is findable on its own terms and
-    // each carries its own calendar file. Sent oldest first so the inbox reads
-    // in series order.
-    const workshops: WorkshopDoc[] = await sanity.fetch(WORKSHOPS_IN_SERIES, {
-      seriesId: series._id,
-    });
-    for (const w of workshops) {
-      await sendConfirmation(w, email, firstName, amountPaid, {
-        fromPass: true,
-        idempotencyRef: `${session.id}:${w._id}`,
-      });
-    }
-    return;
-  }
-
-  /* ---- single workshop ---- */
   if (!workshopSlug || !seriesSlug) {
     throw new Error(
       `Session ${session.id} missing workshop_slug and/or series_slug metadata ` +
@@ -263,7 +216,6 @@ async function handlePurchase(
   });
 
   await sendConfirmation(workshop, email, firstName, amountPaid, {
-    fromPass: false,
     idempotencyRef: session.id,
   });
 }
