@@ -11,7 +11,8 @@
     "purge:test-registrations": "node scripts/purge-test-registrations.mjs",
     "audit:schema": "tsx scripts/audit-schema-drift.ts",
     "test:revalidate": "tsx scripts/verify-revalidate.ts",
-    "test:timezone": "tsx scripts/timezone-assertion.ts"
+    "test:timezone": "tsx scripts/timezone-assertion.ts",
+    "test:cutoff": "tsx scripts/test-registration-cutoff.ts"
   },
   "dependencies": {
     "@sanity/client": "7.25.0",

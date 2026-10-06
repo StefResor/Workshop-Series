@@ -61,11 +61,13 @@ STRIPE_WEBHOOK_SECRET=
 WORKSHOP_FROM_EMAIL=
 WORKSHOP_REPLY_TO=
 CRON_SECRET=
+REGISTRATION_CUTOFF_MINUTES=0
+STEF_NOTIFY_EMAIL=
 ```
 
 Pre-cutover `NEXT_PUBLIC_SITE_URL` should be `https://stefanie-schumacher-com.vercel.app` so `/events.ics` and OG URLs resolve to Next, not Wix. Switch to `https://stefanie-schumacher.com` at DNS cutover.
 
-Workshop registration: see `docs/workshop-registration-system.md`. Webhook matches Payment Link metadata `workshop_slug` / `series_slug` → Sanity workshop/series, writes `registration` docs, sends confirmation (no Zoom). Cron at `/api/cron/workshop-credentials` sends Zoom from `zoomLink` / `zoomPasscode` eight days out. Never project `zoomLink` / `zoomPasscode` / `stripeProductId` in public GROQ.
+Workshop registration: see `docs/workshop-registration-system.md`. Webhook matches Payment Link metadata `workshop_slug` / `series_slug` → Sanity workshop/series, writes `registration` docs, sends confirmation (no Zoom). A late purchase still writes the registration and emails `STEF_NOTIFY_EMAIL`. Cron at `/api/cron/workshop-credentials` sends Zoom from `zoomLink` / `zoomPasscode` eight days out. `/api/cron/close-started-sessions` deactivates the Payment Link after cutoff. Never project `zoomLink` / `zoomPasscode` / `stripeProductId` in public GROQ.
 
 The `production` dataset is **private**. `SANITY_API_READ_TOKEN` (Viewer) must be set on Vercel — without it, pages render empty shells (no workshops/fees). Create under Sanity → project → API → Tokens.
 

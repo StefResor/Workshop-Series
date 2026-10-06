@@ -1,12 +1,13 @@
 import Link from 'next/link'
 import { catalogueHook } from '@/lib/catalogue-hook'
-import { sessionRegisterHref } from '@/lib/catalogue'
-import { formatCatalogueDate } from '@/lib/datetime'
+import { openUpcoming, sessionRegisterHref } from '@/lib/catalogue'
+import { formatCatalogueRegisterLabel } from '@/lib/datetime'
 import { topicPath } from '@/lib/workshop-paths'
 import type { CatalogueTopic } from '@/lib/types'
 
 export function CatalogueTopicRow({ topic }: { topic: CatalogueTopic }) {
-  const [next, ...later] = topic.sessions
+  const open = openUpcoming(topic.sessions)
+  const [next, ...later] = open
   const hook = catalogueHook(topic)
   const href = topicPath(topic.slug)
   const nextRegister = next ? sessionRegisterHref(next) : null
@@ -25,7 +26,10 @@ export function CatalogueTopicRow({ topic }: { topic: CatalogueTopic }) {
           <p className="catalogue-row-also">
             Also:{' '}
             {later.map((session, i) => {
-              const label = formatCatalogueDate(session.startsAt, session.timeZone)
+              const label = formatCatalogueRegisterLabel(
+                session.startsAt,
+                session.timeZone,
+              )
               const pay = sessionRegisterHref(session)
               const sep = i < later.length - 1 ? ' · ' : ''
               if (pay) {
@@ -57,21 +61,13 @@ export function CatalogueTopicRow({ topic }: { topic: CatalogueTopic }) {
           <a
             className="catalogue-register"
             href={nextRegister}
-            aria-label={`Register for ${topic.title}, ${formatCatalogueDate(next.startsAt, next.timeZone)}`}
+            aria-label={`Register for ${topic.title}, ${formatCatalogueRegisterLabel(next.startsAt, next.timeZone)}`}
           >
-            Register · {formatCatalogueDate(next.startsAt, next.timeZone)}
+            Register · {formatCatalogueRegisterLabel(next.startsAt, next.timeZone)}
           </a>
-        ) : next && next.registrationStatus === 'closed' ? (
-          <span className="catalogue-register catalogue-register--muted">
-            Registration closed
-          </span>
-        ) : next && next.registrationStatus === 'sold-out' ? (
-          <span className="catalogue-register catalogue-register--muted">
-            Sold out
-          </span>
         ) : next ? (
           <Link className="catalogue-register" href={href}>
-            Register · {formatCatalogueDate(next.startsAt, next.timeZone)}
+            Register · {formatCatalogueRegisterLabel(next.startsAt, next.timeZone)}
           </Link>
         ) : null}
       </div>

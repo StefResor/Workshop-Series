@@ -19,7 +19,9 @@ Next.js App Router + Sanity CMS rebuild of stefanie-schumacher.com.
 | `STRIPE_WEBHOOK_SECRET` | Signature for `POST /api/stripe/webhook` |
 | `WORKSHOP_FROM_EMAIL` | From on confirmation / credentials mail |
 | `WORKSHOP_REPLY_TO` | Reply-To on those mails |
-| `CRON_SECRET` | Bearer for `GET /api/cron/workshop-credentials` |
+| `CRON_SECRET` | Bearer for `GET /api/cron/workshop-credentials` and `GET /api/cron/close-started-sessions` |
+| `REGISTRATION_CUTOFF_MINUTES` | Minutes after `startsAt` when listing/cron close registration (default 0) |
+| `STEF_NOTIFY_EMAIL` | Late-purchase alert; falls back to `CONTACT_TO_EMAIL` |
 | `CONTACT_FROM_EMAIL` / `RESEND_API_KEY` | Contact form + Resend API |
 
 Registration and credentials flow: see [`docs/workshop-registration-system.md`](./docs/workshop-registration-system.md). Payment Links must carry `workshop_slug` or `series_slug` metadata.

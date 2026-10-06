@@ -2,7 +2,10 @@ import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { catalogueHook } from '@/lib/catalogue-hook'
 import { sessionRegisterHref } from '@/lib/catalogue'
-import { formatCatalogueDate, formatWorkshopDisplay } from '@/lib/datetime'
+import {
+  formatCatalogueRegisterLabel,
+  formatWorkshopDisplay,
+} from '@/lib/datetime'
 import { resolveSessionPrice, resolveWorkshopPrice } from '@/lib/workshop-price'
 import { topicPath } from '@/lib/workshop-paths'
 import type { SiteSettings, Workshop } from '@/lib/types'
@@ -20,7 +23,10 @@ export function HomeWorkshopCard({
   const hook = catalogueHook(workshop)
   const topicHref = topicPath(workshop.topicSlug || workshop.slug)
   const registerHref = sessionRegisterHref(workshop)
-  const dateLabel = formatCatalogueDate(workshop.startsAt, workshop.timeZone)
+  const dateLabel = formatCatalogueRegisterLabel(
+    workshop.startsAt,
+    workshop.timeZone,
+  )
   const price = resolveWorkshopPrice(workshop, settings)
   const defaultPrice = resolveSessionPrice(settings)
   const showPrice =

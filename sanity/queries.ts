@@ -6,19 +6,22 @@ export const BOOKABLE = `_type == "workshopSession"`
 /** Published listings hide draft and cancelled. Closed/sold-out still list. */
 export const PUBLIC_BOOKABLE = `${BOOKABLE} && !(registrationStatus in ["draft", "cancelled"])`
 
+/** Registerable listings: open, has a Payment Link, and still before cutoff. */
+export const OPEN_FOR_REGISTRATION = `${PUBLIC_BOOKABLE} && registrationStatus == "open" && defined(stripePaymentLink) && startsAt > $registrationOpenAfter`
+
 /**
- * Current series: still has a session in the future, earliest first session.
+ * Current series: still has a session before cutoff, earliest first session.
  * Derived from workshopSession.startsAt — not series.startsOn / endsOn.
  * "Winter 2027" sorts above "Fall 2026" by title, so never use active + title desc.
  */
 export const currentSeriesIdQuery = `(*[_type == "series"] {
   _id,
   "firstAt": *[_type == "workshopSession" && series._ref == ^._id] | order(startsAt asc)[0].startsAt,
-  "remaining": count(*[_type == "workshopSession" && series._ref == ^._id && startsAt > now()])
+  "remaining": count(*[_type == "workshopSession" && series._ref == ^._id && startsAt > $registrationOpenAfter])
 }[remaining > 0] | order(firstAt asc)[0]._id)`
 
 /** Remaining sessions in the current series window (homepage Zone 1). */
-export const CURRENT_SERIES_BOOKABLE = `${PUBLIC_BOOKABLE} && series._ref == ${currentSeriesIdQuery}`
+export const CURRENT_SERIES_BOOKABLE = `${OPEN_FOR_REGISTRATION} && series._ref == ${currentSeriesIdQuery}`
 
 const sessionListProjection = `{
   _id,
@@ -34,7 +37,7 @@ const sessionListProjection = `{
   price,
   stripePaymentLink,
   registrationStatus,
-  "isPast": startsAt <= now()
+  "isPast": startsAt <= $registrationOpenAfter
 }`
 
 const workshopProjection = `{
@@ -57,23 +60,21 @@ const workshopProjection = `{
   "shortDescription": coalesce(topic->shortDescription, shortDescription),
   "body": coalesce(topic->description, body),
   locationLabel,
-  "isPast": startsAt <= now()
+  "isPast": startsAt <= $registrationOpenAfter
 }`
 
 /** Homepage: upcoming sessions in the current series window. Cap in the page. */
 export const homeUpcomingWorkshopsQuery = `*[
-  ${CURRENT_SERIES_BOOKABLE} &&
-  startsAt > now()
+  ${CURRENT_SERIES_BOOKABLE}
 ] | order(startsAt asc) ${workshopProjection}`
 
 /** Between series: next upcoming sessions across every public series. */
 export const upcomingPublicWorkshopsQuery = `*[
-  ${PUBLIC_BOOKABLE} &&
-  startsAt > now()
+  ${OPEN_FOR_REGISTRATION}
 ] | order(startsAt asc) ${workshopProjection}`
 
 /** Archive Zone 1 — remaining current-series sessions, uncapped. */
-export const workshopsQuery = `*[${CURRENT_SERIES_BOOKABLE} && startsAt > now()] | order(startsAt asc) ${workshopProjection}`
+export const workshopsQuery = `*[${CURRENT_SERIES_BOOKABLE}] | order(startsAt asc) ${workshopProjection}`
 
 /** Ten topics with future sessions for the catalogue. */
 export const catalogueTopicsQuery = `*[_type == "workshopTopic"] | order(order asc) {
@@ -85,8 +86,7 @@ export const catalogueTopicsQuery = `*[_type == "workshopTopic"] | order(order a
   shortDescription,
   description,
   "sessions": *[
-    ${PUBLIC_BOOKABLE} &&
-    startsAt > now() &&
+    ${OPEN_FOR_REGISTRATION} &&
     (topic._ref == ^._id || slug.current == ^.slug.current)
   ] | order(startsAt asc) ${sessionListProjection}
 }`
@@ -100,8 +100,7 @@ export const topicBySlugQuery = `*[_type == "workshopTopic" && slug.current == $
   shortDescription,
   description,
   "sessions": *[
-    ${PUBLIC_BOOKABLE} &&
-    startsAt > now() &&
+    ${OPEN_FOR_REGISTRATION} &&
     (topic._ref == ^._id || slug.current == ^.slug.current)
   ] | order(startsAt asc) ${workshopProjection}
 }`
@@ -139,7 +138,7 @@ export const activeSeriesSlugQuery = `*[_type == "series" && defined(slug.curren
   "slug": slug.current,
   title,
   "firstAt": *[_type == "workshopSession" && series._ref == ^._id] | order(startsAt asc)[0].startsAt,
-  "remaining": count(*[_type == "workshopSession" && series._ref == ^._id && startsAt > now()])
+  "remaining": count(*[_type == "workshopSession" && series._ref == ^._id && startsAt > $registrationOpenAfter])
 }[remaining > 0] | order(firstAt asc)[0]{
   slug,
   title

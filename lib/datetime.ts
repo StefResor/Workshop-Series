@@ -94,6 +94,18 @@ export function formatCatalogueDate(
   return `${d.monthShort} ${d.day}`
 }
 
+/** Register CTA label: "Tonight" when the session is still today in ET. */
+export function formatCatalogueRegisterLabel(
+  utcIso: string,
+  timeZone: string = DISPLAY_TIME_ZONE,
+  now: Date = new Date(),
+): string {
+  if (etCalendarDate(parseUtc(utcIso)) === etCalendarDate(now)) {
+    return 'Tonight'
+  }
+  return formatCatalogueDate(utcIso, timeZone)
+}
+
 /**
  * Format a stored UTC instant for iCalendar DTSTART/DTEND.
  * Always emits basic UTC with Z suffix (VALUE=DATE-TIME in UTC).
