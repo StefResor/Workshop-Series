@@ -148,6 +148,7 @@ export const page = defineType({
       type: 'text',
       rows: 16,
       description: 'Plain-text paragraphs separated by blank lines.',
+      hidden: ({ document }) => !isAboutPage(document),
     }),
     defineField({
       name: 'ctaLabel',
