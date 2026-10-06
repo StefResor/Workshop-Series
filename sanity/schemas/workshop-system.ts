@@ -44,28 +44,6 @@ export const series = defineType({
       hidden: true,
       description: "Last session date (America/New_York calendar date, not UTC).",
     }),
-    defineField({
-      name: "passPrice",
-      title: "Full-series pass price (USD)",
-      type: "number",
-      hidden: true,
-      readOnly: true,
-    }),
-    defineField({
-      name: "passPaymentLink",
-      title: "Stripe Payment Link — full series pass",
-      type: "url",
-      hidden: true,
-      readOnly: true,
-    }),
-    defineField({
-      name: "active",
-      type: "boolean",
-      initialValue: false,
-      hidden: true,
-      description:
-        "Deprecated. Current series is the one that still has a future session and whose first session is earliest. Leave future series false so a leftover active-query cannot promote Winter over Fall.",
-    }),
   ],
   orderings: [
     {
@@ -90,7 +68,7 @@ export const registration = defineType({
     defineField({
       name: "workshop",
       type: "reference",
-      to: [{ type: "workshopSession" }, { type: "workshop" }],
+      to: [{ type: "workshopSession" }],
       description:
         "The dated session this registration belongs to. Field name is legacy — do not rename; IDs stay registration.{live|test}.{sessionId}.{hash}.",
     }),
@@ -99,13 +77,8 @@ export const registration = defineType({
     defineField({
       name: "source",
       type: "string",
-      options: { list: ["single", "pass"], layout: "radio" },
-      description: '"single" = bought this workshop alone. "pass" = covered by a series pass.',
-    }),
-    defineField({
-      name: "passId",
-      type: "string",
-      description: "Stripe Checkout Session ID of the pass purchase. Groups a fan-out.",
+      options: { list: ["single"], layout: "radio" },
+      description: "Bought this session on its own Payment Link.",
     }),
     defineField({ name: "stripeSessionId", type: "string" }),
     defineField({

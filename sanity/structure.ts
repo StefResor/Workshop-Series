@@ -5,13 +5,11 @@ type StructureBuilder = Parameters<StructureResolver>[0]
 const SINGLETONS = new Set(['siteSettings', 'emailSignup'])
 /**
  * Hide auto-generated duplicates of types that have custom desk items.
- * `workshop` is retired — Fall docs are workshopSession.
  * `series` lives under Schedule, not as its own sidebar item.
  */
 const HIDDEN_TYPES = new Set([
   'workshopTopic',
   'workshopSession',
-  'workshop',
   'series',
   'registration',
   ...SINGLETONS,

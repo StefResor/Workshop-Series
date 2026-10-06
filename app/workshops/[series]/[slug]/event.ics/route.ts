@@ -5,7 +5,7 @@ import { workshopPath } from "@/lib/workshop-paths";
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://stefanie-schumacher.com";
 
 const QUERY = `*[
-  _type in ["workshopSession", "workshop"] &&
+  _type == "workshopSession" &&
   slug.current == $slug &&
   series->slug.current == $series
 ][0]{
@@ -76,7 +76,7 @@ export async function GET(
   return new NextResponse(lines.join("\r\n"), {
     headers: {
       "Content-Type": "text/calendar; charset=utf-8",
-      "Content-Disposition": `attachment; filename="relational-diplomacy-${series}-${slug}.ics"`,
+      "Content-Disposition": `attachment; filename="connection-workshop-${series}-${slug}.ics"`,
       "Cache-Control": "public, max-age=3600",
     },
   });

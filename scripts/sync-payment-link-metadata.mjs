@@ -1,8 +1,8 @@
 /**
  * Sync Stripe Payment Link metadata + checkout collection settings.
  *
- * Matches live links by legacy metadata.workshop ("01"…"10") / kind=series_pass.
- * Adds workshop_slug + series_slug (both required for singles); leaves legacy keys.
+ * Matches live links by legacy metadata.workshop ("01"…"10").
+ * Adds workshop_slug + series_slug (both required); leaves legacy keys.
  * Also requires individual name collection and terms-of-service agreement,
  * and clears custom_fields (Dashboard can't edit API-created links).
  * Clearing uses rawRequest with custom_fields='' — stripe-node drops [].
@@ -197,7 +197,7 @@ async function main() {
   }
 
   const workshops = await sanity.fetch(
-    `*[_type in ["workshopSession", "workshop"] && series._ref == $seriesId] | order(sessionNumber asc){
+    `*[_type == "workshopSession" && series._ref == $seriesId] | order(sessionNumber asc){
       _id,
       "sessionNumber": coalesce(sessionNumber, topic->order),
       "title": coalesce(topic->title, title),
@@ -221,11 +221,6 @@ async function main() {
       l.metadata?.series === SERIES_META &&
       l.metadata?.workshop &&
       l.metadata?.kind !== 'series_pass',
-  )
-  const passLinks = links.filter(
-    (l) =>
-      l.metadata?.series === SERIES_META &&
-      l.metadata?.kind === 'series_pass',
   )
 
   /** @type {Array<{ id: string, kind: string, link: import('stripe').Stripe.PaymentLink, currentMeta: Record<string,string>, proposedMeta: Record<string,string>, currentCheckout: ReturnType<typeof checkoutSnapshot>, proposedCheckout: ReturnType<typeof desiredCheckoutSnapshot> }>} */
@@ -253,36 +248,6 @@ async function main() {
     rows.push({
       id: link.id,
       kind: `workshop ${nn}`,
-      link,
-      currentMeta,
-      proposedMeta,
-      currentCheckout: checkoutSnapshot(link),
-      proposedCheckout: desiredCheckoutSnapshot(),
-    })
-  }
-
-  if (passLinks.length === 0) {
-    unmatchedLinks.push({
-      id: '(none)',
-      reason: 'no Payment Link with kind=series_pass',
-    })
-  } else if (passLinks.length > 1) {
-    for (const link of passLinks) {
-      unmatchedLinks.push({
-        id: link.id,
-        reason: 'multiple series_pass links — refuse to guess',
-      })
-    }
-  } else {
-    const link = passLinks[0]
-    const currentMeta = { ...link.metadata }
-    const proposedMeta = {
-      ...currentMeta,
-      series_slug: SERIES_SLUG,
-    }
-    rows.push({
-      id: link.id,
-      kind: 'SERIES pass',
       link,
       currentMeta,
       proposedMeta,

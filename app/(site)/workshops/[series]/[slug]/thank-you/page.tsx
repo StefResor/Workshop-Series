@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
 const WORKSHOP_QUERY = `*[
-  _type in ["workshopSession", "workshop"] &&
+  _type == "workshopSession" &&
   slug.current == $slug &&
   series->slug.current == $series
 ][0]{

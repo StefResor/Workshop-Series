@@ -1,10 +1,7 @@
 /** Central GROQ queries — no inline queries elsewhere. */
 
-/**
- * Dated offerings are workshopSession. Dual-type keeps webhook/GROQ working
- * if a leftover workshop doc (or workshop_slug Payment Link) is still around.
- */
-export const BOOKABLE = `_type in ["workshopSession", "workshop"]`
+/** Dated offerings. */
+export const BOOKABLE = `_type == "workshopSession"`
 
 /** Published listings hide draft and cancelled. Closed/sold-out still list. */
 export const PUBLIC_BOOKABLE = `${BOOKABLE} && !(registrationStatus in ["draft", "cancelled"])`
