@@ -1,4 +1,5 @@
 import { getReadClient } from './client'
+import { registrationOpenAfter } from '@/lib/catalogue'
 import { etCalendarDate } from '@/lib/datetime'
 
 export async function sanityFetch<T>(
@@ -7,7 +8,11 @@ export async function sanityFetch<T>(
 ): Promise<T> {
   return getReadClient().fetch<T>(
     query,
-    { today: etCalendarDate(), ...params },
+    {
+      today: etCalendarDate(),
+      registrationOpenAfter: registrationOpenAfter().toISOString(),
+      ...params,
+    },
     {
       next: { revalidate: 60 },
     },

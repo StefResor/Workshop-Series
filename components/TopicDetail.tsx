@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { catalogueHook } from '@/lib/catalogue-hook'
-import { sessionRegisterHref } from '@/lib/catalogue'
-import { formatCatalogueDate } from '@/lib/datetime'
+import { openUpcoming, sessionRegisterHref } from '@/lib/catalogue'
+import { formatCatalogueRegisterLabel } from '@/lib/datetime'
 import { breadcrumbJsonLd, workshopEventJsonLd } from '@/lib/schema'
 import { DEFAULT_WORKSHOP_DISCLAIMER } from '@/lib/workshop-disclaimer'
 import { resolveWorkshopPrice } from '@/lib/workshop-price'
@@ -30,6 +30,8 @@ export function TopicDetail({
     settings?.workshopDisclaimer?.trim() || DEFAULT_WORKSHOP_DISCLAIMER
   const organizer = settings?.siteName || 'Stefanie Schumacher'
 
+  const openSessions = openUpcoming(topic.sessions)
+
   const breadcrumbs = breadcrumbJsonLd([
     { name: 'Home', path: '/' },
     { name: 'Workshops', path: '/workshops' },
@@ -38,7 +40,7 @@ export function TopicDetail({
 
   return (
     <>
-      {(topic.sessions || []).map((session) => {
+      {openSessions.map((session) => {
         const asWorkshop = session as Workshop
         const price = resolveWorkshopPrice(asWorkshop, settings)
         return (
@@ -81,7 +83,7 @@ export function TopicDetail({
           </div>
 
           <h2 className="ev-dates-heading">Upcoming dates</h2>
-          {topic.sessions.length === 0 ? (
+          {openSessions.length === 0 ? (
             <p className="catalogue-row-empty">
               New dates coming soon.{' '}
               <Link href="/workshops#hear-about-workshops">
@@ -90,10 +92,10 @@ export function TopicDetail({
             </p>
           ) : (
             <ul className="topic-session-list">
-              {topic.sessions.map((session) => {
+              {openSessions.map((session) => {
                 const pay = sessionRegisterHref(session)
                 const price = resolveWorkshopPrice(session as Workshop, settings)
-                const dateLabel = formatCatalogueDate(
+                const dateLabel = formatCatalogueRegisterLabel(
                   session.startsAt,
                   session.timeZone,
                 )
@@ -116,14 +118,6 @@ export function TopicDetail({
                           Register · {dateLabel}
                           {price != null ? ` · $${price}` : ''}
                         </a>
-                      ) : session.registrationStatus === 'closed' ? (
-                        <span className="btn" aria-disabled="true">
-                          Registration closed
-                        </span>
-                      ) : session.registrationStatus === 'sold-out' ? (
-                        <span className="btn" aria-disabled="true">
-                          Sold out
-                        </span>
                       ) : (
                         <Link
                           className="btn"

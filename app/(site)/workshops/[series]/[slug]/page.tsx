@@ -1,14 +1,15 @@
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
+import { notFound, permanentRedirect } from 'next/navigation'
 import { WorkshopWhen } from '@/components/WorkshopWhen'
 import { breadcrumbJsonLd, workshopEventJsonLd } from '@/lib/schema'
+import { sessionHasClosed, sessionRegisterHref } from '@/lib/catalogue'
 import { buildPageMetadata } from '@/lib/seo'
 import type { SiteSettings, Workshop } from '@/lib/types'
 import { DEFAULT_WORKSHOP_DISCLAIMER } from '@/lib/workshop-disclaimer'
 import { resolveWorkshopPrice } from '@/lib/workshop-price'
-import { workshopPath } from '@/lib/workshop-paths'
+import { topicPath, workshopPath } from '@/lib/workshop-paths'
 import { sanityFetch } from '@/sanity/lib/fetch'
 import {
   siteSettingsQuery,
@@ -59,6 +60,10 @@ export default async function WorkshopDetailPage({ params }: Props) {
   ])
   if (!workshop?.seriesSlug) notFound()
 
+  if (sessionHasClosed(workshop.startsAt) && workshop.topicSlug) {
+    permanentRedirect(topicPath(workshop.topicSlug))
+  }
+
   const path = workshopPath(workshop.seriesSlug, workshop.slug)
   const policyNote =
     settings?.workshopDisclaimer?.trim() || DEFAULT_WORKSHOP_DISCLAIMER
@@ -73,11 +78,7 @@ export default async function WorkshopDetailPage({ params }: Props) {
   const priceLabel =
     price != null ? `$${price}` : 'Contact for current fees'
   const duration = workshop.durationMinutes ?? 90
-  const canRegister =
-    workshop.registrationStatus === 'open' &&
-    !workshop.isPast &&
-    Boolean(workshop.stripePaymentLink)
-  const registerHref = canRegister ? workshop.stripePaymentLink : null
+  const registerHref = sessionRegisterHref(workshop)
 
   let cta: ReactNode
   if (registerHref) {

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { Resend } from "resend";
 import { client as sanity } from "@/sanity/lib/client";
+import { sessionHasClosed } from "@/lib/catalogue";
 import { createRegistration, voidRegistrations } from "@/lib/registrations";
 import { renderConfirmation } from "@/lib/email/workshop-confirmation";
 import { workshopIcsPath, workshopPath } from "@/lib/workshop-paths";
@@ -218,4 +219,29 @@ async function handlePurchase(
   await sendConfirmation(workshop, email, firstName, amountPaid, {
     idempotencyRef: session.id,
   });
+
+  if (sessionHasClosed(workshop.startsAt)) {
+    const notifyTo =
+      process.env.STEF_NOTIFY_EMAIL?.trim() ||
+      process.env.CONTACT_TO_EMAIL?.trim();
+    if (!notifyTo) {
+      console.error(
+        "[stripe] Late registration but no STEF_NOTIFY_EMAIL / CONTACT_TO_EMAIL",
+        session.id,
+      );
+    } else {
+      const who = firstName || "—";
+      const label = workshop.title;
+      const line = `Late registration: ${who}, ${email}, ${label}`;
+      await resend.emails.send({
+        from: FROM,
+        to: notifyTo,
+        ...(REPLY_TO ? { replyTo: REPLY_TO } : {}),
+        subject: line,
+        text: line,
+        headers: { "X-Entity-Ref-ID": `${session.id}-late` },
+        tags: [{ name: "type", value: "late_registration" }],
+      });
+    }
+  }
 }

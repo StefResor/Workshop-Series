@@ -173,6 +173,9 @@ truncation budget. The email tells recipients that search term explicitly.
 ## The cron
 
 `/api/cron/workshop-credentials`, daily at 14:00 UTC (`vercel.json`).
+`/api/cron/close-started-sessions` deactivates Stripe Payment Links and sets
+`registrationStatus: closed` after `REGISTRATION_CUTOFF_MINUTES` (default 0 =
+at start). Hourly on Pro; daily at 14:00 UTC if Hobby rejects hourly.
 Authorized via `Authorization: Bearer $CRON_SECRET`, which Vercel sends
 automatically.
 
