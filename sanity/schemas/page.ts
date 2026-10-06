@@ -18,14 +18,6 @@ export const page = defineType({
   name: 'page',
   title: 'Page',
   type: 'document',
-  groups: [
-    { name: 'content', title: 'Content', default: true },
-    {
-      name: 'workshopsIntro',
-      title: 'Workshop series intro',
-      hidden: ({ document }) => !isHomePage(document),
-    },
-  ],
   fields: [
     defineField({
       name: 'title',
@@ -100,7 +92,6 @@ export const page = defineType({
       description:
         'Homepage only. e.g. The Notice* Workshop Series. (include the period if you want it)',
       hidden: ({ document }) => !isHomePage(document),
-      group: 'workshopsIntro',
     }),
     defineField({
       name: 'workshopsSpec',
@@ -110,7 +101,6 @@ export const page = defineType({
       description:
         'Full line under the workshops heading (schedule, pricing, join rules, age). Edit freely — shown as authored.',
       hidden: ({ document }) => !isHomePage(document),
-      group: 'workshopsIntro',
     }),
     defineField({
       name: 'workshopsSpecTail',
@@ -119,7 +109,6 @@ export const page = defineType({
       description:
         'Deprecated — use Workshops section subhead. Kept only until that field is populated.',
       hidden: true,
-      group: 'workshopsIntro',
     }),
     defineField({
       name: 'workshopsNote',
@@ -129,13 +118,11 @@ export const page = defineType({
       description:
         'Line under the subhead — e.g. Separate from the series, I see a small number of couples and individuals privately.',
       hidden: ({ document }) => !isHomePage(document),
-      group: 'workshopsIntro',
     }),
     defineField({
       name: 'portrait',
       title: 'Headshot',
       type: 'image',
-      group: 'content',
       hidden: ({ document }) => !isAboutPage(document),
       options: { hotspot: true },
       description:
