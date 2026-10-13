@@ -1,11 +1,11 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { buildPageMetadata } from '@/lib/seo'
+import { AlternateDatesCallout } from '@/components/AlternateDatesCallout'
 import { EmailSignupBand } from '@/components/EmailSignupBand'
 import { HomeHeroHeadline } from '@/components/HomeHeroHeadline'
 import { HomeWorkshopCard } from '@/components/HomeWorkshopCard'
 import { HowChangeSection } from '@/components/HowChangeSection'
-import { SeeAllDatesCell } from '@/components/SeeAllDatesCell'
 import type {
   EmailSignup,
   PageDoc,
@@ -18,7 +18,6 @@ import {
   resolveSessionPrice,
 } from '@/lib/workshop-price'
 import { sanityFetch } from '@/sanity/lib/fetch'
-import { HOME_SESSION_CAP } from '@/lib/catalogue'
 import {
   emailSignupQuery,
   homeUpcomingWorkshopsQuery,
@@ -67,11 +66,11 @@ export default async function HomePage() {
       sanityFetch<EmailSignup | null>(emailSignupQuery),
     ])
 
-  let workshops = (currentUpcoming || []).slice(0, HOME_SESSION_CAP)
+  let workshops = currentUpcoming || []
   let betweenSeries = false
   if (workshops.length === 0) {
     const across = await sanityFetch<Workshop[]>(upcomingPublicWorkshopsQuery)
-    workshops = (across || []).slice(0, HOME_SESSION_CAP)
+    workshops = across || []
     betweenSeries = workshops.length > 0
   }
 
@@ -166,21 +165,17 @@ export default async function HomePage() {
               </p>
             </div>
           ) : (
-            <>
-              {workshops.map((w) => (
-                <HomeWorkshopCard
-                  key={w._id}
-                  workshop={w}
-                  settings={settings}
-                  showSeriesLabel={betweenSeries}
-                />
-              ))}
-              {workshops.length === HOME_SESSION_CAP ? (
-                <SeeAllDatesCell />
-              ) : null}
-            </>
+            workshops.map((w) => (
+              <HomeWorkshopCard
+                key={w._id}
+                workshop={w}
+                settings={settings}
+                showSeriesLabel={betweenSeries}
+              />
+            ))
           )}
         </div>
+        {workshops.length > 0 ? <AlternateDatesCallout /> : null}
       </section>
 
       <section

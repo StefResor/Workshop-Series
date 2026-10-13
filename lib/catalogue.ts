@@ -1,7 +1,5 @@
 import type { Workshop } from '@/lib/types'
 
-export const HOME_SESSION_CAP = 5
-
 /** Minutes after startsAt when registration closes. 0 = at start time. */
 export function registrationCutoffMinutes(): number {
   const raw = process.env.REGISTRATION_CUTOFF_MINUTES

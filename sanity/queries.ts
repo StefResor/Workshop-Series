@@ -63,7 +63,7 @@ const workshopProjection = `{
   "isPast": startsAt <= $registrationOpenAfter
 }`
 
-/** Homepage: upcoming sessions in the current series window. Cap in the page. */
+/** Homepage: upcoming sessions in the current series window. */
 export const homeUpcomingWorkshopsQuery = `*[
   ${CURRENT_SERIES_BOOKABLE}
 ] | order(startsAt asc) ${workshopProjection}`
