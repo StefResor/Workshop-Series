@@ -32,7 +32,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     workshopBySeriesAndSlugQuery,
     { series, slug },
   )
-  if (!workshop) return { title: 'Workshop' }
+  if (!workshop) {
+    return buildPageMetadata({
+      title: 'Workshop',
+      description: 'Live Connection Workshop session with Stefanie Schumacher.',
+      path: workshopPath(series, slug),
+    })
+  }
   return buildPageMetadata({
     title: workshop.title,
     description:

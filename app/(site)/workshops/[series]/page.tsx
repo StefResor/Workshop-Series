@@ -46,7 +46,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     slug: segment,
   })
   if (series) {
-    return { title: 'Workshops' }
+    return buildPageMetadata({
+      title: 'Workshops',
+      description:
+        'The Connection Workshop — live online Wednesdays, 7:00–8:30 PM ET. Join any session, in any order.',
+      path: `/workshops/${segment}`,
+    })
   }
 
   const topic = await sanityFetch<CatalogueTopic | null>(topicBySlugQuery, {
@@ -63,7 +68,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     })
   }
 
-  return { title: 'Workshop' }
+  return buildPageMetadata({
+    title: 'Workshop',
+    description: 'Live Connection Workshop session with Stefanie Schumacher.',
+    path: `/workshops/${segment}`,
+  })
 }
 
 export default async function WorkshopsSeriesSegmentPage({ params }: Props) {

@@ -4,6 +4,13 @@ export const siteSettings = defineType({
   name: 'siteSettings',
   title: 'Site settings',
   type: 'document',
+  fieldsets: [
+    {
+      name: 'seo',
+      title: 'SEO & sharing',
+      options: { collapsible: false },
+    },
+  ],
   fields: [
     defineField({
       name: 'siteName',
@@ -44,6 +51,7 @@ export const siteSettings = defineType({
       name: 'defaultTitle',
       title: 'Default meta title',
       type: 'string',
+      fieldset: 'seo',
       validation: (rule) => rule.required(),
     }),
     defineField({
@@ -51,19 +59,38 @@ export const siteSettings = defineType({
       title: 'Default meta description',
       type: 'text',
       rows: 3,
+      fieldset: 'seo',
       validation: (rule) => rule.required(),
     }),
     defineField({
       name: 'twitterTitle',
       title: 'Twitter / X title',
       type: 'string',
+      fieldset: 'seo',
       validation: (rule) => rule.required(),
     }),
     defineField({
       name: 'ogTitle',
       title: 'Open Graph title',
       type: 'string',
+      fieldset: 'seo',
       validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: 'shareImage',
+      title: 'Link preview image',
+      type: 'image',
+      fieldset: 'seo',
+      description:
+        'Shown when the site link is shared in texts, LinkedIn, Facebook, etc. Use 2400×1260 (or 1200×630). Keep important text away from the edges.',
+      fields: [
+        defineField({
+          name: 'alt',
+          type: 'string',
+          title: 'Alt text',
+          validation: (rule) => rule.required(),
+        }),
+      ],
     }),
     defineField({
       name: 'mailingAddress',

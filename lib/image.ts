@@ -12,6 +12,7 @@ type UrlForOptions = {
   quality?: number
   /** Force a raster format for social cards (og/twitter). Never WebP for those. */
   format?: 'jpg' | 'png'
+  fit?: 'clip' | 'crop' | 'fill' | 'fillmax' | 'max' | 'min' | 'scale'
 }
 
 /**
@@ -19,12 +20,16 @@ type UrlForOptions = {
  * Uses Sanity CDN auto-format (negotiated per request) unless an explicit format is set.
  */
 export function urlForImage(source: SanityImageSource, options: UrlForOptions) {
-  const { width, height, quality = 80, format } = options
+  const { width, height, quality = 80, format, fit } = options
 
   let img = builder.image(source).width(width).quality(quality)
 
   if (height != null) {
     img = img.height(height)
+  }
+
+  if (fit) {
+    img = img.fit(fit)
   }
 
   if (format) {

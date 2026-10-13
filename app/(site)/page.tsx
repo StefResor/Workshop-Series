@@ -29,7 +29,7 @@ import {
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await sanityFetch<SiteSettings | null>(siteSettingsQuery)
-  const meta = buildPageMetadata({
+  const meta = await buildPageMetadata({
     title:
       settings?.defaultTitle || 'Stefanie Schumacher — The Connection Workshop',
     description:

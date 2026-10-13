@@ -12,8 +12,8 @@ import {
   workshopsQuery,
 } from '@/sanity/queries'
 
-export function generateMetadata(): Metadata {
-  return buildPageMetadata({
+export async function generateMetadata(): Promise<Metadata> {
+  return await buildPageMetadata({
     title: 'Workshops',
     description:
       'The Connection Workshop — live online Wednesdays, 7:00–8:30 PM ET. Join any session, in any order.',

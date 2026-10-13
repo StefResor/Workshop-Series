@@ -168,6 +168,12 @@ export const siteSettingsQuery = `*[_type == "siteSettings"][0] {
   defaultDescription,
   twitterTitle,
   ogTitle,
+  shareImage{
+    alt,
+    asset,
+    crop,
+    hotspot
+  },
   mailingAddress,
   notificationsEnabled,
   sessionPrice,
