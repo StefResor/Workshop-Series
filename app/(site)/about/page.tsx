@@ -15,7 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const page = await sanityFetch<PageDoc | null>(pageBySlugQuery, {
     slug: 'about',
   })
-  return buildPageMetadata({
+  return await buildPageMetadata({
     title: 'About',
     description:
       page?.summary ||

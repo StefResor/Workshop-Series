@@ -6,7 +6,7 @@ import { sanityFetch } from '@/sanity/lib/fetch'
 import { siteSettingsQuery } from '@/sanity/queries'
 import type { SiteSettings } from '@/lib/types'
 import { allowSearchIndexing } from '@/lib/indexing'
-import { absoluteUrl, defaultOgImages, siteOrigin } from '@/lib/seo'
+import { absoluteUrl, shareImagesFromSettings, siteOrigin } from '@/lib/seo'
 
 const archivo = Archivo({
   subsets: ['latin'],
@@ -35,7 +35,12 @@ export const viewport: Viewport = {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await sanityFetch<SiteSettings | null>(siteSettingsQuery)
+  let settings: SiteSettings | null = null
+  try {
+    settings = await sanityFetch<SiteSettings | null>(siteSettingsQuery)
+  } catch {
+    settings = null
+  }
   const title =
     settings?.defaultTitle || 'Stefanie Schumacher — The Connection Workshop'
   const description =
@@ -44,6 +49,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const canonical = siteOrigin()
   const host = (await headers()).get('host')
   const indexable = allowSearchIndexing(host)
+  const images = shareImagesFromSettings(settings)
 
   return {
     title: {
@@ -78,13 +84,13 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: settings?.siteName || 'Stefanie Schumacher',
       locale: 'en_US',
       type: 'website',
-      images: defaultOgImages(),
+      images,
     },
     twitter: {
       card: 'summary_large_image',
       title: settings?.twitterTitle || title,
       description,
-      images: [absoluteUrl('/stefanie-schumacher.jpg')],
+      images: [images[0]?.url ?? '/og/og-default-2026-10.png'],
     },
     robots: indexable
       ? {

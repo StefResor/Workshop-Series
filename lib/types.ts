@@ -43,6 +43,12 @@ export type SiteSettings = {
   defaultDescription: string
   twitterTitle: string
   ogTitle: string
+  shareImage?: {
+    alt?: string
+    asset?: { _ref?: string; _type?: string }
+    crop?: unknown
+    hotspot?: unknown
+  }
   mailingAddress?: string
   notificationsEnabled?: boolean
   sessionPrice?: number

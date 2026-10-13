@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import { ContactForm } from '@/components/ContactForm'
 import { buildPageMetadata } from '@/lib/seo'
 
-export function generateMetadata(): Metadata {
-  return buildPageMetadata({
+export async function generateMetadata(): Promise<Metadata> {
+  return await buildPageMetadata({
     title: 'Contact',
     description:
       'Request a confidential consultation with Stefanie Schumacher. Private-pay practice and the Connection Workshop for individuals and couples.',

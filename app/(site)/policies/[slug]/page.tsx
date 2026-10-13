@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const policy = await fetchPolicy(slug)
 
   if (slug === 'terms') {
-    return buildPageMetadata({
+    return await buildPageMetadata({
       title: policy?.title?.trim() || DEFAULT_TERMS_TITLE,
       description:
         'Workshop registration terms, refunds, conduct, and educational scope for Stefanie Schumacher’s Connection Workshop series.',
@@ -51,7 +51,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   if (!policy?.title) {
-    return buildPageMetadata({
+    return await buildPageMetadata({
       title: 'Policy',
       description:
         'Practice policies for Stefanie Schumacher’s Connection Workshop.',
@@ -59,7 +59,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     })
   }
 
-  return buildPageMetadata({
+  return await buildPageMetadata({
     title: policy.title,
     description: policy.title,
     path: publicPath(slug),
