@@ -1697,9 +1697,7 @@ textarea {
  * All Ten Sessions.
  */
 .workshop-led-grid:not(:has(.series-package-cell))
-  > .workshop-led:nth-last-child(-n + 2),
-.workshop-led-grid:not(:has(.series-package-cell))
-  > .see-all-dates-cell:nth-last-child(-n + 2) {
+  > .workshop-led:nth-last-child(-n + 2) {
   border-bottom: 0;
 }
 
@@ -1807,25 +1805,24 @@ textarea {
   color: var(--vermillion);
 }
 
-.see-all-dates-cell {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 16px;
-  background: var(--white);
-  padding: 36px 28px 28px;
-  border-right: var(--rule-width) solid var(--rule-internal);
-  border-bottom: var(--rule-width) solid var(--rule-internal);
-  scroll-margin-top: 6rem;
-}
-
-.workshop-led-grid > .workshop-led:nth-child(2n),
-.workshop-led-grid > .see-all-dates-cell:nth-child(2n) {
+.workshop-led-grid > .workshop-led:nth-child(2n) {
   border-right: 0;
 }
 
-.see-all-dates-kicker {
-  margin: 0;
+.alternate-dates-callout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px 40px;
+  padding: 32px 0 8px;
+}
+
+.alternate-dates-copy {
+  min-width: 0;
+}
+
+.alternate-dates-kicker {
+  margin: 0 0 8px;
   font-family: var(--font-sans);
   font-size: var(--text-kicker);
   font-weight: 600;
@@ -1834,7 +1831,7 @@ textarea {
   color: var(--vermillion);
 }
 
-.see-all-dates-heading {
+.alternate-dates-line {
   margin: 0;
   font-family: var(--font-display);
   font-size: clamp(16px, 1.5vw, 20px);
@@ -1845,10 +1842,9 @@ textarea {
   text-wrap: balance;
 }
 
-.see-all-dates-cta {
-  align-self: flex-start;
+.alternate-dates-cta {
+  flex-shrink: 0;
   display: inline-block;
-  margin-top: 8px;
   background: var(--vermillion);
   color: var(--bone);
   padding: 14px 22px;
@@ -1860,16 +1856,8 @@ textarea {
   transition: background 0.2s var(--ease);
 }
 
-.see-all-dates-cta:hover {
+.alternate-dates-cta:hover {
   background: var(--ink);
-}
-
-@supports (grid-template-rows: subgrid) {
-  @media (min-width: 861px) {
-    .see-all-dates-cell {
-      grid-row: span 4;
-    }
-  }
 }
 
 .workshops-catalogue-section,
@@ -2513,19 +2501,18 @@ textarea {
    * 1-col: restore row dividers on what was the 2-col last pair, then drop the
    * final card’s bottom edge — unless the series cell follows (it needs that rule).
    */
-  .workshop-led-grid > .workshop-led:nth-last-child(-n + 2),
-  .workshop-led-grid > .see-all-dates-cell:nth-last-child(-n + 2) {
+  .workshop-led-grid > .workshop-led:nth-last-child(-n + 2) {
     border-bottom: var(--rule-width) solid var(--rule-internal);
   }
 
-  .workshop-led-grid:not(:has(.series-package-cell)) > .workshop-led:last-child,
-  .workshop-led-grid:not(:has(.series-package-cell))
-    > .see-all-dates-cell:last-child {
+  .workshop-led-grid:not(:has(.series-package-cell)) > .workshop-led:last-child {
     border-bottom: 0;
   }
 
-  .see-all-dates-cell {
-    border-right: 0;
+  .alternate-dates-callout {
+    flex-direction: column;
+    align-items: flex-start;
+    padding-top: 28px;
   }
 
   .catalogue-row {
